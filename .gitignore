@@ -1,0 +1,11 @@
+/build/
+/tools/
+# /tools/*/**
+/.cache/
+
+# backup file
+*.bak*
+
+# testing file of tools
+# !/tools/**/*.cpp
+# !/tools/**/*.hpp

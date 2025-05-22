@@ -1,0 +1,12 @@
+[submodule "3rdlibs/SDL3"]
+	path = 3rdlibs/SDL3
+	url = https://github.com/libsdl-org/SDL.git
+[submodule "3rdlibs/SDL3_image"]
+	path = 3rdlibs/SDL3_image
+	url = https://github.com/libsdl-org/SDL_image.git
+[submodule "3rdlibs/entt"]
+	path = 3rdlibs/entt
+	url = https://github.com/skypjack/entt.git
+[submodule "3rdlibs/toml++"]
+	path = 3rdlibs/toml++
+	url = https://github.com/marzer/tomlplusplus.git

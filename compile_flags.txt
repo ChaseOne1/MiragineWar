@@ -1,0 +1,16 @@
+-std=c++17
+-I
+3rdlibs
+-I
+3rdlibs/SDL3/include
+-I
+3rdlibs/SDL3_image/include
+-I
+3rdlibs/entt/single_include
+-I
+src
+-include
+src/pch.hpp
+-D
+DEBUG
+-pedantic
