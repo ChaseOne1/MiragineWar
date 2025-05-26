@@ -5,11 +5,7 @@ template <typename Topic>
 class Topics
 {
     using Callback_t = std::function<void()>;
-    struct Subscriber
-    {
-        Callback_t callback;
-        const void* subscriber;
-    };
+    using Subscriber = Callback_t;
 
 private:
     std::unordered_map<Topic, std::vector<Subscriber>> m_Topics;
@@ -21,7 +17,7 @@ public:
         if (subscribers == m_Topics.end()) return;
 
         for (auto& subscriber : subscribers->second) {
-            subscriber.callback();
+            subscriber();
         }
     }
 
@@ -30,7 +26,7 @@ public:
     {
         auto& subscribers = m_Topics[topic];
         subscribers.emplace_back(Subscriber { std::forward<F>(callback) });
-        return subscribers.back().callback.template target<std::remove_reference_t<F>>();
+        return subscribers.back().template target<std::remove_reference_t<F>>();
     }
 
     // NOTE: DO NOT unsubscribe in callback
@@ -41,7 +37,7 @@ public:
         auto& subscribers = m_Topics.at(topic);
         subscribers.erase(
             std::remove_if(subscribers.begin(), subscribers.end(),
-                [&](const Subscriber& sub) { return callback == sub.callback.template target<F>(); }),
+                [&](const Subscriber& sub) { return callback == sub.template target<F>(); }),
             subscribers.end());
     }
 
