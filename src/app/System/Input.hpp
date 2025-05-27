@@ -1,6 +1,5 @@
 #pragma once
 #include "FunctionalKeyDef.hpp"
-#include "InputTopicDef.hpp"
 #include "utility/Topics.hpp"
 
 namespace app::sys {
@@ -14,7 +13,7 @@ private:
 #undef BUTTON_COUNT
     SDL_Scancode m_KeyMaps[std::size_t(Key::KEY_COUNT)];
 
-    utility::Topics<InputTopic> m_Topics;
+    utility::Topics<Key> m_Topics;
 
 private:
     Input();
@@ -24,13 +23,13 @@ public:
     void Tick();
 
     template <typename F>
-    void Subsrcibe(InputTopic topic, F&& callback)
+    void Subsrcibe(Key topic, F&& callback)
     {
         m_Topics.Subscribe(topic, callback);
     }
 
     template <typename F>
-    void Unsubscribe(InputTopic topic, F* callback)
+    void Unsubscribe(Key topic, F* callback)
     {
         m_Topics.Unsubscribe(topic, callback);
     }

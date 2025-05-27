@@ -19,22 +19,22 @@ Input::Input()
     eventbus.Subscribe(SDL_EVENT_MOUSE_BUTTON_DOWN, [this]() {
         SDL_Event* event = app::EventBus::GetInstance().GetEvent();
         m_KeyStatusMap[BUTTON2KEY(event->button.button)] = true;
-        m_Topics.Publish(InputTopic::BUTTON_EVENT); });
+        m_Topics.Publish(static_cast<Key>(BUTTON2KEY(event->button.button))); });
 
     eventbus.Subscribe(SDL_EVENT_MOUSE_BUTTON_UP, [this]() {
         SDL_Event* event = app::EventBus::GetInstance().GetEvent();
         m_KeyStatusMap[BUTTON2KEY(event->button.button)] = false;
-        m_Topics.Publish(InputTopic::BUTTON_EVENT); });
+        m_Topics.Publish(static_cast<Key>(BUTTON2KEY(event->button.button))); });
 
     eventbus.Subscribe(SDL_EVENT_KEY_DOWN, [this]() {
         SDL_Event* event = app::EventBus::GetInstance().GetEvent();
         m_KeyStatusMap[event->key.scancode] = true;
-        m_Topics.Publish(InputTopic::KEY_EVENT); });
+        m_Topics.Publish(static_cast<Key>(event->key.scancode)); });
 
     eventbus.Subscribe(SDL_EVENT_KEY_UP, [this]() {
         SDL_Event* event = app::EventBus::GetInstance().GetEvent();
         m_KeyStatusMap[event->key.scancode] = false;
-        m_Topics.Publish(InputTopic::KEY_EVENT); });
+        m_Topics.Publish(static_cast<Key>(event->key.scancode)); });
 }
 
 Input::~Input()

@@ -10,7 +10,7 @@ Clickable::Clickable()
     reg.on_construct<comp::Clickable>().connect<&Clickable::AddClickable>(this);
     reg.on_destroy<comp::Clickable>().connect<&Clickable::RemoveClickable>(this);
 
-    Input::GetInstance().Subsrcibe(InputTopic::BUTTON_EVENT, std::bind(&Clickable::Tick, this));
+    Input::GetInstance().Subsrcibe(app::Key::MOUSE_SELECT, std::bind(&Clickable::Tick, this));
 }
 
 void Clickable::AddClickable(entt::registry& reg, entt::entity entity)
