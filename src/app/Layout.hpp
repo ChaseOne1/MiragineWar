@@ -20,7 +20,10 @@ class Layout : public utility::Singleton<Layout>
 #define RightBottom "RightBottom"
 
 private:
+    static constexpr SDL_Point mc_nDefaultWindowSize { 1920, 1080 };
+
     std::unordered_map<Anchor, SDL_Point> m_Anchors;
+    SDL_FPoint m_fScale {};
     // TODO: a scale factory
 
 private:
@@ -47,6 +50,8 @@ private:
         m_Anchors[RightTop] = SDL_Point { w, 0 };
         m_Anchors[RightCenter] = SDL_Point { w, h >> 1 };
         m_Anchors[RightBottom] = SDL_Point { w, h };
+
+        m_fScale = { w / (float)mc_nDefaultWindowSize.x, h / (float)mc_nDefaultWindowSize.y };
     }
 
 public:
@@ -54,8 +59,8 @@ public:
     {
         try {
             const SDL_Point& anchor_pos = m_Anchors.at(anchor);
-            return { anchor_pos.x + offset.x - size.x / 2.f, anchor_pos.y + offset.y - size.y / 2.f,
-                size.x, size.y };
+            return { anchor_pos.x + offset.x * m_fScale.x - size.x * m_fScale.x / 2.f, anchor_pos.y + offset.y * m_fScale.y - size.y * m_fScale.y / 2.f,
+                size.x * m_fScale.x, size.y * m_fScale.y };
         } catch (std::out_of_range e) {
             SDL_Log("%s\n", e.what());
             return {};
