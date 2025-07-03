@@ -2,26 +2,26 @@
 
 using namespace app::sys;
 
-static float gs_FixedTimeAccumulator = 0.f;
+static float gs_fFixedTimeAccumulator = 0.f;
 
 void Time::Tick()
 {
     static uint64_t last = 0u;
 
-    m_RealTime = SDL_GetTicks();
+    m_uRealTime = SDL_GetTicks();
 
-    m_UnscaledDeltaTime = (m_RealTime - last) / 1000.f;
-    m_DeltaTime = m_UnscaledDeltaTime * m_TimeScale;
+    m_uUnscaledDeltaTime = m_uRealTime - last;
+    m_fDeltaTime = m_uUnscaledDeltaTime * m_fTimeScale;
 
-    gs_FixedTimeAccumulator += m_DeltaTime;
+    gs_fFixedTimeAccumulator += m_fDeltaTime;
 
-    last = m_RealTime;
+    last = m_uRealTime;
 }
 
-bool Time::ConsumeFixedTick() const noexcept
+bool Time::ConsumeTick() const noexcept
 {
-    if (gs_FixedTimeAccumulator < m_FixedDeltaTime) return false;
+    if (gs_fFixedTimeAccumulator < m_fFixedDeltaTime) return false;
 
-    gs_FixedTimeAccumulator -= m_FixedDeltaTime;
+    gs_fFixedTimeAccumulator -= m_fFixedDeltaTime;
     return true;
 }

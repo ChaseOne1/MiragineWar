@@ -7,8 +7,4 @@ namespace game::comp
     {
         utility::math::Vector2 m_Position;
     };
-
-    struct FixedPosition
-    {
-    };
 }

@@ -9,9 +9,10 @@ class Input : public utility::Singleton<Input>
 
 private:
 #define BUTTON_COUNT (sizeof(decltype(SDL_MouseButtonEvent::button)) * CHAR_BIT)
-    std::bitset<SDL_Scancode::SDL_SCANCODE_COUNT + BUTTON_COUNT> m_KeyStatusMap;
+    std::bitset<SDL_Scancode::SDL_SCANCODE_COUNT + 1 + BUTTON_COUNT> m_ScancodeStatusMap;
 #undef BUTTON_COUNT
-    SDL_Scancode m_KeyMaps[std::size_t(Key::KEY_COUNT)];
+    SDL_Scancode m_Key2Scancode[std::size_t(Key::KEY_COUNT)] {};
+    Key m_Scancode2Key[SDL_Scancode::SDL_SCANCODE_COUNT] {};
 
     utility::Topics<Key> m_Topics;
 
