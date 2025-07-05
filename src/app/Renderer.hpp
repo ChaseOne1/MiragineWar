@@ -20,6 +20,13 @@ private:
     ~Renderer() { SDL_DestroyRenderer(m_pRenderer); }
 
 public:
-    SDL_Renderer* GetRenderer() { return m_pRenderer; }
+    SDL_Renderer* GetSDLRenderer() const noexcept { return m_pRenderer; }
+
+    mathfu::vec2i GetRenderSize() const noexcept
+    {
+        mathfu::vec2i size = mathfu::kZeros2i;
+        SDL_GetCurrentRenderOutputSize(m_pRenderer, &size.x, &size.y);
+        return size;
+    }
 };
 }

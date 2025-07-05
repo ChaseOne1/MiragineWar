@@ -10,3 +10,6 @@
 [submodule "3rdlibs/toml++"]
 	path = 3rdlibs/toml++
 	url = https://github.com/marzer/tomlplusplus.git
+[submodule "3rdlibs/mathfu"]
+	path = 3rdlibs/mathfu
+	url = https://github.com/google/mathfu.git

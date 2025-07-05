@@ -9,7 +9,7 @@ private:
 
 
 private:
-    Scene() = default;
+    Scene();
     ~Scene() = default;
 
 public:

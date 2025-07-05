@@ -14,7 +14,7 @@ private:
     World();
     ~World() = default;
 
-    void OnPosnConstruct(entt::registry&, entt::entity);
+    void OnCollisionConstruct(entt::registry&, entt::entity);
 
 public:
     static constexpr float msc_fWidth = 1024.f, msc_fHeight = 256.f;

@@ -16,6 +16,10 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <entt/entt.hpp>
+#include <mathfu/vector.h>
+#include <mathfu/matrix.h>
+#include <mathfu/glsl_mappings.h>
+#include <mathfu/constants.h>
 
 // be careful with the order of headers we write,
 // as it may cause some symbol errors

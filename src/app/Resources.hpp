@@ -78,7 +78,7 @@ struct Resources::LoadFromMemImpl<SDL_Texture>
     static std::shared_ptr<SDL_Texture> Load(const ResDesc& desc, std::unique_ptr<std::byte[]> data)
     {
         SDL_IOStream* stream = SDL_IOFromConstMem(data.get(), desc.m_nSize);
-        return std::shared_ptr<SDL_Texture>(IMG_LoadTexture_IO(app::Renderer::GetInstance().GetRenderer(), stream, true),
+        return std::shared_ptr<SDL_Texture>(IMG_LoadTexture_IO(app::Renderer::GetInstance().GetSDLRenderer(), stream, true),
             [](SDL_Texture* texture) { SDL_DestroyTexture(texture); });
     }
 };

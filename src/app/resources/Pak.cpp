@@ -8,7 +8,7 @@ Pak::Pak(GUID_t file)
           std::ios::in | std::ios::binary)
 {
     if (!m_PakFile)
-        throw std::invalid_argument("Invalid file:" + ms_PakDescs[std::to_string(file)].value_or<std::string>(""));
+        throw std::invalid_argument("Invalid Pak:" + ms_PakDescs[std::to_string(file)].value_or<std::string>(""));
 }
 
 std::unique_ptr<std::byte[]> Pak::Load(const ResourceDescription& resource)

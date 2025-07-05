@@ -8,9 +8,14 @@
 -I
 3rdlibs/entt/single_include
 -I
+3rdlibs/mathfu/include
+-I
+3rdlibs/mathfu/dependencies/vectorial/include
+-I
 src
 -include
 src/pch.hpp
 -D
 DEBUG
 -pedantic
+-msse4.1

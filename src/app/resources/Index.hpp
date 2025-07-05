@@ -5,6 +5,7 @@ namespace app {
 class Index
 {
 private:
+    //TODO: change ".meta" to ".toml"
     inline static toml::table ms_IndexDescs = 
         toml::parse_file((AppMetaData::msc_szAssetsPath / "index.meta").generic_u8string());
 

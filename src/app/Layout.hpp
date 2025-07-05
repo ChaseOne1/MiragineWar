@@ -37,7 +37,7 @@ private:
 
     void UpdateAnchors()
     {
-        SDL_Renderer* renderer = Renderer::GetInstance().GetRenderer();
+        SDL_Renderer* renderer = Renderer::GetInstance().GetSDLRenderer();
         int w = 0, h = 0;
         SDL_GetCurrentRenderOutputSize(renderer, &w, &h);
 

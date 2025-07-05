@@ -6,20 +6,27 @@ configure_file(
     "${CMAKE_SOURCE_DIR}/src/app/AppMetadata.hpp"
 )
 
-# set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-#Should be changed to a bin directory
+#------------------------------------------------------------------
+#should be changed to a bin directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../MiragineWar-Game)
 
-#aux_source_directory(./src SOURCE_FILES)
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS src/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
+#------------------------------------------------------------------
+#3rdlibs
 add_subdirectory(3rdlibs/SDL3 EXCLUDE_FROM_ALL)
 add_subdirectory(3rdlibs/SDL3_image EXCLUDE_FROM_ALL)
 add_subdirectory(3rdlibs/toml++ EXCLUDE_FROM_ALL)
 add_subdirectory(3rdlibs/entt EXCLUDE_FROM_ALL)
+set(mathfu_build_benchmarks OFF CACHE BOOL "")
+set(mathfu_build_tests OFF CACHE BOOL "")
+add_subdirectory(3rdlibs/mathfu EXCLUDE_FROM_ALL)
+mathfu_configure_flags(${PROJECT_NAME})
 add_subdirectory(tools EXCLUDE_FROM_ALL)
 
+#------------------------------------------------------------------
+#compile flags
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3 
                                               SDL3_image::SDL3_image
                                               tomlplusplus::tomlplusplus

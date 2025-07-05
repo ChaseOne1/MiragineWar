@@ -33,6 +33,7 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
     app::sys::Clickable::GetInstance();
     app::sys::TextureRender::GetInstance();
 
+    game::sys::Visible::GetInstance();
     game::World::GetInstance();
     game::Game::GetInstance();
     game::Camera::GetInstance();
@@ -56,7 +57,7 @@ SDL_AppResult SDL_AppIterate(void*)
     game::sys::Visible::GetInstance().Tick();
 
     // Render Begin
-    SDL_Renderer* renderer = app::Renderer::GetInstance().GetRenderer();
+    SDL_Renderer* renderer = app::Renderer::GetInstance().GetSDLRenderer();
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
 
