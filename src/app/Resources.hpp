@@ -13,9 +13,6 @@ class Resources final : public utility::Singleton<Resources>
 {
     friend class utility::Singleton<Resources>;
 
-    template <typename T>
-    struct LoadFromMemImpl;
-
 private:
     utility::LRUContainer<GUID_t, std::shared_ptr<void>, GUIDHash> m_Resources { RESOURCE_CACHE_NUM };
     utility::LRUContainer<GUID_t, Index, GUIDHash> m_Indexes { INDEX_CACHE_NUM };
@@ -27,10 +24,7 @@ private:
 
     // TODO: map file instade of stream
     template <typename T>
-    std::shared_ptr<T> LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data)
-    {
-        return LoadFromMemImpl<T>::Load(desc, std::move(data));
-    }
+    static std::shared_ptr<T> LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data);
 
 public:
     template <typename T>
@@ -41,7 +35,7 @@ public:
 
         // if not, load from the pak
         try {
-            // but firstly, find out which pak we need
+            // but firstly, find out which pak we need;;
             auto idx = m_Indexes.Get(index);
             if (!idx) idx = m_Indexes.Put(index, Index(index));
             const ResDesc& desc = idx->GetResourceDescription(resource);
@@ -62,35 +56,11 @@ public:
 };
 
 template <>
-struct Resources::LoadFromMemImpl<SDL_Surface>
-{
-    static std::shared_ptr<SDL_Surface> Load(const ResDesc& desc, std::unique_ptr<std::byte[]> data)
-    {
-        SDL_IOStream* stream = SDL_IOFromConstMem(data.get(), desc.m_nSize);
-        return std::shared_ptr<SDL_Surface>(IMG_Load_IO(stream, true),
-            [](SDL_Surface* surface) { SDL_DestroySurface(surface); });
-    }
-};
+std::shared_ptr<SDL_Surface> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data);
 
 template <>
-struct Resources::LoadFromMemImpl<SDL_Texture>
-{
-    static std::shared_ptr<SDL_Texture> Load(const ResDesc& desc, std::unique_ptr<std::byte[]> data)
-    {
-        SDL_IOStream* stream = SDL_IOFromConstMem(data.get(), desc.m_nSize);
-        return std::shared_ptr<SDL_Texture>(IMG_LoadTexture_IO(app::Renderer::GetInstance().GetSDLRenderer(), stream, true),
-            [](SDL_Texture* texture) { SDL_DestroyTexture(texture); });
-    }
-};
+std::shared_ptr<SDL_Texture> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data);
 
 template <>
-struct Resources::LoadFromMemImpl<toml::table>
-{
-    static std::shared_ptr<toml::table> Load(const ResDesc& desc, std::unique_ptr<std::byte[]> data)
-    {
-        //TODO: no tested
-        //NOTE: just support ascii code
-        return std::make_shared<toml::table>(toml::parse({ reinterpret_cast<const char*>(data.get()), desc.m_nSize }));
-    }
-};
+std::shared_ptr<toml::table> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data);
 }
