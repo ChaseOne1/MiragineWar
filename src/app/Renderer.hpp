@@ -15,6 +15,11 @@ private:
 
         if (!SDL_SetRenderVSync(m_pRenderer, SDL_RENDERER_VSYNC_ADAPTIVE))
             SDL_SetRenderVSync(m_pRenderer, 1);
+
+        if (Settings::GetInstance().GetSettings().at_path("render.use_nearest_scale").value_or(false)
+            && !SDL_SetDefaultTextureScaleMode(m_pRenderer, SDL_SCALEMODE_NEAREST)) {
+            SDL_Log("Set texture scale mode failed");
+        }
     }
 
     ~Renderer() { SDL_DestroyRenderer(m_pRenderer); }

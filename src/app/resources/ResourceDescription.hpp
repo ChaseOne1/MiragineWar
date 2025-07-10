@@ -11,6 +11,7 @@ enum struct ResourceType : std::uint8_t
     MP3,
     WAV,
     BIN,
+    ASF,
 };
 using ResType = ResourceType;
 

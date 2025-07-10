@@ -44,11 +44,11 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
 SDL_AppResult SDL_AppIterate(void*)
 {
     app::sys::Time::GetInstance().Tick();
-    //SDL_Log("fps: %.2f\n", 1.f / app::sys::Time::GetInstance().GetDeltaTime());
+    // SDL_Log("fps: %.2f\n", 1.f / app::sys::Time::GetInstance().GetDeltaTimeInSeconds());
 
     while (app::sys::Time::GetInstance().ConsumeTick()) {
         // Fixed Update
-         game::sys::Move::GetInstance().Tick();
+        game::sys::Move::GetInstance().Tick();
         // game::sys::Collide::GetInstance().Tick();
         // game::sys::Trigger::GetInstance().Tick();
     }

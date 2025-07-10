@@ -7,7 +7,7 @@ class Camera : public utility::Singleton<Camera>
 
 private:
     entt::entity m_Camera = utility::Registry::GetInstance().GetRegistry().create();
-    mathfu::vec2 m_HalfFOV { 188.f, 128.f };//TODO: use the Transform:Size to instead fov
+    mathfu::vec2 m_HalfFOV { 188.f, 128.f }; // TODO: use the Transform:Size to instead fov
 
     inline static const mathfu::vec2 msc_Velocity { 100.f, 100.f };
 

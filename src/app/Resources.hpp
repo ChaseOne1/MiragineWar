@@ -2,6 +2,7 @@
 #include "app/resources/Index.hpp"
 #include "app/resources/Pak.hpp"
 #include "utility/LRU.hpp"
+#include "app/resources/AnimSeqFrame.hpp"
 
 #define RESOURCE_CACHE_NUM 100u
 #define INDEX_CACHE_NUM 10u
@@ -63,4 +64,7 @@ std::shared_ptr<SDL_Texture> Resources::LoadFromMem(const ResDesc& desc, std::un
 
 template <>
 std::shared_ptr<toml::table> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data);
+
+template <>
+std::shared_ptr<AnimSeqFrame> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data);
 }

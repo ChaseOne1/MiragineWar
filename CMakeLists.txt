@@ -36,4 +36,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.hpp)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
-target_compile_options(${PROJECT_NAME} PRIVATE -g -Og)
+target_compile_options(${PROJECT_NAME} PRIVATE -g -Og -fno-rtti)

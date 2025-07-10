@@ -1,13 +1,16 @@
 #include "Game.hpp"
+#include "app/Component/Render/RenderCallback.hpp"
 #include "app/Resources.hpp"
 #include "app/resources/AllInOneRes.hpp"
 #include "app/resources/AllInOneIndex.hpp"
 #include "game/Component/Logic.hpp"
 #include "app/Component/Render/Texture.hpp"
 #include "app/Layout.hpp"
+#include "app/System/Time.hpp"
 #include "game/Component/UIElement.hpp"
-#include "game/Component/Visible.hpp"
 #include "game/System/Scene.hpp"
+
+using app::AnimSeqFrame;
 
 using namespace game;
 using namespace entt;
@@ -37,10 +40,32 @@ void Game::LogicInit()
         // title
         entity title = reg.create();
         reg.emplace<game::comp::UIElement>(title);
-        std::shared_ptr<SDL_Texture> title_img = ress.Require<SDL_Texture>(app::res::TITLE_IMG, app::idx::MISC_IDX);
-        auto& title_texture = reg.emplace<app::comp::Texture>(title, std::move(title_img), 0u,
-            std::optional<SDL_FRect>(std::nullopt),
+        std::shared_ptr<AnimSeqFrame> title_img = ress.Require<AnimSeqFrame>(app::res::PERSON_IMG, app::idx::MISC_IDX);
+        auto& title_texture = reg.emplace<app::comp::Texture>(title, title_img->m_Frames, 0u,
+            std::make_optional(SDL_FRect { 0.f, 0.f, static_cast<float>(title_img->m_Idle.width), static_cast<float>(title_img->m_Idle.height) }),
             std::make_optional(layout.Transform(layouts->at_path("title"))));
+        reg.emplace<app::comp::PreRender>(title, [=, &title_texture]() {
+            static uint64_t start_time = app::sys::Time::GetInstance().GetRealTime();
+            static AnimSeqFrame::AnimInfo* info = &title_img->m_Idle;
+
+            // switch animation automatically
+            if (app::sys::Time::GetInstance().GetRealTime() - start_time > 1000) {
+                title_texture.m_AvbFRect->y += info->height;
+                info += 1;
+                start_time = app::sys::Time::GetInstance().GetRealTime();
+                if (info == (&title_img->m_Die + 1)) {
+                    info = &title_img->m_Idle;
+                    title_texture.m_AvbFRect->y = 0.f;
+                }
+                title_texture.m_AvbFRect->w = info->width;
+                title_texture.m_AvbFRect->h = info->height;
+            }
+
+            const int passed_frame = (app::sys::Time::GetInstance().GetRealTime() - start_time) * info->speed;
+            const uint8_t curr_frame = passed_frame % info->count;
+            constexpr uint8_t frame_padding = 1;
+            title_texture.m_AvbFRect->x = curr_frame * (title_texture.m_AvbFRect->w + frame_padding); // padding
+        });
 
         // TODO: save the retVal to unsubscribe
         app::EventBus::GetInstance().Subscribe(SDL_EVENT_WINDOW_RESIZED, [=, &title_texture]() {
