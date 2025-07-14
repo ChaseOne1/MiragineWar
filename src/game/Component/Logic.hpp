@@ -18,6 +18,11 @@ public:
         m_fnEnter();
     }
 
+    template <typename T>
+    explicit Logic(T&& fnTick)
+        : m_fnTick(std::forward<T>(fnTick))
+    { }
+
     ~Logic()
     {
         m_fnExit();

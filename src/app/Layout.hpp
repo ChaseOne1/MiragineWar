@@ -55,7 +55,7 @@ private:
     }
 
 public:
-    SDL_FRect Transform(Anchor anchor, const SDL_FPoint& offset, const SDL_FPoint& size)
+    SDL_FRect Transform(Anchor anchor, const SDL_FPoint& offset, const SDL_FPoint& size) const
     {
         try {
             const SDL_Point& anchor_pos = m_Anchors.at(anchor);
@@ -67,7 +67,7 @@ public:
         }
     }
 
-    SDL_FRect Transform(toml::node_view<toml::node> node)
+    SDL_FRect Transform(const toml::table& node) const
     {
         try {
             return Transform(node["Anchor"].value_or<Anchor>(""),

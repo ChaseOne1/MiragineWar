@@ -9,7 +9,8 @@ private:
     entt::entity m_Camera = utility::Registry::GetInstance().GetRegistry().create();
     mathfu::vec2 m_HalfFOV { 188.f, 128.f }; // TODO: use the Transform:Size to instead fov
 
-    inline static const mathfu::vec2 msc_Velocity { 100.f, 100.f };
+    inline static const mathfu::vec2 msc_Velocity { static_cast<float>(**app::Settings::GetInstance().GetSettings().at_path("Camera.speed_x").as_floating_point()),
+        static_cast<float>(**app::Settings::GetInstance().GetSettings().at_path("Camera.speed_y").as_floating_point()) };
 
 private:
     Camera();
