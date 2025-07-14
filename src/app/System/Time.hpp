@@ -6,7 +6,7 @@ class Time : public utility::Singleton<Time>
     friend class utility::Singleton<Time>;
 
 private:
-    Time() = default;
+    Time();
     ~Time() = default;
 
 private:
