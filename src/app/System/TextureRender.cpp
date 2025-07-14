@@ -33,7 +33,7 @@ void TextureRender::Tick()
     for (auto entity : view) {
         auto& texture = view.get<app::comp::Texture>(entity);
 
-        // transform world object to screen
+        // transform object's vertices in world to screen
         if (const auto* trans = reg.try_get<game::comp::Transform>(entity)) {
             const Camera& cam = Camera::GetInstance();
             const vec2 cam_fov = cam.GetHalfFOV() * 2.f;
@@ -50,8 +50,23 @@ void TextureRender::Tick()
             texture.m_DstFRect->h = vertices[2].y - vertices[0].y;
         }
 
-        SDL_RenderTexture(renderer.GetSDLRenderer(), texture.m_pTexture.get(),
-            texture.m_AvbFRect ? &texture.m_AvbFRect.value() : nullptr,
-            texture.m_DstFRect ? &texture.m_DstFRect.value() : nullptr);
+        SDL_FlipMode flip_mode = SDL_FlipMode::SDL_FLIP_NONE;
+        if (texture.m_SrcFRect && texture.m_SrcFRect->w < 0.f) {
+            flip_mode = SDL_FlipMode::SDL_FLIP_HORIZONTAL;
+            texture.m_SrcFRect->w = -texture.m_SrcFRect->w;
+        } else if (texture.m_SrcFRect && texture.m_SrcFRect->h < 0.f) {
+            flip_mode = SDL_FlipMode::SDL_FLIP_VERTICAL;
+            texture.m_SrcFRect->h = -texture.m_SrcFRect->h;
+        }
+
+        SDL_RenderTextureRotated(renderer.GetSDLRenderer(), texture.m_pTexture.get(),
+            texture.m_SrcFRect ? &texture.m_SrcFRect.value() : nullptr,
+            texture.m_DstFRect ? &texture.m_DstFRect.value() : nullptr,
+            texture.m_fAngle,
+            texture.m_RotationPivot ? &texture.m_RotationPivot.value() : nullptr,
+            flip_mode);
+
+        if (flip_mode == SDL_FLIP_HORIZONTAL) texture.m_SrcFRect->w = -texture.m_SrcFRect->w;
+        else if (flip_mode == SDL_FLIP_VERTICAL) texture.m_SrcFRect->h = -texture.m_SrcFRect->h;
     }
 }

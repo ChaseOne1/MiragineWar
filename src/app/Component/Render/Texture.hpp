@@ -3,31 +3,37 @@
 namespace app::comp {
 struct Texture
 {
-    uint8_t m_bDirty = 0, m_nZIndex = 0;
+    uint32_t m_nZIndex = 0u; float m_fAngle = 0.f;
+    std::optional<SDL_FPoint> m_RotationPivot;
 
-    //TODO: refactor with vec4
-    std::optional<SDL_FRect> m_AvbFRect {}, m_DstFRect {};
+    // TODO: refactor with vec4
+    std::optional<SDL_FRect> m_SrcFRect, m_DstFRect;
 
     std::shared_ptr<SDL_Texture> m_pTexture {};
 
 public:
-    template <typename TexturePtr>
-    explicit Texture(TexturePtr&& texture)
-        : m_pTexture(std::forward<TexturePtr>(texture))
+    explicit Texture(const std::shared_ptr<SDL_Texture>& texture)
+        : m_pTexture(texture)
     { }
 
-    template <typename TexturePtr>
-    explicit Texture(TexturePtr&& texture, uint8_t zindex)
-        : m_pTexture(std::forward<TexturePtr>(texture))
+    Texture(const std::shared_ptr<SDL_Texture>& texture,
+        const std::optional<SDL_FRect>& srcFRect, const std::optional<SDL_FRect>& dstFRect,
+        uint32_t zindex)
+        : m_pTexture(texture)
+        , m_SrcFRect(srcFRect)
+        , m_DstFRect(dstFRect)
         , m_nZIndex(zindex)
     { }
 
-    template <typename TexturePtr, typename OptionalRect>
-    Texture(TexturePtr&& texture, uint8_t zindex, OptionalRect&& avbRect, OptionalRect&& dstRect)
-        : m_pTexture(std::forward<TexturePtr>(texture))
+    Texture(const std::shared_ptr<SDL_Texture>& texture,
+        const std::optional<SDL_FRect>& srcFRect, const std::optional<SDL_FRect>& dstFRect,
+        const std::optional<SDL_FPoint>& rotationPivot, float rotationAngle, uint32_t zindex)
+        : m_pTexture(texture)
+        , m_SrcFRect(srcFRect)
+        , m_DstFRect(dstFRect)
         , m_nZIndex(zindex)
-        , m_AvbFRect(std::forward<OptionalRect>(avbRect))
-        , m_DstFRect(std::forward<OptionalRect>(dstRect))
+        , m_fAngle(rotationAngle)
+        , m_RotationPivot(rotationPivot)
     { }
 };
 }
