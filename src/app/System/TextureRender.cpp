@@ -16,6 +16,7 @@ TextureRender::TextureRender()
     registry& reg = utility::Registry::GetInstance().GetRegistry();
     reg.on_construct<comp::Texture>().connect<&TextureRender::SortTexture>();
     reg.on_update<comp::Texture>().connect<&TextureRender::SortTexture>();
+    //TODO: on destroy
 }
 
 void TextureRender::SortTexture(registry& reg, entity)
@@ -29,6 +30,7 @@ void TextureRender::Tick()
     registry& reg = utility::Registry::GetInstance().GetRegistry();
     const Renderer& renderer = Renderer::GetInstance();
     auto view = reg.view<app::comp::Texture, game::comp::Visible>();
+    view.use<app::comp::Texture>(); // let the view follow the order of Texture while iterating
 
     for (auto entity : view) {
         auto& texture = view.get<app::comp::Texture>(entity);
@@ -36,7 +38,7 @@ void TextureRender::Tick()
         // transform object's vertices in world to screen
         if (const auto* trans = reg.try_get<game::comp::Transform>(entity)) {
             const Camera& cam = Camera::GetInstance();
-            const vec2 cam_fov = cam.GetHalfFOV() * 2.f;
+            const vec2 cam_fov = reg.get<game::comp::Transform>(cam.GetCameraEntity()).m_HalfSize.xy() * 2.f;
             const vec2 screen_size { renderer.GetRenderSize() };
 
             std::array<vec3, 4> vertices = trans->GetVertices();

@@ -1,5 +1,4 @@
 #pragma once
-#include "utility/LTGrid.hpp"
 
 namespace game {
 class World : public utility::Singleton<World>
@@ -7,8 +6,6 @@ class World : public utility::Singleton<World>
     friend class utility::Singleton<World>;
 
 private:
-    utility::LTGrid<entt::entity> m_LTGrid { msc_fWidth, msc_fHeight,
-        msc_fLooseWidth, msc_fLooseHeight, msc_fTightWidth, msc_fTightHeight };
 
 private:
     World();

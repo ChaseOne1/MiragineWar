@@ -15,7 +15,7 @@ public:
         , m_fnTick(std::forward<T2>(fnTick))
         , m_fnExit(std::forward<T3>(fnExit))
     {
-        m_fnEnter();
+        if (m_fnEnter) m_fnEnter();
     }
 
     template <typename T>
@@ -25,7 +25,7 @@ public:
 
     ~Logic()
     {
-        m_fnExit();
+        if (m_fnExit) m_fnExit();
     }
 };
 }
