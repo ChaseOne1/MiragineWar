@@ -1,4 +1,6 @@
 #include "TextureRender.hpp"
+#include "app/Component/Render/TextureGrid.hpp"
+#include "app/Component/Render/TextureRotation.hpp"
 #include "app/component/Render/Texture.hpp"
 #include "game/Component/Transform.hpp"
 #include "game/Component/Visible.hpp"
@@ -16,7 +18,7 @@ TextureRender::TextureRender()
     registry& reg = utility::Registry::GetInstance().GetRegistry();
     reg.on_construct<comp::Texture>().connect<&TextureRender::SortTexture>();
     reg.on_update<comp::Texture>().connect<&TextureRender::SortTexture>();
-    //TODO: on destroy
+    // TODO: on destroy
 }
 
 void TextureRender::SortTexture(registry& reg, entity)
@@ -36,7 +38,7 @@ void TextureRender::Tick()
         auto& texture = view.get<app::comp::Texture>(entity);
 
         // transform object's vertices in world to screen
-        if (const auto* trans = reg.try_get<game::comp::Transform>(entity)) {
+        if (const auto* trans = reg.try_get<game::comp::Transform>(entity); trans && trans->m_HalfSize != kZeros2f) {
             const Camera& cam = Camera::GetInstance();
             const vec2 cam_fov = reg.get<game::comp::Transform>(cam.GetCameraEntity()).m_HalfSize.xy() * 2.f;
             const vec2 screen_size { renderer.GetRenderSize() };
@@ -61,12 +63,25 @@ void TextureRender::Tick()
             texture.m_SrcFRect->h = -texture.m_SrcFRect->h;
         }
 
-        SDL_RenderTextureRotated(renderer.GetSDLRenderer(), texture.m_pTexture.get(),
-            texture.m_SrcFRect ? &texture.m_SrcFRect.value() : nullptr,
-            texture.m_DstFRect ? &texture.m_DstFRect.value() : nullptr,
-            texture.m_fAngle,
-            texture.m_RotationPivot ? &texture.m_RotationPivot.value() : nullptr,
-            flip_mode);
+        if (auto* rotation = reg.try_get<app::comp::TextureRotation>(entity)) {
+            SDL_RenderTextureRotated(renderer.GetSDLRenderer(), texture.m_pTexture.get(),
+                texture.m_SrcFRect ? &texture.m_SrcFRect.value() : nullptr,
+                texture.m_DstFRect ? &texture.m_DstFRect.value() : nullptr,
+                rotation->m_fAngle,
+                rotation->m_RotationPivot ? &rotation->m_RotationPivot.value() : nullptr,
+                flip_mode);
+        } else if (auto* grid = reg.try_get<app::comp::TextureGrid>(entity)) {
+            SDL_RenderTexture9GridTiled(renderer.GetSDLRenderer(), texture.m_pTexture.get(),
+                texture.m_SrcFRect ? &texture.m_SrcFRect.value() : nullptr,
+                grid->m_fLeftWidth, grid->m_fRightWidth, grid->m_fTopHeight, grid->m_fBottomHeight, grid->m_fScale,
+                texture.m_DstFRect ? &texture.m_DstFRect.value() : nullptr,
+                grid->m_fTileScale);
+        } else {
+            SDL_RenderTextureRotated(renderer.GetSDLRenderer(), texture.m_pTexture.get(),
+                texture.m_SrcFRect ? &texture.m_SrcFRect.value() : nullptr,
+                texture.m_DstFRect ? &texture.m_DstFRect.value() : nullptr,
+                0.f, nullptr, flip_mode);
+        }
 
         if (flip_mode == SDL_FLIP_HORIZONTAL) texture.m_SrcFRect->w = -texture.m_SrcFRect->w;
         else if (flip_mode == SDL_FLIP_VERTICAL) texture.m_SrcFRect->h = -texture.m_SrcFRect->h;
