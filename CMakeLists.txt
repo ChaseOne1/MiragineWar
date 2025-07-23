@@ -7,12 +7,14 @@ configure_file(
 )
 
 #------------------------------------------------------------------
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 17)
 #should be changed to a bin directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../MiragineWar-Game)
 
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS src/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-
 #------------------------------------------------------------------
 #3rdlibs
 add_subdirectory(3rdlibs/SDL3 EXCLUDE_FROM_ALL)
