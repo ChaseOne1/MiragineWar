@@ -18,19 +18,28 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 #------------------------------------------------------------------
 #3rdlibs
 add_subdirectory(3rdlibs/SDL3 EXCLUDE_FROM_ALL)
+
 add_subdirectory(3rdlibs/SDL3_image EXCLUDE_FROM_ALL)
+
+set(SDLTTF_VENDORED ON)
+add_subdirectory(3rdlibs/SDL3_ttf EXCLUDE_FROM_ALL)
+
 add_subdirectory(3rdlibs/toml++ EXCLUDE_FROM_ALL)
+
 add_subdirectory(3rdlibs/entt EXCLUDE_FROM_ALL)
+
 set(mathfu_build_benchmarks OFF CACHE BOOL "")
 set(mathfu_build_tests OFF CACHE BOOL "")
 add_subdirectory(3rdlibs/mathfu EXCLUDE_FROM_ALL)
 mathfu_configure_flags(${PROJECT_NAME})
+
 add_subdirectory(tools EXCLUDE_FROM_ALL)
 
 #------------------------------------------------------------------
 #compile flags
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3 
                                               SDL3_image::SDL3_image
+                                              SDL3_ttf::SDL3_ttf
                                               tomlplusplus::tomlplusplus
                                               EnTT::EnTT)
 
@@ -38,4 +47,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.hpp)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+target_compile_options(harfbuzz PRIVATE -Wa,-mbig-obj) # for SDL_ttf's dependency on mingw
 target_compile_options(${PROJECT_NAME} PRIVATE -g -Og -fno-rtti)
