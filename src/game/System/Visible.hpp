@@ -16,7 +16,6 @@ private:
     Visible();
     ~Visible() = default;
 
-    void OnUIElementConstruct(entt::registry&, entt::entity);
     void OnTransformConstruct(entt::registry&, entt::entity);
     void OnTransformDestroy(entt::registry&, entt::entity);
 

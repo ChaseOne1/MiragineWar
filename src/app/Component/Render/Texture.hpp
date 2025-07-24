@@ -5,8 +5,7 @@ struct Texture
 {
     std::shared_ptr<SDL_Texture> m_pTexture {};
     // TODO: refactor with vec4
-    std::optional<SDL_FRect> m_SrcFRect, m_DstFRect;
-    uint32_t m_nZIndex = 0u;
+    std::optional<SDL_FRect> m_SrcFRect; //, m_DstFRect;
 
 public:
     explicit Texture(const std::shared_ptr<SDL_Texture>& texture)
@@ -14,12 +13,10 @@ public:
     { }
 
     Texture(const std::shared_ptr<SDL_Texture>& texture,
-        const std::optional<SDL_FRect>& srcFRect, const std::optional<SDL_FRect>& dstFRect,
-        uint32_t zindex)
+        const std::optional<SDL_FRect>& srcFRect /*, const std::optional<SDL_FRect>& dstFRect*/)
         : m_pTexture(texture)
         , m_SrcFRect(srcFRect)
-        , m_DstFRect(dstFRect)
-        , m_nZIndex(zindex)
+    //, m_DstFRect(dstFRect)
     { }
 };
 }

@@ -1,7 +1,7 @@
 #pragma once
 
-namespace app::sys {
-enum ZIndex : uint32_t
+namespace app::comp {
+enum ZIndex : uint16_t
 {
     ZINDEX_GROUND = 0u,
 

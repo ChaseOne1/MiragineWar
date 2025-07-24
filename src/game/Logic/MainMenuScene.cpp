@@ -5,7 +5,7 @@
 #include "app/Component/Render/RenderCallback.hpp"
 #include "app/resources/AllInOneRes.hpp"
 #include "app/resources/AllInOneIndex.hpp"
-#include "app/System/ZIndex.hpp"
+#include "app/Component/Render/ZIndex.hpp"
 #include "app/System/Time.hpp"
 #include "game/System/Scene.hpp"
 #include "game/Component/UIElement.hpp"
@@ -14,6 +14,7 @@
 #include "game/Component/Logic.hpp"
 #include "game/Camera.hpp"
 #include "game/World.hpp"
+#include "app/Component/Render/TextureGrid.hpp"
 #include "utility/Random.hpp"
 
 using namespace game::logic;
@@ -38,11 +39,15 @@ void MainMenuScene::SetupTitle()
     app::Resources& resources = app::Resources::GetInstance();
     const app::Layout& layouts = app::Layout::GetInstance();
 
-    const std::shared_ptr<SDL_Texture> title_img = resources.Require<SDL_Texture>(app::res::TITLE_IMG, app::idx::MISC_IDX);
-    std::shared_ptr<toml::table> boot_layouts = resources.Require<toml::table>(app::res::BOOT_LO, app::idx::MISC_IDX);
-    registry.emplace<app::comp::Texture>(m_Title, std::move(title_img), std::nullopt,
-        layouts.Transform(*boot_layouts->at("title").as_table()), app::sys::ZINDEX_UIELEMENT);
     registry.emplace<game::comp::UIElement>(m_Title);
+
+    const std::shared_ptr<SDL_Texture>& title_img = resources.Require<SDL_Texture>(app::res::TITLE_IMG, app::idx::MISC_IDX);
+    registry.emplace<app::comp::Texture>(m_Title, title_img, std::nullopt);
+    registry.emplace<app::comp::ZIndex>(m_Title, app::comp::ZIndex::ZINDEX_UIELEMENT);
+
+    const std::shared_ptr<toml::table>& boot_layouts = resources.Require<toml::table>(app::res::BOOT_LO, app::idx::MISC_IDX);
+    const SDL_FRect& layout = layouts.Transform(*boot_layouts->at("title").as_table());
+    registry.emplace<game::comp::Transform>(m_Title, vec2 { layout.x + layout.w / 2.f, layout.y + layout.h / 2.f }, vec2 { layout.w / 2.f, layout.h / 2.f });
 }
 
 void MainMenuScene::SetupSoldiers()
@@ -75,18 +80,19 @@ void MainMenuScene::SetupSoldiers()
         std::shared_ptr<app::AnimSeqFrames> texture_asf = resources.Require<app::AnimSeqFrames>(soldiers_guid[guid_dist(gen)], app::idx::SOLDIERS_IDX);
         auto& texture_comp = registry.emplace<app::comp::Texture>(soldier, texture_asf->m_Frames,
             SDL_FRect { 0.f, static_cast<float>(texture_asf->GetGlobalCoordY(app::AnimSeqFrames::ANIM_RUN)),
-                mirrored * static_cast<float>(texture_asf->m_Info[app::AnimSeqFrames::ANIM_RUN].width), static_cast<float>(texture_asf->m_Info[app::AnimSeqFrames::ANIM_RUN].height) },
-            SDL_FRect {}, app::sys::ZINDEX_SOLDIER);
+                mirrored * static_cast<float>(texture_asf->m_Info[app::AnimSeqFrames::ANIM_RUN].width),
+                static_cast<float>(texture_asf->m_Info[app::AnimSeqFrames::ANIM_RUN].height) });
 
         // Transform
         const float size_ratio = **settings["soldiers_size_ratio"].as_floating_point();
         auto& transform_comp = registry.emplace<game::comp::Transform>(soldier,
-            vec2 { cam_center.x + mirrored * (distance_x_from - posn_dist(gen) * (distance_x_from - distance_x_to)), cam_center.y - distance_hy + posn_dist(gen) * distance_hy * 2 },
-            vec2 { texture_asf->m_Info[app::AnimSeqFrames::ANIM_RUN].width / 2.f * size_ratio, texture_asf->m_Info[app::AnimSeqFrames::ANIM_RUN].height / 2.f * size_ratio });
+            vec2 { cam_center.x + mirrored * (distance_x_from - posn_dist(gen) * (distance_x_from - distance_x_to)),
+                cam_center.y - distance_hy + posn_dist(gen) * distance_hy * 2 },
+            vec2 { texture_asf->m_Info[app::AnimSeqFrames::ANIM_RUN].width / 2.f * size_ratio,
+                texture_asf->m_Info[app::AnimSeqFrames::ANIM_RUN].height / 2.f * size_ratio });
 
-        registry.patch<app::comp::Texture>(soldier, [&transform_comp](app::comp::Texture& texture) {
-            texture.m_nZIndex += transform_comp.m_Position.y / game::World::GetInstance().msc_fHeight * 100u;
-        });
+        // ZIndex
+        registry.emplace<app::comp::ZIndex>(soldier, app::comp::ZIndex(app::comp::ZIndex::ZINDEX_SOLDIER + transform_comp.m_Position.y / game::World::GetInstance().msc_fHeight * 100u));
 
         // Movement
         registry.emplace<game::comp::Movement>(soldier,
@@ -98,7 +104,8 @@ void MainMenuScene::SetupSoldiers()
             std::shared_ptr<app::AnimSeqFrames> m_asf;
             app::AnimSeqFrames::ANIM m_anim = app::AnimSeqFrames::ANIM_IDLE;
         };
-        std::shared_ptr<Context> texture_ctx = std::make_shared<Context>(Context { app::sys::Time::GetInstance().GetRealTime(), texture_asf, app::AnimSeqFrames::ANIM_RUN });
+        std::shared_ptr<Context> texture_ctx = std::make_shared<Context>(
+            Context { app::sys::Time::GetInstance().GetRealTime(), texture_asf, app::AnimSeqFrames::ANIM_RUN });
 
         // Logic
         const float posn_to = cam_center.x + mirrored * (distance_x_to + posn_dist(gen) * **settings["soldiers_float_length"].as_floating_point());

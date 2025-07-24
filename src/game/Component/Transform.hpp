@@ -16,5 +16,13 @@ public:
             mathfu::vec3 { m_Position.x + m_HalfSize.x, m_Position.y + m_HalfSize.y, 1.f },
         };
     }
+
+    SDL_FRect GetFRect() const noexcept
+    {
+        return {
+            m_Position.x - m_HalfSize.x, m_Position.y - m_HalfSize.y,
+            m_HalfSize.x * 2.f, m_HalfSize.y * 2.f
+        };
+    }
 };
 }

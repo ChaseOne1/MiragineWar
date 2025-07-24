@@ -1,6 +1,5 @@
 #include "Resources.hpp"
 #include "app/Component/Render/Texture.hpp"
-#include "app/System/ZIndex.hpp"
 
 using namespace app;
 
@@ -31,7 +30,7 @@ std::shared_ptr<app::comp::Texture> Resources::LoadFromMem<app::comp::Texture>(c
     SDL_DestroySurface(surface);
 
     return std::make_shared<app::comp::Texture>(std::move(texture),
-        std::make_optional<SDL_FRect>({ 0.f, 0.f, float(w), float(h) }), std::nullopt, app::sys::ZINDEX_GROUND);
+        std::make_optional<SDL_FRect>({ 0.f, 0.f, float(w), float(h) }));
 }
 
 template <>

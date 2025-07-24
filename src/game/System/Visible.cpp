@@ -9,18 +9,18 @@ using namespace game::sys;
 using namespace entt;
 using namespace mathfu;
 
+static void OnUIElementConstruct(entt::registry& reg, entt::entity ent)
+{
+    reg.emplace<game::comp::Visible>(ent);
+}
+
 Visible::Visible()
 {
     registry& reg = utility::Registry::GetInstance().GetRegistry();
-    reg.on_construct<game::comp::UIElement>().connect<&Visible::OnUIElementConstruct>(this);
+    reg.on_construct<game::comp::UIElement>().connect<OnUIElementConstruct>();
     reg.on_construct<game::comp::Transform>().connect<&Visible::OnTransformConstruct>(this);
     reg.on_destroy<game::comp::Transform>().connect<&Visible::OnTransformDestroy>(this);
     // TODO: for movalbe object, add update listener
-}
-
-void Visible::OnUIElementConstruct(registry& reg, entity ent)
-{
-    reg.emplace<game::comp::Visible>(ent);
 }
 
 void Visible::OnTransformConstruct(entt::registry& reg, entt::entity ent)

@@ -7,7 +7,7 @@
 #include "app/System/Clickable.hpp"
 #include "app/System/Input.hpp"
 #include "app/System/RenderCallback.hpp"
-#include "app/System/TextureRender.hpp"
+#include "app/System/Render.hpp"
 #include "app/System/Time.hpp"
 //-------------------------------------------
 #include "game/Game.hpp"
@@ -21,7 +21,7 @@
 SDL_AppResult SDL_AppInit(void**, int, char**)
 {
     SDL_SetAppMetadata(app::AppMetaData::NAME, app::AppMetaData::VERSION, nullptr);
-    if (!SDL_Init(SDL_INIT_VIDEO))
+    if (!SDL_Init(SDL_INIT_VIDEO) || !TTF_Init())
         return SDL_APP_FAILURE;
 
     app::Window::GetInstance();
@@ -31,7 +31,7 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
 
     utility::Registry::GetInstance(); // Construct registry
     app::sys::Clickable::GetInstance();
-    app::sys::TextureRender::GetInstance();
+    app::sys::Render::GetInstance();
 
     game::sys::Visible::GetInstance();
     game::World::GetInstance();
@@ -63,7 +63,7 @@ SDL_AppResult SDL_AppIterate(void*)
 
     // Tick
     app::sys::PreRender::GetInstance().Tick();
-    app::sys::TextureRender::GetInstance().Tick();
+    app::sys::Render::GetInstance().Tick();
     app::sys::PostRender::GetInstance().Tick();
 
     SDL_RenderPresent(renderer);
@@ -87,4 +87,6 @@ SDL_AppResult SDL_AppEvent(void*, SDL_Event* event)
 
 void SDL_AppQuit(void*, SDL_AppResult result)
 {
+    TTF_Quit();
+    // SDL_Quit(); not required in the case of callback main
 }
