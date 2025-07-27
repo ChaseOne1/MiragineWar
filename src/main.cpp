@@ -9,6 +9,7 @@
 #include "app/System/RenderCallback.hpp"
 #include "app/System/Render.hpp"
 #include "app/System/Time.hpp"
+#include "app/Resources.hpp"
 //-------------------------------------------
 #include "game/Game.hpp"
 #include "game/Camera.hpp"
@@ -26,6 +27,7 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
 
     app::Window::GetInstance();
     app::Renderer::GetInstance();
+    app::TextEngine::GetInstance();
     app::Layout::GetInstance();
     app::sys::Input::GetInstance();
 
@@ -87,6 +89,11 @@ SDL_AppResult SDL_AppEvent(void*, SDL_Event* event)
 
 void SDL_AppQuit(void*, SDL_AppResult result)
 {
+    // release TTF_Font before TTF_Quit, or SIGSEGV
+    utility::Registry::GetInstance().GetRegistry().clear();
+    app::Resources::GetInstance().CleanUp();
+
     TTF_Quit();
+
     // SDL_Quit(); not required in the case of callback main
 }

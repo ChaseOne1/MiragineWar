@@ -33,4 +33,6 @@
 #include "app/Settings.hpp"
 #include "app/Window.hpp"
 #include "app/Renderer.hpp"
+#include "app/TextEngine.hpp"
+#include "app/resources/GUID.hpp"
 /*clang-format on*/

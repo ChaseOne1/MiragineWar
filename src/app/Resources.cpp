@@ -1,5 +1,7 @@
 #include "Resources.hpp"
 #include "app/Component/Render/Texture.hpp"
+#include "app/resources/AnimSeqFrames.hpp"
+#include "app/resources/Mox.hpp"
 
 using namespace app;
 
@@ -46,11 +48,31 @@ std::shared_ptr<AnimSeqFrames> Resources::LoadFromMem(const ResDesc& desc, std::
     constexpr unsigned int meta_size = sizeof(AnimSeqFrames::AnimInfo) * AnimSeqFrames::ANIM_NUM;
 
     std::shared_ptr<AnimSeqFrames> asf = std::make_shared<AnimSeqFrames>();
-    std::memcpy(asf.get(), data.get(), meta_size);
+    std::memcpy((void*)asf.get(), data.get(), meta_size);
 
     SDL_IOStream* stream = SDL_IOFromConstMem(data.get() + meta_size, desc.m_nSize - meta_size);
     asf->m_Frames.reset(IMG_LoadTexture_IO(app::Renderer::GetInstance().GetSDLRenderer(), stream, true),
         [](SDL_Texture* texture) { SDL_DestroyTexture(texture); });
 
     return asf;
+}
+
+template <>
+std::shared_ptr<TTF_Font> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data)
+{
+    // the stream must remain open, and the data must be valid before the font is closed
+    SDL_IOStream* stream = SDL_IOFromConstMem(data.get(), desc.m_nSize);
+    return std::shared_ptr<TTF_Font>(TTF_OpenFontIO(stream, true, **Settings::GetInstance().GetSettings().at_path("Text.font_size").as_floating_point()), [datas = std::move(data)](TTF_Font* font) { TTF_CloseFont(font); });
+}
+
+template <>
+std::shared_ptr<Mox> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data)
+{
+    std::shared_ptr<Mox> mox = std::make_shared<Mox>();
+    std::memcpy((void*)mox.get(), data.get(), sizeof(Mox::Header));
+
+    SDL_IOStream* stream = SDL_IOFromConstMem(data.get() + sizeof(Mox::Header), desc.m_nSize - sizeof(Mox::Header));
+    mox->m_Texture.reset(IMG_LoadTexture_IO(app::Renderer::GetInstance().GetSDLRenderer(), stream, true), [](SDL_Texture* texture) { SDL_DestroyTexture(texture); });
+
+    return mox;
 }

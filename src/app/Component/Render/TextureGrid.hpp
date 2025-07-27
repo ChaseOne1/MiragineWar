@@ -1,4 +1,5 @@
 #pragma once
+#include "app/resources/Mox.hpp"
 
 namespace app::comp {
 struct TextureGrid
@@ -6,6 +7,21 @@ struct TextureGrid
     float m_fLeftWidth = 0.f, m_fRightWidth = 0.f;
     float m_fTopHeight = 0.f, m_fBottomHeight = 0.f;
     // TODO: if the tile_scale is equal to 0.f, then the RenderTexture9Grid is used, or Tiled
-    float m_fScale = 1.f, m_fTileScale = 1.f;
+    float m_fScale = 1.f;
+
+public:
+    TextureGrid(float left_width, float right_width, float top_height, float bottom_height)
+        : m_fLeftWidth(left_width)
+        , m_fRightWidth(right_width)
+        , m_fTopHeight(top_height)
+        , m_fBottomHeight(bottom_height)
+    { }
+
+    TextureGrid(const app::Mox::Header& header)
+        : m_fLeftWidth(header.left_width)
+        , m_fRightWidth(header.right_width)
+        , m_fTopHeight(header.top_height)
+        , m_fBottomHeight(header.bottom_height)
+    { }
 };
 }

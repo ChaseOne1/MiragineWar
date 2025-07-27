@@ -10,7 +10,7 @@ private:
 
 private:
     Game();
-    ~Game();
+    ~Game() = default;
 
     void LogicInit();
 };

@@ -1,17 +1,6 @@
 #include "Game.hpp"
-#include "app/Component/Render/RenderCallback.hpp"
-#include "app/Resources.hpp"
-#include "app/resources/AllInOneRes.hpp"
-#include "app/resources/AllInOneIndex.hpp"
 #include "game/Component/Logic.hpp"
-#include "app/Component/Render/Texture.hpp"
-#include "app/Layout.hpp"
-#include "app/System/Time.hpp"
-#include "game/Component/UIElement.hpp"
-#include "game/System/Scene.hpp"
 #include "game/Logic/MainMenuScene.hpp"
-
-using app::AnimSeqFrames;
 
 using namespace game;
 using namespace entt;
@@ -20,12 +9,6 @@ Game::Game()
 {
     auto& reg = utility::Registry::GetInstance().GetRegistry();
     reg.emplace<game::comp::Logic>(m_Game, std::bind(&Game::LogicInit, this), []() { }, []() { });
-}
-
-Game::~Game()
-{
-    auto& reg = utility::Registry::GetInstance().GetRegistry();
-    reg.destroy(m_Game);
 }
 
 void Game::LogicInit()
