@@ -58,5 +58,10 @@ public:
         m_Elements.erase(m_Cache.at(key));
         m_Cache.erase(e);
     }
+
+    void Clear()
+    {
+        m_Elements.clear();
+    }
 };
 }

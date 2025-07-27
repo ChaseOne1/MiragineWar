@@ -9,7 +9,7 @@ class Visible : public utility::Singleton<Visible>
     friend class utility::Singleton<Visible>;
 
 private:
-    utility::LTGrid<entt::entity> m_LTGrid { game::World::msc_fWidth, game::World::msc_fHeight,
+    utility::LTGrid<entt::entity> m_WorldLTGrid { game::World::msc_fWidth, game::World::msc_fHeight,
         game::World::msc_fLooseWidth, game::World::msc_fLooseHeight, game::World::msc_fTightWidth, game::World::msc_fTightHeight };
 
 private:

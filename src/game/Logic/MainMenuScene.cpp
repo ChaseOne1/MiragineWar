@@ -5,6 +5,7 @@
 #include "app/Component/Render/RenderCallback.hpp"
 #include "app/resources/AllInOneRes.hpp"
 #include "app/resources/AllInOneIndex.hpp"
+#include "app/resources/AnimSeqFrames.hpp"
 #include "app/Component/Render/ZIndex.hpp"
 #include "app/System/Time.hpp"
 #include "game/System/Scene.hpp"
@@ -14,7 +15,6 @@
 #include "game/Component/Logic.hpp"
 #include "game/Camera.hpp"
 #include "game/World.hpp"
-#include "app/Component/Render/TextureGrid.hpp"
 #include "utility/Random.hpp"
 
 using namespace game::logic;

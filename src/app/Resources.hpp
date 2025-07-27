@@ -2,7 +2,6 @@
 #include "app/resources/Index.hpp"
 #include "app/resources/Pak.hpp"
 #include "utility/LRU.hpp"
-#include "app/resources/AnimSeqFrames.hpp"
 
 #define RESOURCE_CACHE_NUM 100u
 #define INDEX_CACHE_NUM 10u
@@ -54,17 +53,10 @@ public:
         // give them what they want, maybe someting unexpected :D
         return std::static_pointer_cast<T>(*m_Resources.Get(resource));
     }
+
+    void CleanUp()
+    {
+        m_Resources.Clear();
+    }
 };
-
-template <>
-std::shared_ptr<SDL_Surface> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data);
-
-template <>
-std::shared_ptr<SDL_Texture> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data);
-
-template <>
-std::shared_ptr<toml::table> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data);
-
-template <>
-std::shared_ptr<AnimSeqFrames> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data);
 }
