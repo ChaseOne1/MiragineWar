@@ -36,12 +36,23 @@ void Visible::OnTransformConstruct(entt::registry& reg, entt::entity ent)
     m_WorldLTGrid.Insert(ent, tsfm.m_Position.x, tsfm.m_Position.y, tsfm.m_HalfSize.x, tsfm.m_HalfSize.y);
 }
 
-void Visible::OnTransformUpdate(entt::entity ent, const game::comp::Transform& last, const game::comp::Transform& now)
+void Visible::OnPositionUpdate(entt::entity ent, const mathfu::vec2& last)
 {
     registry& reg = utility::Registry::GetInstance().GetRegistry();
     if (CheckValid(reg, ent)) return;
 
-    m_WorldLTGrid.Move(ent, last.m_Position.x, last.m_Position.y, now.m_Position.x, now.m_Position.y);
+    const auto& now = reg.get<game::comp::Transform>(ent);
+    m_WorldLTGrid.Move(ent, last.x, last.y, now.m_Position.x, now.m_Position.y);
+}
+
+void Visible::OnSizeUpdate(entity ent)
+{
+    registry& reg = utility::Registry::GetInstance().GetRegistry();
+    if (CheckValid(reg, ent)) return;
+
+    auto& tsfm = reg.get<game::comp::Transform>(ent);
+    m_WorldLTGrid.Delete(ent, tsfm.m_Position.x, tsfm.m_Position.y);
+    m_WorldLTGrid.Insert(ent, tsfm.m_Position.x, tsfm.m_Position.y, tsfm.m_HalfSize.x, tsfm.m_HalfSize.y);
 }
 
 void Visible::OnTransformDestroy(entt::registry& reg, entt::entity ent)

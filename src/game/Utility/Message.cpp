@@ -61,17 +61,13 @@ void Message::SetColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 void Message::SetPosition(float x, float y)
 {
     registry& reg = utility::Registry::GetInstance().GetRegistry();
-    auto& tsfm = reg.get_or_emplace<game::comp::Transform>(m_Message);
-    tsfm.m_Position.x = x;
-    tsfm.m_Position.y = y;
+    reg.get_or_emplace<game::comp::Transform>(m_Message).m_Position = vec2 { x, y };
 }
 
 void Message::SetOffset(float x, float y)
 {
     registry& reg = utility::Registry::GetInstance().GetRegistry();
-    auto& text = reg.get<app::comp::Text>(m_Message);
-
-    text.m_Offset = { x, y };
+    reg.get<app::comp::Text>(m_Message).m_Offset = { x, y };
 }
 
 void Message::SetMovement(mathfu::vec2 velocity, mathfu::vec2 accleration)

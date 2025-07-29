@@ -2,24 +2,22 @@
 #include "app/Resources.hpp"
 #include "app/Layout.hpp"
 #include "app/Component/Render/Texture.hpp"
-#include "app/Component/Render/RenderCallback.hpp"
 #include "app/resources/AllInOneRes.hpp"
 #include "app/resources/AllInOneIndex.hpp"
 #include "app/resources/AnimSeqFrames.hpp"
 #include "app/Component/Render/ZIndex.hpp"
-#include "app/System/Time.hpp"
 #include "game/System/Scene.hpp"
 #include "game/Component/UIElement.hpp"
 #include "game/Component/Transform.hpp"
 #include "game/Component/Movement.hpp"
-#include "game/Component/Logic.hpp"
 #include "game/Camera.hpp"
-#include "game/World.hpp"
 #include "utility/Random.hpp"
+#include "game/Utility/Soldier.hpp"
 
 using namespace game::logic;
 using namespace entt;
 using namespace mathfu;
+using namespace game::util;
 
 MainMenuScene::MainMenuScene()
 {
@@ -55,7 +53,7 @@ void MainMenuScene::SetupSoldiers()
     using namespace app::res;
     registry& registry = utility::Registry::GetInstance().GetRegistry();
     app::Resources& resources = app::Resources::GetInstance();
-    const toml::table& settings = *app::Settings::GetInstance().GetSettings()["MainMenuScene"].as_table(); // TODO: initialize with at_path MainMenuScene
+    const toml::table& settings = *app::Settings::GetInstance().GetSettings()["MainMenuScene"].as_table();
     constexpr std::array<app::GUID_t, 16u> soldiers_guid = {
         RECRUIT_ASF, VETERAN_ASF, ZOMBIE_ASF, SAMURAI_ASF,
         SWORDSMAN_ASF, NINJA_ASF, SISTER_ASF, ARMORED_SWORDSMAN_ASF,
@@ -73,69 +71,27 @@ void MainMenuScene::SetupSoldiers()
 
     m_Soldiers.reserve(**settings["soldiers_num"].as_integer());
     for (int i = 0; i < m_Soldiers.capacity(); ++i) {
-        entity& soldier = m_Soldiers.emplace_back(registry.create());
-        const int8_t mirrored = i > m_Soldiers.capacity() >> 1 ? 1 : -1;
+        const int8_t mirrored = i > m_Soldiers.capacity() - 1 >> 1 ? 1 : -1;
 
-        // Texture
-        std::shared_ptr<app::AnimSeqFrames> texture_asf = resources.Require<app::AnimSeqFrames>(soldiers_guid[guid_dist(gen)], app::idx::SOLDIERS_IDX);
-        auto& texture_comp = registry.emplace<app::comp::Texture>(soldier, texture_asf->m_Frames,
-            SDL_FRect { 0.f, static_cast<float>(texture_asf->GetGlobalCoordY(app::AnimSeqFrames::ANIM_RUN)),
-                mirrored * static_cast<float>(texture_asf->m_Info[app::AnimSeqFrames::ANIM_RUN].width),
-                static_cast<float>(texture_asf->m_Info[app::AnimSeqFrames::ANIM_RUN].height) });
-
-        // Transform
-        const float size_ratio = **settings["soldiers_size_ratio"].as_floating_point();
-        auto& transform_comp = registry.emplace<game::comp::Transform>(soldier,
+        auto& soldier = m_Soldiers.emplace_back(soldiers_guid[guid_dist(gen)],
             vec2 { cam_center.x + mirrored * (distance_x_from - posn_dist(gen) * (distance_x_from - distance_x_to)),
                 cam_center.y - distance_hy + posn_dist(gen) * distance_hy * 2 },
-            vec2 { texture_asf->m_Info[app::AnimSeqFrames::ANIM_RUN].width / 2.f * size_ratio,
-                texture_asf->m_Info[app::AnimSeqFrames::ANIM_RUN].height / 2.f * size_ratio });
-
-        // ZIndex
-        registry.emplace<app::comp::ZIndex>(soldier, app::comp::ZIndex(app::comp::ZIndex::ZINDEX_SOLDIER + transform_comp.m_Position.y / game::World::GetInstance().msc_fHeight * 100u));
+            app::AnimSeqFrames::ANIM_RUN, mirrored < 0);
 
         // Movement
-        registry.emplace<game::comp::Movement>(soldier,
-            vec2 { -mirrored * static_cast<float>(**settings["soldiers_speed"].as_floating_point()), 0.f });
-
-        struct Context
-        {
-            uint64_t m_start_time = 0u;
-            std::shared_ptr<app::AnimSeqFrames> m_asf;
-            app::AnimSeqFrames::ANIM m_anim = app::AnimSeqFrames::ANIM_IDLE;
-        };
-        std::shared_ptr<Context> texture_ctx = std::make_shared<Context>(
-            Context { app::sys::Time::GetInstance().GetRealTime(), texture_asf, app::AnimSeqFrames::ANIM_RUN });
+        soldier.SetMovement(vec2 { -mirrored * settings["soldiers_speed"].value_or(32.f), 0.f });
 
         // Logic
-        const float posn_to = cam_center.x + mirrored * (distance_x_to + posn_dist(gen) * **settings["soldiers_float_length"].as_floating_point());
+        const float posn_to = cam_center.x + mirrored * (distance_x_to + posn_dist(gen) * settings["soldiers_float_length"].value_or(50.f));
         // we don't capture components because deleting the movement component will invalidate those references
-        registry.emplace<game::comp::Logic>(soldier, [soldier, posn_to, texture_ctx, size_ratio, mirrored]() {
+        soldier.SetLogic([&soldier, posn_to, mirrored]() mutable {
             auto& registry = utility::Registry::GetInstance().GetRegistry();
-            auto& transform_comp = registry.get<game::comp::Transform>(soldier);
-            if (-mirrored * transform_comp.m_Position.x > -mirrored * posn_to && registry.all_of<game::comp::Movement>(soldier)) {
-                registry.erase<game::comp::Movement>(soldier);
-
-                transform_comp.m_HalfSize.x = texture_ctx->m_asf->m_Info[app::AnimSeqFrames::ANIM_IDLE].width / 2.f * size_ratio;
-                transform_comp.m_HalfSize.y = texture_ctx->m_asf->m_Info[app::AnimSeqFrames::ANIM_IDLE].height / 2.f * size_ratio;
-
-                auto& texture_comp = registry.get<app::comp::Texture>(soldier);
-                texture_comp.m_SrcFRect->y = texture_ctx->m_asf->GetGlobalCoordY(app::AnimSeqFrames::ANIM_IDLE);
-                texture_comp.m_SrcFRect->w = mirrored * texture_ctx->m_asf->m_Info[app::AnimSeqFrames::ANIM_IDLE].width;
-                texture_comp.m_SrcFRect->h = texture_ctx->m_asf->m_Info[app::AnimSeqFrames::ANIM_IDLE].height;
-
-                texture_ctx->m_start_time = app::sys::Time::GetInstance().GetRealTime();
-                texture_ctx->m_anim = app::AnimSeqFrames::ANIM_IDLE;
+            entity soldier_ent = soldier.GetEntity();
+            const vec2& posn = registry.get<game::comp::Transform>(soldier_ent).m_Position;
+            if (-mirrored * posn.x > -mirrored * posn_to && registry.all_of<game::comp::Movement>(soldier_ent)) {
+                registry.erase<game::comp::Movement>(soldier_ent);
+                soldier.SetAnimation(app::AnimSeqFrames::ANIM_IDLE);
             }
-        });
-
-        // PreRender
-        // we don't capture the texture component because deleting the movement component will invalidate the reference
-        registry.emplace<app::comp::PreRender>(soldier, [texture_ctx, soldier]() {
-            const uint16_t passed_frame = (app::sys::Time::GetInstance().GetRealTime() - texture_ctx->m_start_time)
-                * texture_ctx->m_asf->m_Info[texture_ctx->m_anim].speed;
-            utility::Registry::GetInstance().GetRegistry().get<app::comp::Texture>(soldier).m_SrcFRect->x
-                = texture_ctx->m_asf->m_Info[texture_ctx->m_anim].GetCoordX(passed_frame);
         });
     }
 }

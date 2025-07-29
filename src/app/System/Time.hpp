@@ -10,25 +10,23 @@ private:
     ~Time() = default;
 
 private:
-    static constexpr float m_fFixedDeltaTime = 1.f / 60.f * 1000u;
+    static constexpr std::chrono::milliseconds m_FixedDeltaTime { 16 };
+    const std::chrono::time_point<std::chrono::steady_clock> mc_GameStartTime;
 
-    uint64_t m_uRealTime = 0u, m_uUnscaledDeltaTime = 0u;
-    float m_fDeltaTime = 0.f, m_fTimeScale = 1.f;
+    std::chrono::time_point<std::chrono::steady_clock> m_Now, m_RealNow;
+    std::chrono::milliseconds m_DeltaTime, m_RealDeltaTime;
+
+    float m_fTimeScale = 1.f;
 
 public:
     void Tick();
 
-    float GetDeltaTime() const noexcept { return m_fDeltaTime; }
-    float GetDeltaTimeInSeconds() const noexcept { return m_fDeltaTime / 1000.f; }
-    uint64_t GetUnscaledDeltaTime() const noexcept { return m_uUnscaledDeltaTime; }
-    float GetUnscaledDeltaTimeInSeconds() const noexcept { return m_uUnscaledDeltaTime / 1000.f; }
+    bool FixedTick() const noexcept;
 
-    float GetFixedDeltaTime() const noexcept { return m_fFixedDeltaTime; }
-    bool ConsumeTick() const noexcept;
-
-    void SetTimeScale(float scale) noexcept { m_fTimeScale = scale; }
-    float GetTimeScale() const noexcept { return m_fTimeScale; }
-
-    uint64_t GetRealTime() const noexcept { return m_uRealTime; }
+    const std::chrono::time_point<std::chrono::steady_clock>& Now() const noexcept { return m_Now; }
+    const std::chrono::time_point<std::chrono::steady_clock>& RealNow() const noexcept { return m_RealNow; }
+    
+    const std::chrono::milliseconds DeltaTime() const noexcept {return m_DeltaTime;}
+    const std::chrono::milliseconds RealDeltaTime() const noexcept {return m_RealDeltaTime;}
 };
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game/Utility/Soldier.hpp"
 namespace game::logic {
 class MainMenuScene : public utility::Singleton<MainMenuScene>
 {
@@ -7,7 +8,7 @@ class MainMenuScene : public utility::Singleton<MainMenuScene>
 
 private:
     entt::entity m_Title = utility::Registry::GetInstance().GetRegistry().create();
-    std::vector<entt::entity> m_Soldiers;
+    std::vector<game::util::Soldier> m_Soldiers;
 
 private:
     MainMenuScene();

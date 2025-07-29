@@ -1,6 +1,5 @@
 #pragma once
 #include "utility/LTGrid.hpp"
-#include "game/Component/Transform.hpp"
 #include "game/World.hpp"
 
 namespace game::sys {
@@ -17,12 +16,15 @@ private:
     ~Visible() = default;
 
     void OnTransformConstruct(entt::registry&, entt::entity);
+    void OnTransformUpdate(entt::registry&, entt::entity);
     void OnTransformDestroy(entt::registry&, entt::entity);
 
 public:
     void Tick();
     void CleanUp();
-    //TODO: maybe there is a better way than calling manually
-    void OnTransformUpdate(entt::entity ent, const game::comp::Transform& last, const comp::Transform& now);
+    // NOTE: we use this funciton to move object cheaply
+    // TODO: maybe there is a better way than calling manually
+    void OnPositionUpdate(entt::entity ent, const mathfu::vec2& last);
+    void OnSizeUpdate(entt::entity ent);
 };
 }

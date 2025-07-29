@@ -20,25 +20,25 @@ void Move::Tick()
         vec2& position = view.get<game::comp::Transform>(entity).m_Position;
 
         const auto& time = app::sys::Time::GetInstance();
-        const float time_square = time.GetDeltaTimeInSeconds() * time.GetDeltaTimeInSeconds();
+        const float time_square = time.DeltaTime().count() / 1000.f * time.DeltaTime().count() / 1000.f;
 
         // update position
         // in order to notify the collision system but not introduce a new way
         reg.patch<game::comp::Transform>(entity, [&](game::comp::Transform& transform) {
-            const game::comp::Transform last_tsfm = transform;
+            const vec2 last_posn = transform.m_Position;
 
-            transform.m_Position.x += movement.m_Velocity.x * time.GetDeltaTimeInSeconds() + 0.5f * movement.m_Acceleration.x * time_square;
-            transform.m_Position.y += movement.m_Velocity.y * time.GetDeltaTimeInSeconds() + 0.5f * movement.m_Acceleration.y * time_square;
-            std::clamp(transform.m_Position.x, 0.f, World::msc_fWidth);
-            std::clamp(transform.m_Position.y, 0.f, World::msc_fHeight);
+            transform.m_Position.x += movement.m_Velocity.x * time.DeltaTime().count() / 1000.f + 0.5f * movement.m_Acceleration.x * time_square;
+            transform.m_Position.y += movement.m_Velocity.y * time.DeltaTime().count() / 1000.f + 0.5f * movement.m_Acceleration.x * time_square;
+            transform.m_Position.x = std::clamp(transform.m_Position.x, 0.f, World::msc_fWidth);
+            transform.m_Position.y = std::clamp(transform.m_Position.y, 0.f, World::msc_fHeight);
 
-            Visible::GetInstance().OnTransformUpdate(entity, last_tsfm, transform);
+            Visible::GetInstance().OnPositionUpdate(entity, last_posn);
         });
 
         // update velocity
         reg.patch<game::comp::Movement>(entity, [&](game::comp::Movement& movement) {
-            movement.m_Velocity.x += movement.m_Acceleration.x * time.GetDeltaTimeInSeconds();
-            movement.m_Velocity.y += movement.m_Acceleration.y * time.GetDeltaTimeInSeconds();
+            movement.m_Velocity.x += movement.m_Acceleration.x * time.DeltaTime().count() / 1000.f;
+            movement.m_Velocity.y += movement.m_Acceleration.y * time.DeltaTime().count() / 1000.f;
         });
     }
 }

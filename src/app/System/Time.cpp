@@ -1,33 +1,34 @@
 #include "Time.hpp"
 
 using namespace app::sys;
+using namespace std::chrono;
 
-static uint64_t gs_GameStartTime = 0u;
-static float gs_fFixedTimeAccumulator = 0.f;
+static milliseconds gs_FixedTimeAccumulator { 0 };
 
 Time::Time()
-{
-    gs_GameStartTime = SDL_GetTicks();
-}
+    : mc_GameStartTime(std::chrono::steady_clock::now())
+{ }
 
 void Time::Tick()
 {
-    static uint64_t last = 0u;
+    static time_point<std::chrono::steady_clock> real_last = mc_GameStartTime;
+    const time_point<std::chrono::steady_clock> now = steady_clock::now();
 
-    m_uRealTime = SDL_GetTicks() - gs_GameStartTime;
+    m_RealDeltaTime = duration_cast<milliseconds>(now - real_last);
+    m_RealNow += m_RealDeltaTime;
 
-    m_uUnscaledDeltaTime = m_uRealTime - last;
-    m_fDeltaTime = m_uUnscaledDeltaTime * m_fTimeScale;
+    m_DeltaTime = duration_cast<milliseconds>(m_RealDeltaTime * m_fTimeScale);
+    m_Now += m_DeltaTime;
 
-    gs_fFixedTimeAccumulator += m_fDeltaTime;
+    gs_FixedTimeAccumulator += m_DeltaTime;
 
-    last = m_uRealTime;
+    real_last = now;
 }
 
-bool Time::ConsumeTick() const noexcept
+bool Time::FixedTick() const noexcept
 {
-    if (gs_fFixedTimeAccumulator < m_fFixedDeltaTime) return false;
+    if (gs_FixedTimeAccumulator < m_FixedDeltaTime) return false;
 
-    gs_fFixedTimeAccumulator -= m_fFixedDeltaTime;
+    gs_FixedTimeAccumulator -= m_FixedDeltaTime;
     return true;
 }

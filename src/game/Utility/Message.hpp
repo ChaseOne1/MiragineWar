@@ -24,7 +24,7 @@ public:
     const static float msc_StandardBoxScale;
 
 public:
-    Message(std::string_view msg, app::GUID_t font = app::res::SUBTITLE_TTF, bool isUIElement = true);
+    explicit Message(std::string_view msg, app::GUID_t font = app::res::SUBTITLE_TTF, bool isUIElement = true);
     ~Message();
 
     void SetString(std::string_view msg);
