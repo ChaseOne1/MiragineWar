@@ -4,6 +4,7 @@
 #include "app/System/Time.hpp"
 #include "game/World.hpp"
 #include "game/System/Visible.hpp"
+#include "utility/Registry.hpp"
 
 using namespace game::sys;
 using namespace entt;

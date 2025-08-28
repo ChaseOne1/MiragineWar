@@ -2,6 +2,7 @@
 /tools/
 # /tools/*/**
 /.cache/
+/.vscode/
 
 # backup file
 *.bak*

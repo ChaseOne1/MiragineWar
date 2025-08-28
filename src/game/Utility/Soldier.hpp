@@ -1,5 +1,7 @@
 #pragma once
 #include "app/resources/AnimSeqFrames.hpp"
+#include "utility/Registry.hpp"
+#include "app/resources/GUID.hpp"
 
 namespace game::util {
 class Soldier

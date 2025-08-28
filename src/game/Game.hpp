@@ -1,4 +1,5 @@
 #pragma once
+#include "utility/Registry.hpp"
 
 namespace game {
 class Game : public utility::Singleton<Game>

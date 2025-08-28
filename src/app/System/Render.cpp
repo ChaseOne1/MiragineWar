@@ -4,6 +4,7 @@
 #include "app/Component/Render/ZIndex.hpp"
 #include "app/component/Render/Texture.hpp"
 #include "app/Component/Render/Text.hpp"
+#include "app/Renderer.hpp"
 #include "game/Component/Transform.hpp"
 #include "game/Component/UIElement.hpp"
 #include "game/Component/Visible.hpp"

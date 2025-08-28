@@ -1,4 +1,5 @@
 #include "Input.hpp"
+#include "app/EventBus.hpp"
 
 using app::Key;
 using namespace app::sys;
@@ -18,25 +19,23 @@ Input::Input()
 
     EventBus& eventbus = app::EventBus::GetInstance();
 
-    eventbus.Subscribe(SDL_EVENT_MOUSE_BUTTON_DOWN, [this]() {
-        SDL_Event* event = app::EventBus::GetInstance().GetEvent();
+    eventbus.Subscribe(SDL_EVENT_MOUSE_BUTTON_DOWN, [this](const SDL_Event* event) {
         m_ScancodeStatusMap[BUTTON2SCODE(event->button.button)] = true;
-        m_Topics.Publish(static_cast<Key>(BUTTON2SCODE(event->button.button))); });
+        m_Topics.Publish(static_cast<Key>(BUTTON2SCODE(event->button.button)), event); });
 
-    eventbus.Subscribe(SDL_EVENT_MOUSE_BUTTON_UP, [this]() {
-        SDL_Event* event = app::EventBus::GetInstance().GetEvent();
+    eventbus.Subscribe(SDL_EVENT_MOUSE_BUTTON_UP, [this](const SDL_Event* event) {
         m_ScancodeStatusMap[BUTTON2SCODE(event->button.button)] = false;
-        m_Topics.Publish(static_cast<Key>(BUTTON2SCODE(event->button.button))); });
+        m_Topics.Publish(static_cast<Key>(BUTTON2SCODE(event->button.button)), event); });
 
-    eventbus.Subscribe(SDL_EVENT_KEY_DOWN, [this]() {
-        SDL_Event* event = app::EventBus::GetInstance().GetEvent();
+    eventbus.Subscribe(SDL_EVENT_KEY_DOWN, [this](const SDL_Event* event) {
         m_ScancodeStatusMap[event->key.scancode] = true;
-        m_Topics.Publish(m_Scancode2Key[event->key.scancode]); });
+        m_Topics.Publish(m_Scancode2Key[event->key.scancode],event); });
 
-    eventbus.Subscribe(SDL_EVENT_KEY_UP, [this]() {
-        SDL_Event* event = app::EventBus::GetInstance().GetEvent();
+    eventbus.Subscribe(SDL_EVENT_KEY_UP, [this](const SDL_Event* event) {
         m_ScancodeStatusMap[event->key.scancode] = false;
-        m_Topics.Publish(m_Scancode2Key[event->key.scancode]); });
+        m_Topics.Publish(m_Scancode2Key[event->key.scancode],event); });
+
+    m_Topics.CleanUp();
 }
 
 Input::~Input()

@@ -1,4 +1,5 @@
 #include "World.hpp"
+#include "utility/Registry.hpp"
 #include "game/Component/Transform.hpp"
 #include "game/Component/Collision.hpp"
 

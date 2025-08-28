@@ -1,4 +1,5 @@
 #pragma once
+#include "utility/Singleton.hpp"
 
 namespace game {
 class World : public utility::Singleton<World>

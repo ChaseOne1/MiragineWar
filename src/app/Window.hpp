@@ -1,4 +1,6 @@
 #pragma once
+#include "AppMetadata.hpp"
+#include "Settings.hpp"
 
 namespace app {
 class Window final : public utility::Singleton<Window>
@@ -20,6 +22,6 @@ private:
     ~Window() { SDL_DestroyWindow(m_pWindow); }
 
 public:
-    SDL_Window* GetWindow() { return m_pWindow; }
+    static SDL_Window* GetWindow() { return GetInstance().m_pWindow; }
 };
 }

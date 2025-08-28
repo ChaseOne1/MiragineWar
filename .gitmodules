@@ -16,3 +16,12 @@
 [submodule "3rdlibs/SDL3_ttf"]
 	path = 3rdlibs/SDL3_ttf
 	url = https://github.com/libsdl-org/SDL_ttf.git
+[submodule "3rdlibs/SLikeNet"]
+	path = 3rdlibs/SLikeNet
+	url = https://github.com/ChaseOne1/SLikeNet
+[submodule "3rdlibs/protobuf"]
+	path = 3rdlibs/protobuf
+	url = https://github.com/protocolbuffers/protobuf.git
+[submodule "3rdlibs/MiragineWarProtocol"]
+	path = 3rdlibs/MiragineWarProtocol
+	url = https://github.com/ChaseOne1/MiragineWarProtocol.git

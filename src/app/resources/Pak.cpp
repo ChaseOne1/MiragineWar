@@ -1,7 +1,6 @@
 #include "Pak.hpp"
 
 using namespace app;
-using namespace utility;
 
 Pak::Pak(GUID_t file)
     : m_PakFile(AppMetaData::msc_szAssetsPath / ms_PakDescs[std::to_string(file)].value_or<std::string>(""),

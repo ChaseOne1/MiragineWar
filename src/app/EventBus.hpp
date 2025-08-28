@@ -9,7 +9,7 @@ class EventBus : public utility::Singleton<EventBus>
 
 private:
     SDL_Event* m_pEvent = nullptr;
-    utility::Topics<Topic> m_Topics;
+    utility::Topics<Topic, std::function<void(const SDL_Event*)>> m_Topics;
 
 private:
     EventBus() = default;
@@ -19,19 +19,16 @@ public:
     void Tick(SDL_Event* event);
 
     template <typename F>
-    void Subscribe(Topic topic, F&& callback)
+    static auto Subscribe(Topic topic, F&& callback)
     {
-        m_Topics.Subscribe(topic, std::forward<F>(callback));
+        return GetInstance().m_Topics.Subscribe(topic, std::forward<F>(callback));
     }
 
-    template<typename F>
-    void Unsubscribe(Topic topic, F* callback)
+    static void Unsubscribe(Topic topic, utility::TopicsSubscriberID id)
     {
-        m_Topics.Unsubscribe(topic, callback);
+        GetInstance().m_Topics.Unsubscribe(topic, id);
     }
 
-    void CleanUp();
-
-    SDL_Event* GetEvent() const;
+    static void CleanUp() { GetInstance().m_Topics.CleanUp(); }
 };
 }

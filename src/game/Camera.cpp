@@ -16,7 +16,7 @@ Camera::Camera()
     reg.emplace<game::comp::Transform>(m_Camera, vec2 { World::msc_fWidth / 2.f, World::msc_fHeight / 2.f }, vec2 { 188.f, 128.f });
     reg.emplace<game::comp::Movement>(m_Camera, vec2 { 0.f, 0.f }, vec2 { 0.f, 0.f });
 
-    app::sys::Input::GetInstance().Subsrcibe(app::Key::CAM_MOVE_UP, [this]() {
+    app::sys::Input::GetInstance().Subsrcibe(app::Key::CAM_MOVE_UP, [this](const SDL_Event* event) {
         auto& input = app::sys::Input::GetInstance();
         registry& reg = utility::Registry::GetInstance().GetRegistry();
         if (input.IsPressed(app::Key::CAM_MOVE_UP)) {
@@ -26,7 +26,7 @@ Camera::Camera()
         }
     });
 
-    app::sys::Input::GetInstance().Subsrcibe(app::Key::CAM_MOVE_DOWN, [this]() {
+    app::sys::Input::GetInstance().Subsrcibe(app::Key::CAM_MOVE_DOWN, [this](const SDL_Event* event) {
         auto& input = app::sys::Input::GetInstance();
         registry& reg = utility::Registry::GetInstance().GetRegistry();
         if (input.IsPressed(app::Key::CAM_MOVE_DOWN)) {
@@ -36,7 +36,7 @@ Camera::Camera()
         }
     });
 
-    app::sys::Input::GetInstance().Subsrcibe(app::Key::CAM_MOVE_LEFT, [this]() {
+    app::sys::Input::GetInstance().Subsrcibe(app::Key::CAM_MOVE_LEFT, [this](const SDL_Event* event) {
         auto& input = app::sys::Input::GetInstance();
         registry& reg = utility::Registry::GetInstance().GetRegistry();
         if (input.IsPressed(app::Key::CAM_MOVE_LEFT)) {
@@ -46,7 +46,7 @@ Camera::Camera()
         }
     });
 
-    app::sys::Input::GetInstance().Subsrcibe(app::Key::CAM_MOVE_RIGHT, [this]() {
+    app::sys::Input::GetInstance().Subsrcibe(app::Key::CAM_MOVE_RIGHT, [this](const SDL_Event* event) {
         auto& input = app::sys::Input::GetInstance();
         registry& reg = utility::Registry::GetInstance().GetRegistry();
         if (input.IsPressed(app::Key::CAM_MOVE_RIGHT)) {

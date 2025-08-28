@@ -3,10 +3,8 @@
 namespace game::comp {
 struct Logic
 {
-    using LogicFunc_t = std::function<void()>;
-
 public:
-    LogicFunc_t m_fnEnter {}, m_fnTick {}, m_fnExit {};
+    std::function<void()> m_fnEnter {}, m_fnTick {}, m_fnExit {};
 
 public:
     template <typename T1, typename T2, typename T3>

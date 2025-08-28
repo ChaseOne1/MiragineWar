@@ -1,4 +1,6 @@
 #pragma once
+#include "utility/Registry.hpp"
+#include "app/Settings.hpp"
 
 namespace game {
 class Camera : public utility::Singleton<Camera>

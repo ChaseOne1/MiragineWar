@@ -1,4 +1,5 @@
 #include "Resources.hpp"
+#include "Renderer.hpp"
 #include "app/Component/Render/Texture.hpp"
 #include "app/resources/AnimSeqFrames.hpp"
 #include "app/resources/Mox.hpp"

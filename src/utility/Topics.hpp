@@ -1,43 +1,57 @@
 #pragma once
 
 namespace utility {
-template <typename Topic>
+using TopicsSubscriberID = std::size_t;
+constexpr TopicsSubscriberID TopicsSubscriberIDNull = 0u;
+template <typename Topic, typename Callback = std::function<void()>>
 class Topics
 {
-    using Callback_t = std::function<void()>;
-    using Subscriber = Callback_t;
+    using SubscriberID = std::size_t;
+
+private:
+    struct Subscriber
+    {
+        Callback m_Callback;
+        SubscriberID m_ID;
+    };
 
 private:
     std::unordered_map<Topic, std::vector<Subscriber>> m_Topics;
+    SubscriberID m_CurrentID = 0u;
 
 public:
-    void Publish(Topic topic)
+    template <typename... Args>
+    void Publish(Topic topic, Args&&... args)
     {
         auto subscribers = m_Topics.find(topic);
         if (subscribers == m_Topics.end()) return;
 
         for (auto& subscriber : subscribers->second) {
-            subscriber();
+            subscriber.m_Callback(std::forward<Args>(args)...);
         }
     }
 
-    template <typename F>
-    std::remove_reference_t<F>* Subscribe(Topic topic, F&& callback)
+    SubscriberID GetNextSubscriberID() const noexcept
+    {
+        return m_CurrentID + 1;
+    }
+
+    template <typename F, typename = std::enable_if_t<std::is_constructible_v<Callback, F>>>
+    SubscriberID Subscribe(Topic topic, F&& callback)
     {
         auto& subscribers = m_Topics[topic];
-        subscribers.emplace_back(Subscriber { std::forward<F>(callback) });
-        return subscribers.back().template target<std::remove_reference_t<F>>();
+        subscribers.emplace_back(Subscriber { std::forward<F>(callback), ++m_CurrentID });
+        return m_CurrentID;
     }
 
     // NOTE: DO NOT unsubscribe in callback
-    template <typename F>
-    void Unsubscribe(Topic topic, F* callback)
+    void Unsubscribe(Topic topic, SubscriberID id)
     {
         // TODO: optimize deletion performance
         auto& subscribers = m_Topics.at(topic);
         subscribers.erase(
             std::remove_if(subscribers.begin(), subscribers.end(),
-                [&](const Subscriber& sub) { return callback == sub.template target<F>(); }),
+                [&](const Subscriber& sub) { return sub.m_ID == id; }),
             subscribers.end());
     }
 

@@ -1,15 +1,17 @@
+#include "game/System/MouseInteractive.hpp"
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL_main.h>
 
 #include "app/EventBus.hpp"
 #include "app/Layout.hpp"
+#include "app/Resources.hpp"
+#include "app/TextEngine.hpp"
 
-#include "app/System/Clickable.hpp"
 #include "app/System/Input.hpp"
 #include "app/System/RenderCallback.hpp"
 #include "app/System/Render.hpp"
 #include "app/System/Time.hpp"
-#include "app/Resources.hpp"
+#include "app/System/Network.hpp"
 //-------------------------------------------
 #include "game/Game.hpp"
 #include "game/Camera.hpp"
@@ -18,6 +20,7 @@
 #include "game/System/Move.hpp"
 #include "game/System/Logic.hpp"
 #include "game/System/Visible.hpp"
+#include "game/System/GarbageCollection.hpp"
 
 SDL_AppResult SDL_AppInit(void**, int, char**)
 {
@@ -30,11 +33,12 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
     app::TextEngine::GetInstance();
     app::Layout::GetInstance();
     app::sys::Input::GetInstance();
+    app::sys::Network::GetInstance();
 
     utility::Registry::GetInstance(); // Construct registry
-    app::sys::Clickable::GetInstance();
     app::sys::Render::GetInstance();
 
+    game::sys::MouseInteractive::GetInstance();
     game::sys::Visible::GetInstance();
     game::World::GetInstance();
     game::Game::GetInstance();
@@ -46,6 +50,7 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
 SDL_AppResult SDL_AppIterate(void*)
 {
     app::sys::Time::GetInstance().Tick();
+    app::sys::Network::GetInstance().Tick();
     // SDL_Log("fps: %.2f\n", 1.f / app::sys::Time::GetInstance().GetDeltaTimeInSeconds());
 
     while (app::sys::Time::GetInstance().FixedTick()) {
@@ -72,8 +77,8 @@ SDL_AppResult SDL_AppIterate(void*)
     // Render End
 
     app::EventBus::GetInstance().CleanUp();
-    app::sys::Input::GetInstance().CleanUp();
     game::sys::Visible::GetInstance().CleanUp();
+    game::sys::GarbageCollection::GetInstance().Tick();
     return SDL_APP_CONTINUE;
 }
 

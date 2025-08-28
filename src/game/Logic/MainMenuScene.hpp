@@ -1,6 +1,8 @@
 #pragma once
-
+#include "app/NetPacket.hpp"
 #include "game/Utility/Soldier.hpp"
+#include "utility/Singleton.hpp"
+
 namespace game::logic {
 class MainMenuScene : public utility::Singleton<MainMenuScene>
 {
@@ -17,7 +19,6 @@ private:
     void SetupWorldScene();
     void SetupTitle();
     void SetupSoldiers();
-
-public:
+    void SetupMenu(const app::InboundPacket&);
 };
 }

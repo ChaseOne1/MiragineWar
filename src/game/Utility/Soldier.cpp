@@ -10,6 +10,7 @@
 #include "game/Component/Transform.hpp"
 #include "game/System/Visible.hpp"
 #include "game/World.hpp"
+#include "app/Settings.hpp"
 
 using namespace game::util;
 using namespace mathfu;

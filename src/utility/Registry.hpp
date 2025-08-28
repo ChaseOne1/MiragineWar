@@ -13,6 +13,6 @@ private:
     ~Registry() = default;
 
 public:
-    entt::registry& GetRegistry() noexcept { return m_Registry; }
+    static entt::registry& GetRegistry() noexcept { return GetInstance().m_Registry; }
 };
 }

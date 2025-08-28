@@ -14,6 +14,6 @@ private:
     ~Random() = default;
 
 public:
-    std::mt19937& GetGenerator() noexcept { return m_Generator; }
+    static std::mt19937& GetGenerator() noexcept { return GetInstance().m_Generator; }
 };
 }

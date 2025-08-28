@@ -14,7 +14,7 @@ private:
     SDL_Scancode m_Key2Scancode[std::size_t(Key::KEY_COUNT)] {};
     Key m_Scancode2Key[SDL_Scancode::SDL_SCANCODE_COUNT] {};
 
-    utility::Topics<Key> m_Topics;
+    utility::Topics<Key, std::function<void(const SDL_Event*)>> m_Topics;
 
 private:
     Input();
@@ -24,21 +24,14 @@ public:
     void Tick();
 
     template <typename F>
-    void Subsrcibe(Key topic, F&& callback)
+    auto Subsrcibe(Key topic, F&& callback)
     {
-        m_Topics.Subscribe(topic, callback);
+        return m_Topics.Subscribe(topic, callback);
     }
 
-    template <typename F>
-    void Unsubscribe(Key topic, F* callback)
+    void Unsubscribe(Key topic, utility::TopicsSubscriberID id)
     {
-        m_Topics.Unsubscribe(topic, callback);
-    }
-
-    // TODO: call this
-    void CleanUp()
-    {
-        m_Topics.CleanUp();
+        m_Topics.Unsubscribe(topic, id);
     }
 
     bool IsPressed(Key key) const noexcept;

@@ -5,7 +5,7 @@
 #include "app/Component/Render/Texture.hpp"
 #include "app/Component/Render/ZIndex.hpp"
 #include "game/Component/Transform.hpp"
-#include "game/Component/Collision.hpp"
+#include "utility/Registry.hpp"
 
 using namespace game::sys;
 using namespace entt;
@@ -15,20 +15,11 @@ Scene::Scene()
 {
     entt::registry& reg = utility::Registry::GetInstance().GetRegistry();
     app::Resources& rsc = app::Resources::GetInstance();
-    try {
-        for (int i = 0; i < 3; ++i) {
-            entity ground = reg.create();
-            std::shared_ptr<SDL_Texture> ground_tex = rsc.Require<SDL_Texture>(app::res::GROUND_IMG, app::idx::ENV_IDX);
-            reg.emplace<app::comp::Texture>(ground, std::move(ground_tex), std::nullopt);
-            reg.emplace<app::comp::ZIndex>(ground, app::comp::ZIndex::ZINDEX_GROUND);
-            reg.emplace<game::comp::Transform>(ground, vec2 { 384.f + i * 128.f, 128.f }, vec2 { 64.f, 128.f });
-            // const auto& coll = reg.emplace<game::comp::Collision>(ground, mathfu::vec4 { 0.f, 0.f, 64.f, 128.f });
-        }
-    } catch (toml::parse_error e) {
-        SDL_Log("%s\n", e.description().data());
+    for (int i = 0; i < 3; ++i) {
+        entity ground = reg.create();
+        std::shared_ptr<SDL_Texture> ground_tex = rsc.Require<SDL_Texture>(app::res::GROUND_IMG, app::idx::ENV_IDX);
+        reg.emplace<app::comp::Texture>(ground, std::move(ground_tex), std::nullopt);
+        reg.emplace<app::comp::ZIndex>(ground, app::comp::ZIndex::ZINDEX_GROUND);
+        reg.emplace<game::comp::Transform>(ground, vec2 { 384.f + i * 128.f, 128.f }, vec2 { 64.f, 128.f });
     }
-}
-
-void Scene::Tick()
-{
 }

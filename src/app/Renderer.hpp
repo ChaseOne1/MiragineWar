@@ -1,4 +1,5 @@
 #pragma once
+#include "Window.hpp"
 
 namespace app {
 class Renderer final : public utility::Singleton<Renderer>
@@ -25,12 +26,12 @@ private:
     ~Renderer() { SDL_DestroyRenderer(m_pRenderer); }
 
 public:
-    SDL_Renderer* GetSDLRenderer() const noexcept { return m_pRenderer; }
+    static SDL_Renderer* GetSDLRenderer() noexcept { return GetInstance().m_pRenderer; }
 
-    mathfu::vec2i GetRenderSize() const noexcept
+    static mathfu::vec2i GetRenderSize() noexcept
     {
         mathfu::vec2i size = mathfu::kZeros2i;
-        SDL_GetCurrentRenderOutputSize(m_pRenderer, &size.x, &size.y);
+        SDL_GetCurrentRenderOutputSize(GetInstance().m_pRenderer, &size.x, &size.y);
         return size;
     }
 };

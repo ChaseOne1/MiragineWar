@@ -1,4 +1,5 @@
 #include "Logic.hpp"
+#include "utility/Registry.hpp"
 #include "game/Component/Logic.hpp"
 
 using namespace game::sys;

@@ -1,4 +1,5 @@
 #pragma once
+#include "Renderer.hpp"
 
 namespace app {
 class TextEngine : public utility::Singleton<TextEngine>
@@ -17,6 +18,6 @@ private:
     ~TextEngine() = default;
 
 public:
-    TTF_TextEngine* GetRendererTextEngine() const noexcept { return m_RendererTextEngine.get(); }
+    static TTF_TextEngine* GetRendererTextEngine() noexcept { return GetInstance().m_RendererTextEngine.get(); }
 };
 }

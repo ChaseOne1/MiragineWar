@@ -23,10 +23,12 @@ public:
 
     bool FixedTick() const noexcept;
 
-    const std::chrono::time_point<std::chrono::steady_clock>& Now() const noexcept { return m_Now; }
-    const std::chrono::time_point<std::chrono::steady_clock>& RealNow() const noexcept { return m_RealNow; }
-    
-    const std::chrono::milliseconds DeltaTime() const noexcept {return m_DeltaTime;}
-    const std::chrono::milliseconds RealDeltaTime() const noexcept {return m_RealDeltaTime;}
+    static const std::chrono::time_point<std::chrono::steady_clock>& GameStartTime() { return GetInstance().mc_GameStartTime; }
+
+    static const std::chrono::time_point<std::chrono::steady_clock>& Now() noexcept { return GetInstance().m_Now; }
+    static const std::chrono::time_point<std::chrono::steady_clock>& RealNow() noexcept { return GetInstance().m_RealNow; }
+
+    static const std::chrono::milliseconds DeltaTime() noexcept { return GetInstance().m_DeltaTime; }
+    static const std::chrono::milliseconds RealDeltaTime() noexcept { return GetInstance().m_RealDeltaTime; }
 };
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "app/AppMetadata.hpp"
 #include "ResourceDescription.hpp"
 
 namespace app {

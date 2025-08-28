@@ -6,9 +6,6 @@ class Scene : public utility::Singleton<Scene>
     friend class utility::Singleton<Scene>;
 
 private:
-
-
-private:
     Scene();
     ~Scene() = default;
 
