@@ -26,8 +26,12 @@ public:
         auto subscribers = m_Topics.find(topic);
         if (subscribers == m_Topics.end()) return;
 
-        for (auto& subscriber : subscribers->second) {
-            subscriber.m_Callback(std::forward<Args>(args)...);
+        for(auto iter = subscribers->second.begin(); iter != subscribers->second.end();)
+        {
+            const std::size_t dis1 = std::distance(iter, subscribers->second.begin());
+            iter->m_Callback(std::forward<Args>(args)...);
+            const std::size_t dis2 = std::distance(iter, subscribers->second.begin());
+            if(dis1 == dis2) ++iter;
         }
     }
 
@@ -44,7 +48,7 @@ public:
         return m_CurrentID;
     }
 
-    // NOTE: DO NOT unsubscribe in callback
+    // NOTE: DO NOT unsubscribe that are not currently in use in callback
     void Unsubscribe(Topic topic, SubscriberID id)
     {
         // TODO: optimize deletion performance

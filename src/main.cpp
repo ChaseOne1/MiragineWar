@@ -6,11 +6,13 @@
 #include "app/Layout.hpp"
 #include "app/Resources.hpp"
 #include "app/TextEngine.hpp"
+#include "app/FPS.hpp"
 
 #include "app/System/Input.hpp"
 #include "app/System/RenderCallback.hpp"
 #include "app/System/Render.hpp"
 #include "app/System/Time.hpp"
+#include "app/System/Timer.hpp"
 #include "app/System/Network.hpp"
 //-------------------------------------------
 #include "game/Game.hpp"
@@ -33,6 +35,7 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
     app::TextEngine::GetInstance();
     app::Layout::GetInstance();
     app::sys::Input::GetInstance();
+    app::sys::Timer::GetInstance();
     app::sys::Network::GetInstance();
 
     utility::Registry::GetInstance(); // Construct registry
@@ -44,14 +47,16 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
     game::Game::GetInstance();
     game::Camera::GetInstance();
 
+    app::FPS::GetInstance();
+
     return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult SDL_AppIterate(void*)
 {
     app::sys::Time::GetInstance().Tick();
+    app::sys::Timer::GetInstance().Tick();
     app::sys::Network::GetInstance().Tick();
-    // SDL_Log("fps: %.2f\n", 1.f / app::sys::Time::GetInstance().GetDeltaTimeInSeconds());
 
     while (app::sys::Time::GetInstance().FixedTick()) {
         // Fixed Update

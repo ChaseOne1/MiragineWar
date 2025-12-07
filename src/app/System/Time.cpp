@@ -25,7 +25,7 @@ void Time::Tick()
     real_last = now;
 }
 
-bool Time::FixedTick() const noexcept
+bool Time::FixedTick() noexcept
 {
     if (gs_FixedTimeAccumulator < m_FixedDeltaTime) return false;
 

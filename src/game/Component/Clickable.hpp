@@ -11,8 +11,8 @@ struct Clickable
     } m_Area;
 
     template <typename F>
-    Clickable(F&& callback, float cx, float cy, float hw, float hh)
-        : m_ClickInCallback(std::forward<F>(callback))
+    Clickable(F&& onClickInCallback, float cx, float cy, float hw, float hh)
+        : m_ClickInCallback(std::forward<F>(onClickInCallback))
         , m_Area { cx, cy, hw, hh }
     { }
 

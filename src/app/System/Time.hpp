@@ -21,14 +21,14 @@ private:
 public:
     void Tick();
 
-    bool FixedTick() const noexcept;
+    static bool FixedTick() noexcept;
 
-    static const std::chrono::time_point<std::chrono::steady_clock>& GameStartTime() { return GetInstance().mc_GameStartTime; }
+    static std::chrono::time_point<std::chrono::steady_clock> GameStartTime() { return GetInstance().mc_GameStartTime; }
 
-    static const std::chrono::time_point<std::chrono::steady_clock>& Now() noexcept { return GetInstance().m_Now; }
-    static const std::chrono::time_point<std::chrono::steady_clock>& RealNow() noexcept { return GetInstance().m_RealNow; }
+    static std::chrono::time_point<std::chrono::steady_clock> Now() noexcept { return GetInstance().m_Now; }
+    static std::chrono::time_point<std::chrono::steady_clock> RealNow() noexcept { return GetInstance().m_RealNow; }
 
-    static const std::chrono::milliseconds DeltaTime() noexcept { return GetInstance().m_DeltaTime; }
-    static const std::chrono::milliseconds RealDeltaTime() noexcept { return GetInstance().m_RealDeltaTime; }
+    static std::chrono::milliseconds DeltaTime() noexcept { return GetInstance().m_DeltaTime; }
+    static std::chrono::milliseconds RealDeltaTime() noexcept { return GetInstance().m_RealDeltaTime; }
 };
 }
