@@ -13,6 +13,7 @@
 #include <vector>
 #include <filesystem>
 #include <algorithm>
+#include <queue>
 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
