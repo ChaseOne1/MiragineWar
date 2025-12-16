@@ -8,7 +8,7 @@ public:
     std::shared_ptr<const SLNet::Packet> m_packet;
 
 public:
-    InboundPacket() = default;
+    //InboundPacket() = default;
     explicit InboundPacket(SLNet::Packet* packet);
 
     ~InboundPacket() = default;

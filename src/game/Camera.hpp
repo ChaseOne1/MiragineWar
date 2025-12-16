@@ -10,8 +10,7 @@ class Camera : public utility::Singleton<Camera>
 private:
     entt::entity m_Camera = utility::Registry::GetInstance().GetRegistry().create();
 
-    inline static const mathfu::vec2 msc_Velocity { static_cast<float>(**app::Settings::GetInstance().GetSettings().at_path("Camera.speed_x").as_floating_point()),
-        static_cast<float>(**app::Settings::GetInstance().GetSettings().at_path("Camera.speed_y").as_floating_point()) };
+    inline static const mathfu::vec2 msc_Velocity { app::Settings::GetSettings()["Camera"]["speed_x"], app::Settings::GetSettings()["Camera"]["speed_y"] };
 
 private:
     Camera();

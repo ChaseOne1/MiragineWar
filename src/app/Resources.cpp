@@ -6,6 +6,13 @@
 
 using namespace app;
 
+void Resources::RegisterEnv(sol::environment& env)
+{
+    env.new_usertype<Resources>("Resources", sol::no_constructor,
+        "require_texture", [=](GUID_t res, GUID_t idx) { return Resources::GetInstance().Require<SDL_Texture>(res, idx); }
+    );
+}
+
 template <>
 std::shared_ptr<SDL_Surface> Resources::LoadFromMem<SDL_Surface>(const ResDesc& desc, std::unique_ptr<std::byte[]> data)
 {
@@ -63,7 +70,7 @@ std::shared_ptr<TTF_Font> Resources::LoadFromMem(const ResDesc& desc, std::uniqu
 {
     // the stream must remain open, and the data must be valid before the font is closed
     SDL_IOStream* stream = SDL_IOFromConstMem(data.get(), desc.m_nSize);
-    return std::shared_ptr<TTF_Font>(TTF_OpenFontIO(stream, true, **Settings::GetInstance().GetSettings().at_path("Text.font_size").as_floating_point()), [datas = std::move(data)](TTF_Font* font) { TTF_CloseFont(font); });
+    return std::shared_ptr<TTF_Font>(TTF_OpenFontIO(stream, true, Settings::GetSettings()["Text"]["font_size"]), [datas = std::move(data)](TTF_Font* font) { TTF_CloseFont(font); });
 }
 
 template <>

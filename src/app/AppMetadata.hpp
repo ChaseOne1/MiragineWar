@@ -11,7 +11,7 @@ struct AppMetaData final {
 public:
     inline static constexpr char NAME[] = APP_NAME;
     inline static constexpr char VERSION[] = APP_VERSION;
-    inline static const std::filesystem::path msc_szAssetsPath { "Assets/" };
+    inline static const std::filesystem::path msc_szAssetsPath { "assets/" };
 };
 }
 

@@ -24,5 +24,6 @@
 #include <mathfu/matrix.h>
 #include <mathfu/glsl_mappings.h>
 #include <mathfu/constants.h>
+#include <sol/sol.hpp>
 
 #include "utility/Singleton.hpp"

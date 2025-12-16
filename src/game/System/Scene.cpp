@@ -1,4 +1,4 @@
-#include "Scene.hpp"
+#include "game/System/Scene.hpp"
 #include "app/Resources.hpp"
 #include "app/resources/AllInOneRes.hpp"
 #include "app/resources/AllInOneIndex.hpp"
@@ -19,7 +19,7 @@ Scene::Scene()
         entity ground = reg.create();
         std::shared_ptr<SDL_Texture> ground_tex = rsc.Require<SDL_Texture>(app::res::GROUND_IMG, app::idx::ENV_IDX);
         reg.emplace<app::comp::Texture>(ground, std::move(ground_tex), std::nullopt);
-        reg.emplace<app::comp::ZIndex>(ground, app::comp::ZIndex::ZINDEX_GROUND);
+        reg.emplace<app::comp::ZIndex>(ground, app::comp::ZIndexVal::ZINDEX_GROUND);
         reg.emplace<game::comp::Transform>(ground, vec2 { 384.f + i * 128.f, 128.f }, vec2 { 64.f, 128.f });
     }
 }

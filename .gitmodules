@@ -25,3 +25,6 @@
 [submodule "3rdlibs/MiragineWarProtocol"]
 	path = 3rdlibs/MiragineWarProtocol
 	url = https://github.com/ChaseOne1/MiragineWarProtocol.git
+[submodule "3rdlibs/sol2"]
+	path = 3rdlibs/sol2
+	url = https://github.com/ThePhD/sol2.git

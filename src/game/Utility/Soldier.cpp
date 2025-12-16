@@ -27,11 +27,11 @@ Soldier::Soldier(app::GUID_t texture, mathfu::vec2 position, app::AnimSeqFrames:
 
     // Transform
     SetPosition(position.x, position.y);
-    SetSizeRatio(settings.at_path("Soldier.size_ratio").value_or(1.f));
+    SetSizeRatio(settings["Soldier"]["size_ratio"]);
 
     // ZIndex
-    const uint16_t ZPrecision = settings.at_path("Soldier.zprecision").value_or(100u);
-    SetZIndex(app::comp::ZIndex::ZINDEX_SOLDIER + position.y / game::World::GetInstance().msc_fHeight * ZPrecision);
+    const uint16_t ZPrecision = settings["Soldier"]["zprecision"];
+    SetZIndex(app::comp::ZIndexVal::ZINDEX_SOLDIER + position.y / game::World::GetInstance().msc_fHeight * ZPrecision);
 }
 
 Soldier::~Soldier()
@@ -50,7 +50,7 @@ void Soldier::SetAnimation(app::AnimSeqFrames::ANIM animation)
             m_Mirrored ? -static_cast<float>(m_Asf->m_Info[animation].width) : static_cast<float>(m_Asf->m_Info[animation].width),
             static_cast<float>(m_Asf->m_Info[animation].height) });
 
-    const float size_ratio = app::Settings::GetInstance().GetSettings().at_path("Soldier.size_ratio").value_or(1.f);
+    const float size_ratio = app::Settings::GetSettings()["Soldier"]["size_ratio"];
     SetSizeRatio(size_ratio);
 
     registry.emplace_or_replace<app::comp::PreRender>(m_Soldier,
@@ -66,7 +66,7 @@ void Soldier::SetAnimation(app::AnimSeqFrames::ANIM animation)
 void Soldier::SetZIndex(uint16_t zindex)
 {
     auto& registry = utility::Registry::GetInstance().GetRegistry();
-    registry.emplace_or_replace<app::comp::ZIndex>(m_Soldier, app::comp::ZIndex(zindex));
+    registry.emplace_or_replace<app::comp::ZIndex>(m_Soldier, app::comp::ZIndex{zindex});
 }
 
 void Soldier::SetPosition(float x, float y)

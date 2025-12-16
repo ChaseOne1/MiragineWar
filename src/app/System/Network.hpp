@@ -4,20 +4,22 @@
 #include "slikenet/types.h"
 #include "utility/Topics.hpp"
 #include "app/NetPacket.hpp"
+#include "app/ScriptModule.hpp"
 
 namespace app::sys {
-class Network : public utility::Singleton<Network>
+class Network : public utility::Singleton<Network>, public app::ScriptModule<Network>
 {
     friend class utility::Singleton<Network>;
 
     using Handler = std::function<void(const InboundPacket&)>;
 
 private:
-    static const SLNet::SocketDescriptor msc_ServerSocketDesc;
-
     SLNet::RakPeerInterface* m_RakPeer;
 
     utility::Topics<SLNet::MessageID, Handler> m_MessageHandler;
+
+private:
+    void RegisterEnv(sol::environment&);
 
 public:
     Network();
@@ -26,7 +28,7 @@ public:
     void Tick();
 
     template <typename Callback>
-    static auto Subcribe(SLNet::MessageID msg, Callback&& callback)
+    static auto Subscribe(SLNet::MessageID msg, Callback&& callback)
     {
         return GetInstance().m_MessageHandler.Subscribe(msg, std::forward<Callback>(callback));
     }
@@ -36,7 +38,7 @@ public:
         return GetInstance().m_MessageHandler.GetNextSubscriberID();
     }
 
-    static void UnSubscribe(SLNet::MessageID msg, utility::TopicsSubscriberID id)
+    static void Unsubscribe(SLNet::MessageID msg, utility::TopicsSubscriberID id)
     {
         GetInstance().m_MessageHandler.Unsubscribe(msg, id);
     }

@@ -1,7 +1,7 @@
 #pragma once
 
 namespace app::comp {
-enum ZIndex : uint16_t
+enum ZIndexVal : uint16_t
 {
     ZINDEX_GROUND = 0u,
 
@@ -9,4 +9,17 @@ enum ZIndex : uint16_t
 
     ZINDEX_UIELEMENT = 1024u,
 };
+
+struct ZIndex
+{
+     std::underlying_type_t<ZIndexVal> m_Index;
+};
 }
+
+#include "mirrow/srefl/srefl_begin.hpp"
+srefl_class(app::comp::ZIndex,
+    ctors(
+        ctor(std::underlying_type_t<app::comp::ZIndexVal>)
+    )
+)
+#include "mirrow/srefl/srefl_end.hpp"

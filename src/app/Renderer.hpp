@@ -17,7 +17,8 @@ private:
         if (!SDL_SetRenderVSync(m_pRenderer, SDL_RENDERER_VSYNC_ADAPTIVE))
             SDL_SetRenderVSync(m_pRenderer, 1);
 
-        if (Settings::GetInstance().GetSettings().at_path("render.use_pixelart_scale").value_or(false)
+
+        if (Settings::GetSettings()["render"]["use_pixelart_scale"]
             && !SDL_SetDefaultTextureScaleMode(m_pRenderer, SDL_SCALEMODE_PIXELART)) {
             SDL_Log("Set texture scale mode failed");
         }

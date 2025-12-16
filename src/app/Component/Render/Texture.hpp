@@ -20,3 +20,12 @@ public:
     { }
 };
 }
+
+#include "mirrow/srefl/srefl_begin.hpp"
+srefl_class(app::comp::Texture,
+    ctors(
+        ctor(const std::shared_ptr<SDL_Texture>&)
+    )
+ )
+#include "mirrow/srefl/srefl_end.hpp"
+

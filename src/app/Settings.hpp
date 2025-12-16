@@ -1,29 +1,30 @@
 #pragma once
-
-#define APP_SETTINGS_FILE "settings.toml"
-#define LANGUAGE_CN_SETTINGS_FILE "language_cn.toml"
+#include "app/ScriptModule.hpp"
 
 namespace app {
-class Settings final : public utility::Singleton<Settings>
+class Settings final : public utility::Singleton<Settings>, public app::ScriptModule<Settings>
 {
     friend class Singleton<Settings>;
+    friend class ScriptModule<Settings>;
 
 private:
-    toml::table m_settings, m_language;
+    static constexpr std::string_view msc_settings_file_name = "settings.lua";
+    static constexpr std::string_view msc_language_CHS_file_name = "language_chs.lua";
+
+    sol::table m_settings, m_language;
 
 private:
-    Settings()
-        : m_settings(toml::parse_file(APP_SETTINGS_FILE))
-        , m_language(toml::parse_file(LANGUAGE_CN_SETTINGS_FILE))
-    { }
+    Settings();
 
     ~Settings() = default;
 
+    void RegisterEnv(sol::environment& env);
+
 public:
-    static toml::table& GetSettings() { return GetInstance().m_settings; }
-    static toml::table& GetLanguageSettings() { return GetInstance().m_language; }
+
+    //static toml::table& GetSettings() { return GetInstance().m_settings; }
+    // static toml::table& GetLanguageSettings() { return GetInstance().m_language; }
+    static sol::table& GetSettings() { return GetInstance().m_settings; }
+    static sol::table& GetLanguage() { return GetInstance().m_language; }
 };
 }
-
-#undef APP_SETTINGS_FILE
-#undef LANGUAGE_CN_SETTINGS_FILE

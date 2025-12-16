@@ -41,7 +41,7 @@ void Render::Tick()
     if (gs_bShouldSort) {
         gs_bShouldSort = false;
         reg.sort<app::comp::ZIndex>(
-            [](const app::comp::ZIndex& lhs, const app::comp::ZIndex& rhs) { return lhs < rhs; });
+            [](const app::comp::ZIndex& lhs, const app::comp::ZIndex& rhs) { return lhs.m_Index < rhs.m_Index; });
     }
     auto view = reg.view<game::comp::Transform, game::comp::Visible, app::comp::ZIndex>();
     view.use<app::comp::ZIndex>(); // let the view follow the order of zindex while iterating

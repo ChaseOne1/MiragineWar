@@ -47,6 +47,11 @@ set(protobuf_BUILD_PROTOC_BINARIES OFF)
 set(protobuf_BUILD_LIBUPB OFF)
 add_subdirectory(3rdlibs/protobuf EXCLUDE_FROM_ALL)
 
+set(LUA_ROOT "" CACHE PATH "lua root path")
+add_subdirectory(3rdlibs/sol2 EXCLUDE_FROM_ALL)
+
+add_subdirectory(3rdlibs/mirrow EXCLUDE_FROM_ALL)
+
 add_subdirectory(3rdlibs/MiragineWarProtocol)
 
 add_subdirectory(tools EXCLUDE_FROM_ALL)
@@ -59,10 +64,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3
                                               tomlplusplus::tomlplusplus
                                               EnTT::EnTT
                                               SLikeNetDLL
-                                              protobuf::libprotobuf)
+                                              protobuf::libprotobuf
+                                              sol2::sol2
+                                              lua
+					      Mirrow::Srefl)
 #target_link_options(${PROJECT_NAME} PRIVATE -mwindows) #disable console window
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.hpp)
-target_include_directories(${PROJECT_NAME} PRIVATE src ${MWP_CXX_PROTOS_INC_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE src ${MWP_CXX_PROTOS_INC_DIR} ${LUA_ROOT}/include)
+target_link_directories(${PROJECT_NAME} PRIVATE ${LUA_ROOT}/lib)
 target_sources(${PROJECT_NAME} PRIVATE ${MWP_CXX_PROTOS_SRC})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_compile_options(${PROJECT_NAME} PRIVATE -g -Og -fno-rtti)

@@ -1,5 +1,4 @@
 #include "Message.hpp"
-#include "SDL3_ttf/SDL_ttf.h"
 #include "app/Component/Render/Texture.hpp"
 #include "app/Component/Render/ZIndex.hpp"
 #include "app/Component/Render/TextureGrid.hpp"
@@ -21,18 +20,17 @@ using namespace game::util;
 using namespace entt;
 using namespace mathfu;
 
-const unsigned short Message::msc_LongBoxWidth = app::Settings::GetInstance().GetSettings().at_path("Text.standard_long_box_width").value_or(600u);
-const float Message::msc_StandardBoxScale = app::Settings::GetInstance().GetSettings().at_path("Text.standard_box_scale").value_or(0.6f);
+const unsigned short Message::msc_LongBoxWidth = app::Settings::GetSettings()["Text"]["standard_long_box_width"];
+const float Message::msc_StandardBoxScale = app::Settings::GetSettings()["Text"]["standard_box_scale"];
 
-Message::Message(std::string_view msg, app::GUID_t font, app::comp::ZIndex zindex)
-    : m_Font(TTF_CopyFont(app::Resources::GetInstance().Require<TTF_Font>(font, app::idx::TEXT_STYLE_IDX).get()),
-          [](TTF_Font* font) { TTF_CloseFont(font); })
+Message::Message(std::string_view msg, app::GUID_t font, app::comp::ZIndexVal zindex)
 {
     registry& reg = utility::Registry::GetInstance().GetRegistry();
 
     // TTF_SetFontLineSkip(m_Font.get(), app::Settings::GetInstance().GetSettings().at_path("Text.line_skip").value_or(26.f));
 
-    reg.emplace<app::comp::Text>(m_Message, msg, m_Font);
+    reg.emplace<app::comp::Text>(m_Message, msg, std::shared_ptr<TTF_Font>(TTF_CopyFont(app::Resources::GetInstance().Require<TTF_Font>(font, app::idx::TEXT_STYLE_IDX).get()),
+          [](TTF_Font* font) { TTF_CloseFont(font); }));
 
     SetColor(0, 0, 0);
 
@@ -44,8 +42,7 @@ Message::Message(std::string_view msg, app::GUID_t font, app::comp::ZIndex zinde
 }
 
 Message::Message(const Message& other)
-    : m_Font(other.m_Font)
-    , m_BoxStyle(other.m_BoxStyle)
+    : m_BoxStyle(other.m_BoxStyle)
 {
     registry& reg = utility::Registry::GetInstance().GetRegistry();
     for (auto [id, storage] : reg.storage())
@@ -54,7 +51,6 @@ Message::Message(const Message& other)
 
 Message::Message(Message&& other) noexcept
     : m_Message(other.m_Message)
-    , m_Font(std::move(other.m_Font))
     , m_BoxStyle(std::move(other.m_BoxStyle))
 {
     other.m_Message = entt::null;
@@ -72,7 +68,6 @@ Message& Message::operator=(const Message& other)
     for (auto [id, storage] : reg.storage())
         if (storage.contains(other.m_Message)) storage.push(m_Message, storage.value(other.m_Message));
 
-    m_Font = other.m_Font;
     m_BoxStyle = other.m_BoxStyle;
     m_ResizeID = other.m_ResizeID;
 
@@ -85,11 +80,15 @@ Message& Message::operator=(Message&& other) noexcept
 
     m_Message = other.m_Message;
     other.m_Message = entt::null;
-    m_Font = std::move(other.m_Font);
     m_BoxStyle = std::move(other.m_BoxStyle);
     m_ResizeID = other.m_ResizeID;
 
     return *this;
+}
+
+std::shared_ptr<TTF_Font> Message::GetFont() const
+{
+    return utility::Registry::GetRegistry().get<app::comp::Text>(m_Message).m_Font;
 }
 
 Message::~Message()
@@ -158,8 +157,8 @@ void Message::SetBox(app::GUID_t box, int w, int h, float scale)
 
     reg.emplace_or_replace<app::comp::Texture>(m_Message, m_BoxStyle->m_Texture, std::nullopt);
     auto& grid = reg.emplace_or_replace<app::comp::TextureGrid>(m_Message, m_BoxStyle->m_Header);
-    if (const auto& settings = app::Settings::GetInstance().GetSettings(); scale) grid.m_fScale = scale;
-    else grid.m_fScale = TTF_GetFontSize(m_Font.get()) / settings.at_path("Text.standard_font_size").value_or(32.f);
+    if (const auto& settings = app::Settings::GetSettings(); scale) grid.m_fScale = scale;
+    else grid.m_fScale = TTF_GetFontSize(GetFont().get()) / settings["Text"]["standard_font_size"].get_or(1.f);
 
     int textw = 0, texth = 0;
     TTF_GetTextSize(reg.get<app::comp::Text>(m_Message).m_Text.get(), &textw, &texth);
@@ -188,15 +187,15 @@ void Message::SetAlignment(Alignment alignment)
 
     switch (alignment) {
     case Alignment::LEFT:
-        TTF_SetFontWrapAlignment(m_Font.get(), TTF_HORIZONTAL_ALIGN_LEFT);
+        TTF_SetFontWrapAlignment(GetFont().get(), TTF_HORIZONTAL_ALIGN_LEFT);
         SetOffset(-(tsfm.m_HalfSize.x - m_BoxStyle->m_Header.left_width * grid.m_fScale - textw / 2.f), 0.f);
         break;
     case Alignment::CENTER:
-        TTF_SetFontWrapAlignment(m_Font.get(), TTF_HORIZONTAL_ALIGN_CENTER);
+        TTF_SetFontWrapAlignment(GetFont().get(), TTF_HORIZONTAL_ALIGN_CENTER);
         SetOffset(0.f, 0.f);
         break;
     case Alignment::RIGHT:
-        TTF_SetFontWrapAlignment(m_Font.get(), TTF_HORIZONTAL_ALIGN_RIGHT);
+        TTF_SetFontWrapAlignment(GetFont().get(), TTF_HORIZONTAL_ALIGN_RIGHT);
         SetOffset(tsfm.m_HalfSize.x - m_BoxStyle->m_Header.right_width * grid.m_fScale - textw / 2.f, 0.f);
         break;
     default:

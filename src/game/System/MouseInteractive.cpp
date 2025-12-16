@@ -43,8 +43,8 @@ void MouseInteractive::OnClick(const SDL_Event* event)
     if (entities.empty()) return;
 
     std::sort(entities.begin(), entities.end(),
-        [](const entity& lhs, const entity& rhs) { return utility::Registry::GetInstance().GetRegistry().get<app::comp::ZIndex>(lhs)
-                                                       > utility::Registry::GetInstance().GetRegistry().get<app::comp::ZIndex>(rhs); });
+        [](const entity& lhs, const entity& rhs) { return utility::Registry::GetInstance().GetRegistry().get<app::comp::ZIndex>(lhs).m_Index
+                                                       > utility::Registry::GetInstance().GetRegistry().get<app::comp::ZIndex>(rhs).m_Index; });
 
     if (event->button.down) {
         if (auto& callback = reg.get<game::comp::Clickable>(entities.front()).m_ClickInCallback)
@@ -68,8 +68,8 @@ void MouseInteractive::OnMotion(const SDL_Event* event)
     }
 
     std::sort(entities.begin(), entities.end(),
-        [](const entity& lhs, const entity& rhs) { return utility::Registry::GetInstance().GetRegistry().get<app::comp::ZIndex>(lhs)
-                                                       > utility::Registry::GetInstance().GetRegistry().get<app::comp::ZIndex>(rhs); });
+        [](const entity& lhs, const entity& rhs) { return utility::Registry::GetInstance().GetRegistry().get<app::comp::ZIndex>(lhs).m_Index
+                                                       > utility::Registry::GetInstance().GetRegistry().get<app::comp::ZIndex>(rhs).m_Index; });
 
     if (m_Pointed != entities.front()) {
         if (auto* pointable = reg.try_get<game::comp::Pointable>(m_Pointed); pointable && pointable->m_PointOutCallback)

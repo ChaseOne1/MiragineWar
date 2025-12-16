@@ -11,14 +11,13 @@ class MainMenuScene : public utility::Singleton<MainMenuScene>
 private:
     entt::entity m_Title = utility::Registry::GetInstance().GetRegistry().create();
     std::vector<game::util::Soldier> m_Soldiers;
+    sol::environment m_LuaEnv;
 
 private:
     MainMenuScene();
     ~MainMenuScene() = default;
 
     void SetupWorldScene();
-    void SetupTitle();
-    void SetupSoldiers();
     void SetupMenu(const app::InboundPacket&);
 };
 }

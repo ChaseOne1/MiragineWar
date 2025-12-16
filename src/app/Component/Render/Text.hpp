@@ -5,17 +5,20 @@ namespace app::comp {
 struct Text
 {
     std::unique_ptr<TTF_Text, void (*)(TTF_Text*)> m_Text;
+    std::shared_ptr<TTF_Font> m_Font;
     SDL_FPoint m_Offset {};
 
 public:
-    Text(std::string_view text, std::shared_ptr<TTF_Font> font)
+    Text(std::string_view text, const std::shared_ptr<TTF_Font>& font)
         : m_Text(TTF_CreateText(app::TextEngine::GetInstance().GetRendererTextEngine(), font.get(), text.data(), text.length()),
               [](TTF_Text* text) { TTF_DestroyText(text); })
+        , m_Font(font)
     { }
 
     Text(const Text& other)
         : m_Text(TTF_CreateText(app::TextEngine::GetInstance().GetRendererTextEngine(), TTF_GetTextFont(other.m_Text.get()), other.m_Text->text, 0u),
               [](TTF_Text* text) { TTF_DestroyText(text); })
+        , m_Font(std::move(other.m_Font))
         , m_Offset(other.m_Offset)
     { }
 
@@ -28,6 +31,7 @@ public:
         if (this == &other) return *this;
 
         m_Text.reset(TTF_CreateText(app::TextEngine::GetInstance().GetRendererTextEngine(), TTF_GetTextFont(other.m_Text.get()), other.m_Text->text, 0u));
+        m_Font = other.m_Font;
         m_Offset = other.m_Offset;
 
         return *this;

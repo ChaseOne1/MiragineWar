@@ -14,8 +14,8 @@ private:
     Window()
     {
         m_pWindow = SDL_CreateWindow(AppMetaData::NAME,
-            Settings::GetInstance().GetSettings().at_path("app.window_width").value_or(1024),
-            Settings::GetInstance().GetSettings().at_path("app.window_height").value_or(768),
+            Settings::GetSettings()["app"]["window_width"],
+            Settings::GetSettings()["app"]["window_height"],
             SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_RESIZABLE);
     }
 

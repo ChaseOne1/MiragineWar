@@ -7,6 +7,20 @@ struct Transform
     mathfu::vec2 m_HalfSize { mathfu::kZeros2f };
 
 public:
+    Transform() = default;
+
+    Transform(float x, float y)
+        : m_Position(x, y)
+    { }
+
+    Transform(float x, float y, float hw, float hh)
+        : m_Position(x, y)
+        , m_HalfSize(hw, hh)
+    { }
+
+    Transform(const mathfu::vec2& pos, const mathfu::vec2& halfSize) : m_Position(pos), m_HalfSize(halfSize)
+    { }
+
     std::array<mathfu::vec3, 4> GetVertices() const noexcept
     {
         return {
@@ -26,3 +40,22 @@ public:
     }
 };
 }
+
+#include "mirrow/srefl/srefl_begin.hpp"
+srefl_class(game::comp::Transform,
+    ctors(
+        ctor(float, float, float, float)
+    )
+    fields(
+        field(&game::comp::Transform::m_Position),
+        field(&game::comp::Transform::m_HalfSize)
+    )
+)
+
+srefl_class(mathfu::vec2,
+    fields(
+        field(&mathfu::vec2::x),
+        field(&mathfu::vec2::y)
+    )
+)
+#include "mirrow/srefl/srefl_end.hpp"

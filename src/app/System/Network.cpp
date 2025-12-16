@@ -1,19 +1,19 @@
 #include "Network.hpp"
 #include "app/Settings.hpp"
-#include <cassert>
 
 using namespace app::sys;
 using namespace SLNet;
-
-const SocketDescriptor Network::msc_ServerSocketDesc { app::Settings::GetInstance().GetSettings().at_path("app.server_port").value_or(uint16_t(8241)),
-    app::Settings::GetInstance().GetSettings().at_path("app.server_addr").value_or("127.0.0.1") };
 
 Network::Network()
     : m_RakPeer(RakPeerInterface::GetInstance())
 {
     SocketDescriptor client {};
     m_RakPeer->Startup(1u, &client, 1u);
-    const ConnectionAttemptResult result = m_RakPeer->Connect(msc_ServerSocketDesc.hostAddress, msc_ServerSocketDesc.port, nullptr, 0);
+
+    const ConnectionAttemptResult result = m_RakPeer->Connect(
+        app::Settings::GetSettings()["app"]["server_addr"].get<std::string>().c_str(),
+        app::Settings::GetSettings()["app"]["server_port"], nullptr, 0
+        );
     assert(result == CONNECTION_ATTEMPT_STARTED);
 }
 
@@ -32,4 +32,21 @@ void Network::Tick()
         const InboundPacket ipacket(packet);
         m_MessageHandler.Publish(ipacket.GetOpcode(), ipacket);
     }
+}
+
+void Network::RegisterEnv(sol::environment& env)
+{
+    env.new_usertype<app::InboundPacket>(
+        "InboundPacket", sol::no_constructor,
+        "GetOpcode", &app::InboundPacket::GetOpcode,
+        "GetPayload", &app::InboundPacket::GetPayload
+        );
+
+    //TODO: register outbound packet
+
+    env.new_usertype<Network>(
+        "Network", sol::no_constructor,
+        "subscribe", &Network::Subscribe<Handler>,
+        "unsubscribe", &Network::Unsubscribe
+        );
 }

@@ -15,6 +15,7 @@
 #include "app/System/Timer.hpp"
 #include "app/System/Network.hpp"
 //-------------------------------------------
+#include "app/ScriptManager.hpp"
 #include "game/Game.hpp"
 #include "game/Camera.hpp"
 #include "game/World.hpp"
@@ -30,6 +31,7 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
     if (!SDL_Init(SDL_INIT_VIDEO) || !TTF_Init())
         return SDL_APP_FAILURE;
 
+    app::ScriptManager::GetInstance();
     app::Window::GetInstance();
     app::Renderer::GetInstance();
     app::TextEngine::GetInstance();

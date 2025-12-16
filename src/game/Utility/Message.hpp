@@ -13,7 +13,6 @@ namespace game::util {
 class Message
 {
     entt::entity m_Message = utility::Registry::GetInstance().GetRegistry().create();
-    std::shared_ptr<TTF_Font> m_Font;
     std::shared_ptr<app::Mox> m_BoxStyle;
     utility::TopicsSubscriberID m_ResizeID = utility::TopicsSubscriberIDNull;
 
@@ -29,7 +28,7 @@ public:
     const static float msc_StandardBoxScale;
 
 public:
-    explicit Message(std::string_view msg, app::GUID_t font = app::res::SUBTITLE_TTF, app::comp::ZIndex zindex = app::comp::ZINDEX_UIELEMENT);
+    explicit Message(std::string_view msg, app::GUID_t font = app::res::SUBTITLE_TTF, app::comp::ZIndexVal zindex = app::comp::ZINDEX_UIELEMENT);
     Message(const Message&);
     Message(Message&&) noexcept;
 
@@ -38,7 +37,7 @@ public:
     Message& operator=(const Message&);
     Message& operator=(Message&&) noexcept;
 
-    std::shared_ptr<TTF_Font> GetFont() const noexcept { return m_Font; }
+    std::shared_ptr<TTF_Font> GetFont() const;
 
     entt::entity GetEntity() const noexcept { return m_Message; }
 
@@ -58,5 +57,6 @@ public:
     void SetPointable(std::function<void()> pointInCallback);
     void SetPointable(std::function<void()> pointInCallback, std::function<void()> pointOutCallback);
     void SetInvalid();
+    void Release();
 };
 }
