@@ -22,8 +22,6 @@ private:
 
 public:
 
-    //static toml::table& GetSettings() { return GetInstance().m_settings; }
-    // static toml::table& GetLanguageSettings() { return GetInstance().m_language; }
     static sol::table& GetSettings() { return GetInstance().m_settings; }
     static sol::table& GetLanguage() { return GetInstance().m_language; }
 };

@@ -9,7 +9,6 @@
 #include "app/System/Time.hpp"
 #include "app/resources/AllInOneIndex.hpp"
 #include "app/Component/Render/ZIndex.hpp"
-#include "game/Logic/UI/SoldierMenu.hpp"
 #include "game/Component/UIElement.hpp"
 #include "game/Component/Transform.hpp"
 #include "game/Component/Movement.hpp"

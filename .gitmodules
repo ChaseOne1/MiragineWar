@@ -28,3 +28,6 @@
 [submodule "3rdlibs/sol2"]
 	path = 3rdlibs/sol2
 	url = https://github.com/ThePhD/sol2.git
+[submodule "3rdlibs/mirrow"]
+	path = 3rdlibs/mirrow
+	url = https://github.com/VisualGMQ/mirrow.git

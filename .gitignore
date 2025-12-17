@@ -1,12 +1,5 @@
 /build/
 /tools/
-# /tools/*/**
 /.cache/
 /.vscode/
-
-# backup file
-*.bak*
-
-# testing file of tools
-# !/tools/**/*.cpp
-# !/tools/**/*.hpp
+/.idea/

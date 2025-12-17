@@ -3,8 +3,6 @@
 #include "app/Settings.hpp"
 #include "app/System/Network.hpp"
 #include "app/System/Time.hpp"
-#include "game/Game.hpp"
-#include "game/Logic/Match.hpp"
 #include "game/Utility/Message.hpp"
 #include "protocol/ShowMessageNotify.pb.h"
 #include "protocol/PacketOpcodes.hpp"
@@ -76,6 +74,6 @@ NetGame::NetGame()
     network.Subscribe(ID_DISCONNECTION_NOTIFICATION, OnDisconnectionNotify);
     network.Subscribe(ID_CONNECTION_LOST, OnDisconnectionNotify);
     network.Subscribe(proto::ID_SHOW_MESSAGE_NOTIFY, OnShowMessageNotify);
-    network.Subscribe(proto::ID_MATCHMAKING_RSP, std::bind(&NetGame::OnMatchmakingRsp, this, std::placeholders::_1));
-    network.Subscribe(proto::ID_MATCH_FINISHED_NOTIFY, std::bind(&NetGame::OnMatchFinishedNotify, this, std::placeholders::_1));
+    // network.Subscribe(proto::ID_MATCHMAKING_RSP, std::bind(&NetGame::OnMatchmakingRsp, this, std::placeholders::_1));
+    // network.Subscribe(proto::ID_MATCH_FINISHED_NOTIFY, std::bind(&NetGame::OnMatchFinishedNotify, this, std::placeholders::_1));
 }
