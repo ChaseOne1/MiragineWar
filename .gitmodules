@@ -18,10 +18,7 @@
 	url = https://github.com/libsdl-org/SDL_ttf.git
 [submodule "3rdlibs/SLikeNet"]
 	path = 3rdlibs/SLikeNet
-	url = https://github.com/ChaseOne1/SLikeNet
-[submodule "3rdlibs/protobuf"]
-	path = 3rdlibs/protobuf
-	url = https://github.com/protocolbuffers/protobuf.git
+	url = https://github.com/ChaseOne1/SLikeNet.git
 [submodule "3rdlibs/MiragineWarProtocol"]
 	path = 3rdlibs/MiragineWarProtocol
 	url = https://github.com/ChaseOne1/MiragineWarProtocol.git
