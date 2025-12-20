@@ -3,6 +3,7 @@
 namespace utility {
 using TopicsSubscriberID = std::size_t;
 constexpr TopicsSubscriberID TopicsSubscriberIDNull = 0u;
+
 template <typename Topic, typename Callback = std::function<void()>>
 class Topics
 {
@@ -26,25 +27,21 @@ public:
         auto subscribers = m_Topics.find(topic);
         if (subscribers == m_Topics.end()) return;
 
-        for(auto iter = subscribers->second.begin(); iter != subscribers->second.end();)
-        {
+        for (auto iter = subscribers->second.begin(); iter != subscribers->second.end();) {
             const std::size_t dis1 = std::distance(iter, subscribers->second.begin());
             iter->m_Callback(std::forward<Args>(args)...);
             const std::size_t dis2 = std::distance(iter, subscribers->second.begin());
-            if(dis1 == dis2) ++iter;
+            if (dis1 == dis2) ++iter;
         }
     }
 
-    SubscriberID GetNextSubscriberID() const noexcept
-    {
-        return m_CurrentID + 1;
-    }
+    SubscriberID GetNextSubscriberID() const noexcept { return m_CurrentID + 1; }
 
     template <typename F, typename = std::enable_if_t<std::is_constructible_v<Callback, F>>>
     SubscriberID Subscribe(Topic topic, F&& callback)
     {
         auto& subscribers = m_Topics[topic];
-        subscribers.emplace_back(Subscriber { std::forward<F>(callback), ++m_CurrentID });
+        subscribers.emplace_back(Subscriber{ std::forward<F>(callback), ++m_CurrentID });
         return m_CurrentID;
     }
 
@@ -66,5 +63,8 @@ public:
             else ++iter;
         }
     }
+
+    decltype(auto) cbegin() const noexcept { return m_Topics.cbegin(); }
+    decltype(auto) cend() const noexcept { return m_Topics.cend(); }
 };
 }

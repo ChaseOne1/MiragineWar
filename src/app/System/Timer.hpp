@@ -21,23 +21,16 @@ private:
     public:
         TimerInfo(TimerId timerId, std::chrono::milliseconds interval, std::function<bool()> callable)
             : m_TimerId(timerId)
-            , m_Interval(interval)
-            , m_NextCallTime(Time::Now() + interval)
-            , m_Callable(std::move(callable))
-        { }
+              , m_Interval(interval)
+              , m_NextCallTime(Time::Now() + interval)
+              , m_Callable(std::move(callable)) {}
 
-        bool operator>(const TimerInfo& other) const
-        {
-            return m_NextCallTime > other.m_NextCallTime;
-        }
+        bool operator>(const TimerInfo& other) const { return m_NextCallTime > other.m_NextCallTime; }
 
     public:
         struct WeakPtrGreaterWrapper
         {
-            bool operator()(const std::weak_ptr<TimerInfo>& lhs, const std::weak_ptr<TimerInfo>& rhs) const
-            {
-                return lhs.expired() || rhs.expired() || lhs.lock()->m_NextCallTime > rhs.lock()->m_NextCallTime;
-            }
+            bool operator()(const std::weak_ptr<TimerInfo>& lhs, const std::weak_ptr<TimerInfo>& rhs) const { return lhs.expired() || rhs.expired() || lhs.lock()->m_NextCallTime > rhs.lock()->m_NextCallTime; }
         };
     };
 
@@ -54,18 +47,19 @@ public:
     void Tick();
 
     template <typename F, typename = std::enable_if<std::is_invocable_r_v<bool, F>>>
-    TimerId AddTimer(std::chrono::milliseconds interval, F&& callable, bool callNow = false)
+    static TimerId AddTimer(std::chrono::milliseconds interval, F&& callable, bool callNow = false)
     {
-        const auto [piter, succ] = m_TimerMap.emplace(m_NextTimerId, std::make_shared<TimerInfo>(m_NextTimerId, interval, std::forward<F>(callable)));
+        auto& timer = GetInstance();
+        const auto [piter, succ] = timer.m_TimerMap.emplace(timer.m_NextTimerId, std::make_shared<TimerInfo>(timer.m_NextTimerId, interval, std::forward<F>(callable)));
         if (!succ) return TimerIdNull;
 
-        m_TimerHeap.emplace(piter->second);
+        timer.m_TimerHeap.emplace(piter->second);
 
         if (callNow) piter->second->m_Callable();
 
-        return m_NextTimerId++;
+        return timer.m_NextTimerId++;
     }
 
-    void DelTimer(TimerId timerId) { m_TimerMap.erase(timerId); }
+    static void DelTimer(TimerId timerId) { GetInstance().m_TimerMap.erase(timerId); }
 };
 }

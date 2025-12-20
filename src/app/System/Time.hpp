@@ -5,18 +5,23 @@ class Time : public utility::Singleton<Time>
 {
     friend class utility::Singleton<Time>;
 
+public:
+    using Clock_t = std::chrono::steady_clock;
+
 private:
     Time();
     ~Time() = default;
 
 private:
     static constexpr std::chrono::milliseconds m_FixedDeltaTime { 16 };
-    const std::chrono::time_point<std::chrono::steady_clock> mc_GameStartTime;
+    const std::chrono::time_point<Clock_t> mc_GameStartTime;
 
-    std::chrono::time_point<std::chrono::steady_clock> m_Now, m_RealNow;
+    std::chrono::time_point<Clock_t> m_Now, m_RealNow;
     std::chrono::milliseconds m_DeltaTime, m_RealDeltaTime;
 
     float m_fTimeScale = 1.f;
+
+
 
 public:
     void Tick();

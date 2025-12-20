@@ -6,13 +6,12 @@ using namespace std::chrono;
 static milliseconds gs_FixedTimeAccumulator { 0 };
 
 Time::Time()
-    : mc_GameStartTime(std::chrono::steady_clock::now())
-{ }
+    : mc_GameStartTime(Clock_t::now()), m_DeltaTime(), m_RealDeltaTime() {}
 
 void Time::Tick()
 {
-    static time_point<std::chrono::steady_clock> real_last = mc_GameStartTime;
-    const time_point<std::chrono::steady_clock> now = steady_clock::now();
+    static time_point<Clock_t> real_last = mc_GameStartTime;
+    const time_point<Clock_t> now = steady_clock::now();
 
     m_RealDeltaTime = duration_cast<milliseconds>(now - real_last);
     m_RealNow += m_RealDeltaTime;

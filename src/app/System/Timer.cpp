@@ -9,7 +9,9 @@ void Timer::Tick()
         if (const std::shared_ptr timer = m_TimerHeap.top().lock(); !timer) m_TimerHeap.pop();
         else if (timer->m_NextCallTime <= now) {
             if (timer->m_Callable()) {
-                timer->m_NextCallTime = timer->m_Interval + now;
+                timer->m_NextCallTime += timer->m_Interval;
+                m_TimerHeap.pop();
+                m_TimerHeap.emplace(timer);
             } else {
                 m_TimerHeap.pop();
                 // TODO: store the invalid timers and clean outside the loop
