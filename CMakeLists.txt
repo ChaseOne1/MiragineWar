@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 #should be changed to a bin directory
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../MiragineWar-Game)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS src/*.cpp src/*.cc)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
@@ -22,6 +22,7 @@ add_subdirectory(3rdlibs/SDL3 EXCLUDE_FROM_ALL)
 add_subdirectory(3rdlibs/SDL3_image EXCLUDE_FROM_ALL)
 
 set(SDLTTF_VENDORED ON)
+set(SDLTTF_PLUTOSVG OFF)
 add_subdirectory(3rdlibs/SDL3_ttf EXCLUDE_FROM_ALL)
 target_compile_options(harfbuzz PRIVATE -Wa,-mbig-obj) # for SDL_ttf's dependency on mingw
 
