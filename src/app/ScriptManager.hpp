@@ -9,6 +9,11 @@ class ScriptManager : public utility::Singleton<ScriptManager>
 public:
     inline static const std::filesystem::path SCRIPT_ROOT_PATH = "scripts/";
 
+    // standard script file method
+    static constexpr std::string_view SCM_Initialize = "Initialize";
+    static constexpr std::string_view SCM_PreReload = "PreReload";
+    static constexpr std::string_view SCM_PostReload = "PostReload";
+
 public:
     static sol::state& GetLuaState() noexcept { return GetInstance().m_LuaState; }
     static std::filesystem::path GetScriptFilePath(std::string_view file_name) { return SCRIPT_ROOT_PATH / file_name; }
