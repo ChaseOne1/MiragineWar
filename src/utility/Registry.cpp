@@ -19,9 +19,9 @@ struct LuaEmplaceBound<Ctor<Ts...>, C>
     static decltype(auto) Emplace(sol::stack_table entity, Ts... args)
     {
         if constexpr (std::is_void_v<std::invoke_result_t<decltype(&entt::registry::emplace_or_replace<C, Ts...>), entt::registry*, entt::entity, Ts...>>)
-            utility::Registry::GetRegistry().emplace_or_replace<C>(GET_ID(entity), std::forward<Ts>(args)...);
+            utility::Registry::GetRegistry().emplace_or_replace<C>(GET_ID(entity), std::move(args)...);
         else
-            return utility::Registry::GetRegistry().emplace_or_replace<C>(GET_ID(entity), std::forward<Ts>(args)...);
+            return utility::Registry::GetRegistry().emplace_or_replace<C>(GET_ID(entity), std::move(args)...);
     }
 };
 

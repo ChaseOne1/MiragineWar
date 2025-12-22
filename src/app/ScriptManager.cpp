@@ -3,9 +3,12 @@
 
 using namespace app;
 
+static constexpr std::string_view gs_ReloaderFileName = "reloader.lua";
+
 ScriptManager::ScriptManager()
 {
     m_LuaState.open_libraries(sol::lib::base, sol::lib::package, sol::lib::math, sol::lib::string, sol::lib::table);
+    // TODO: add SLM_XXX to global
     // TODO: disable this function if release mode
     app::sys::Timer::AddTimer(std::chrono::milliseconds(1000u), [this]() { return this->DetectChanges(); });
 }
@@ -19,6 +22,7 @@ bool ScriptManager::DetectChanges()
             SDL_Log("ScriptManager::DetectChanges(): the file %s has been changed at %lld",
                 ps->first.string().data(), std::chrono::time_point_cast<std::chrono::seconds>(our_clock_tp).time_since_epoch().count());
             m_FileChanged.Publish(ps->first);
+            GetLuaState().script_file(GetScriptFilePathString(gs_ReloaderFileName)); // update the cache in loaded for downstream dependencies
             llwt = lwt;
         }
     }

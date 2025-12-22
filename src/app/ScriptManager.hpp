@@ -10,9 +10,9 @@ public:
     inline static const std::filesystem::path SCRIPT_ROOT_PATH = "scripts/";
 
     // standard script file method
-    static constexpr std::string_view SCM_Initialize = "Initialize";
-    static constexpr std::string_view SCM_PreReload = "PreReload";
-    static constexpr std::string_view SCM_PostReload = "PostReload";
+    static constexpr std::string_view SLM_Initialize = "Initialize";
+    static constexpr std::string_view SLM_PreReload = "PreReload";
+    static constexpr std::string_view SLM_PostReload = "PostReload";
 
 public:
     static sol::state& GetLuaState() noexcept { return GetInstance().m_LuaState; }

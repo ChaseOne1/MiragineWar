@@ -13,6 +13,7 @@ public:
     void Publish()
     {
         for (auto& subscriber : m_Subscribers) {
+            // TODO: allow remove itself when iterate
             subscriber();
         }
     }
