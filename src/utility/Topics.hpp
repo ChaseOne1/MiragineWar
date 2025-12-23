@@ -64,6 +64,12 @@ public:
         }
     }
 
+    std::size_t GetSubscriberCount(Topic topic) const noexcept
+    {
+        if (auto iter = m_Topics.find(topic); iter != m_Topics.end()) return iter->second.size();
+        else return 0u;
+    }
+
     decltype(auto) cbegin() const noexcept { return m_Topics.cbegin(); }
     decltype(auto) cend() const noexcept { return m_Topics.cend(); }
 };

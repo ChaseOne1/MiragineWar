@@ -9,10 +9,12 @@ class ScriptManager : public utility::Singleton<ScriptManager>
 public:
     inline static const std::filesystem::path SCRIPT_ROOT_PATH = "scripts/";
 
-    // standard script file method
+    // standard local method
     static constexpr std::string_view SLM_Initialize = "Initialize";
     static constexpr std::string_view SLM_PreReload = "PreReload";
     static constexpr std::string_view SLM_PostReload = "PostReload";
+    // standard global method
+    static constexpr std::string_view SGM_ReloadModule = "ReloadModule";
 
 public:
     static sol::state& GetLuaState() noexcept { return GetInstance().m_LuaState; }
@@ -27,13 +29,18 @@ public:
         return GetInstance().m_FileChanged.Subscribe(scriptFilePath, std::forward<F>(callback));
     }
 
-    static void Unsubscribe(const std::filesystem::path& scriptFilePath, utility::TopicsSubscriberID sid) { GetInstance().m_FileChanged.Unsubscribe(scriptFilePath, sid); }
+    static void Unsubscribe(const std::filesystem::path& scriptFilePath, utility::TopicsSubscriberID sid)
+    {
+        GetInstance().m_FileChanged.Unsubscribe(scriptFilePath, sid);
+        GetInstance().m_FileLastWrite.erase(scriptFilePath);
+    }
 
 private:
     ScriptManager();
     ~ScriptManager() = default;
 
     bool DetectChanges();
+    sol::object LuaRequire(const std::string&);
 
 private:
     sol::state m_LuaState;

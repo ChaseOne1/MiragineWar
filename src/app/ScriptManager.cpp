@@ -3,14 +3,24 @@
 
 using namespace app;
 
-static constexpr std::string_view gs_ReloaderFileName = "reloader.lua";
+static sol::function gsc_fnRequirer;
+static constexpr std::string_view gsc_ScriptEngineFileName = "ScriptEngine.lua";
 
 ScriptManager::ScriptManager()
 {
     m_LuaState.open_libraries(sol::lib::base, sol::lib::package, sol::lib::math, sol::lib::string, sol::lib::table);
-    // TODO: add SLM_XXX to global
+
+    // override require for hot-reloading
+    gsc_fnRequirer = m_LuaState["require"];
+    const std::string curr_path = m_LuaState["package"]["path"];
+    m_LuaState["package"]["path"] = curr_path + ";" + SCRIPT_ROOT_PATH.string() + "?.lua";
+    m_LuaState["require"] = [](const std::string_view name) { return ScriptManager::GetInstance().LuaRequire(std::string(name)); };
+
+    // inject global functions
+    m_LuaState.script_file(GetScriptFilePathString(gsc_ScriptEngineFileName));
+
     // TODO: disable this function if release mode
-    app::sys::Timer::AddTimer(std::chrono::milliseconds(1000u), [this]() { return this->DetectChanges(); });
+    app::sys::Timer::AddTimer(std::chrono::milliseconds(1000u), []() { return ScriptManager::GetInstance().DetectChanges(); });
 }
 
 bool ScriptManager::DetectChanges()
@@ -22,10 +32,24 @@ bool ScriptManager::DetectChanges()
             SDL_Log("ScriptManager::DetectChanges(): the file %s has been changed at %lld",
                 ps->first.string().data(), std::chrono::time_point_cast<std::chrono::seconds>(our_clock_tp).time_since_epoch().count());
             m_FileChanged.Publish(ps->first);
-            GetLuaState().script_file(GetScriptFilePathString(gs_ReloaderFileName)); // update the cache in loaded for downstream dependencies
             llwt = lwt;
         }
     }
 
     return true;
+}
+
+sol::object ScriptManager::LuaRequire(const std::string& name)
+{
+    const std::string path{ GetScriptFilePathString(name + ".lua") };
+
+    if (!m_FileChanged.GetSubscriberCount(path)) {
+        Subscribe(path, [=]() {
+            // NOTE: if the module already has a reloading handler, it should do something like this.
+            // update the cache in package loaded for downstream dependencies
+            static_cast<void>(GetLuaState()[SGM_ReloadModule].get<sol::function>()(name));
+        });
+    }
+
+    return gsc_fnRequirer(name);
 }

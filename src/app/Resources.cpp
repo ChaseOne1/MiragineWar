@@ -9,7 +9,7 @@ using namespace app;
 void Resources::RegisterEnv(sol::environment& env)
 {
     env.new_usertype<Resources>("Resources", sol::no_constructor,
-        "require_texture", [=](GUID_t res, GUID_t idx) { return Resources::GetInstance().Require<SDL_Texture>(res, idx); }
+        "texture", [](GUID_t res, GUID_t idx) { return Resources::GetInstance().Require<SDL_Texture>(res, idx); }
     );
 }
 
