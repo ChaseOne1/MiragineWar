@@ -31,7 +31,7 @@ Soldier::Soldier(app::GUID_t texture, mathfu::vec2 position, app::AnimSeqFrames:
 
     // ZIndex
     const uint16_t ZPrecision = settings["Soldier"]["zprecision"];
-    SetZIndex(app::comp::ZIndexVal::ZINDEX_SOLDIER + position.y / game::World::GetInstance().msc_fHeight * ZPrecision);
+    SetZIndex(static_cast<std::underlying_type_t<app::comp::ZIndexVal>>(app::comp::ZIndexVal::ZINDEX_SOLDIER) + position.y / game::World::GetInstance().msc_fHeight * ZPrecision);
 }
 
 Soldier::~Soldier()
@@ -66,7 +66,7 @@ void Soldier::SetAnimation(app::AnimSeqFrames::ANIM animation)
 void Soldier::SetZIndex(uint16_t zindex)
 {
     auto& registry = utility::Registry::GetInstance().GetRegistry();
-    registry.emplace_or_replace<app::comp::ZIndex>(m_Soldier, app::comp::ZIndex{zindex});
+    registry.emplace_or_replace<app::comp::ZIndex>(m_Soldier, zindex);
 }
 
 void Soldier::SetPosition(float x, float y)

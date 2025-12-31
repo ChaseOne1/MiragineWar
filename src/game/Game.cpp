@@ -1,4 +1,6 @@
 #include "Game.hpp"
+
+#include "app/ScriptManager.hpp"
 #include "game/Component/Logic.hpp"
 #include "game/Logic/MainMenuScene.hpp"
 #include "game/System/NetGame.hpp"
@@ -10,6 +12,8 @@ Game::Game()
 {
     auto& reg = utility::Registry::GetInstance().GetRegistry();
     reg.emplace<game::comp::Logic>(m_Game, std::bind(&Game::LogicInit, this), []() { }, []() { });
+
+    // app::ScriptManager::Subscribe(app::ScriptManager::GetScriptFilePath("game.lua"), [](){});
 }
 
 void Game::LogicInit()

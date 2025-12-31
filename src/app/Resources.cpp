@@ -9,8 +9,9 @@ using namespace app;
 void Resources::RegisterEnv(sol::environment& env)
 {
     env.new_usertype<Resources>("Resources", sol::no_constructor,
-        "texture", [](GUID_t res, GUID_t idx) { return Resources::GetInstance().Require<SDL_Texture>(res, idx); }
-    );
+        "texture", [](GUID_t res, GUID_t idx) { return Resources::GetInstance().Require<SDL_Texture>(res, idx); },
+        "font", [](GUID_t res, std::string idx) { return std::static_pointer_cast<void>(Resources::GetInstance().Require<TTF_Font>(res, static_cast<uint64_t>(std::stoull(idx)))); }
+        );
 }
 
 template <>
@@ -68,6 +69,7 @@ std::shared_ptr<AnimSeqFrames> Resources::LoadFromMem(const ResDesc& desc, std::
 template <>
 std::shared_ptr<TTF_Font> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data)
 {
+    SDL_Log("res: %lld", desc.m_Guid);
     // the stream must remain open, and the data must be valid before the font is closed
     SDL_IOStream* stream = SDL_IOFromConstMem(data.get(), desc.m_nSize);
     return std::shared_ptr<TTF_Font>(TTF_OpenFontIO(stream, true, Settings::GetSettings()["Text"]["font_size"]), [datas = std::move(data)](TTF_Font* font) { TTF_CloseFont(font); });

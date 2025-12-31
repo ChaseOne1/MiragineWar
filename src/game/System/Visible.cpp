@@ -25,6 +25,8 @@ Visible::Visible()
 
 static bool CheckValid(const registry& reg, entity ent)
 {
+    // NOTE: we only manage those that are not UI elements and can be seen (such as those with textures or text),
+    // in other words, the UIElement, Texture, Text components must be emplaced before the Transform to have the expected behavior
     return reg.all_of<game::comp::UIElement>(ent) || !reg.any_of<app::comp::Texture, app::comp::Text>(ent);
 }
 

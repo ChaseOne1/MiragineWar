@@ -12,7 +12,7 @@ private:
     ~FPS() = default;
 
 private:
-    game::util::Message m_FPS;
+    // game::util::Message m_FPS;
 
 public:
 

@@ -51,11 +51,4 @@ srefl_class(game::comp::Transform,
         field(&game::comp::Transform::m_HalfSize)
     )
 )
-
-srefl_class(mathfu::vec2,
-    fields(
-        field(&mathfu::vec2::x),
-        field(&mathfu::vec2::y)
-    )
-)
 #include "mirrow/srefl/srefl_end.hpp"

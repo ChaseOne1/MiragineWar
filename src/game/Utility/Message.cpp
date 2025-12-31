@@ -34,7 +34,7 @@ Message::Message(std::string_view msg, app::GUID_t font, app::comp::ZIndexVal zi
 
     SetColor(0, 0, 0);
 
-    if (zindex == app::comp::ZINDEX_UIELEMENT) {
+    if (zindex == app::comp::ZIndexVal::ZINDEX_UIELEMENT) {
         reg.emplace<game::comp::UIElement>(m_Message);
     }
 
@@ -88,7 +88,7 @@ Message& Message::operator=(Message&& other) noexcept
 
 std::shared_ptr<TTF_Font> Message::GetFont() const
 {
-    return utility::Registry::GetRegistry().get<app::comp::Text>(m_Message).m_Font;
+    return std::static_pointer_cast<TTF_Font>(utility::Registry::GetRegistry().get<app::comp::Text>(m_Message).m_Font);
 }
 
 Message::~Message()

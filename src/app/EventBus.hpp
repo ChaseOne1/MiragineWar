@@ -1,10 +1,12 @@
 #pragma once
 #include "utility/Topics.hpp"
+#include "app/ScriptModule.hpp"
 
 namespace app {
-class EventBus : public utility::Singleton<EventBus>
+class EventBus : public utility::Singleton<EventBus>, public app::ScriptModule<EventBus>
 {
     friend class utility::Singleton<EventBus>;
+    friend class app::ScriptModule<EventBus>;
     using Topic = decltype(SDL_Event::type);
 
 private:
@@ -14,6 +16,8 @@ private:
 private:
     EventBus() = default;
     ~EventBus() = default;
+
+    void RegisterEnv(sol::environment&);
 
 public:
     void Tick(SDL_Event* event);

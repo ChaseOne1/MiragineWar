@@ -40,7 +40,7 @@ private:
     ~ScriptManager() = default;
 
     bool DetectChanges();
-    sol::object LuaRequire(const std::string&);
+    sol::object LuaRequire(const std::string&, sol::environment&);
 
 private:
     sol::state m_LuaState;

@@ -28,7 +28,7 @@ public:
     const static float msc_StandardBoxScale;
 
 public:
-    explicit Message(std::string_view msg, app::GUID_t font = app::res::SUBTITLE_TTF, app::comp::ZIndexVal zindex = app::comp::ZINDEX_UIELEMENT);
+    explicit Message(std::string_view msg, app::GUID_t font = app::res::SUBTITLE_TTF, app::comp::ZIndexVal zindex = app::comp::ZIndexVal::ZINDEX_UIELEMENT);
     Message(const Message&);
     Message(Message&&) noexcept;
 

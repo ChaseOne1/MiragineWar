@@ -1,5 +1,6 @@
 #include "Registry.hpp"
 #include "app/ScriptManager.hpp"
+#include "app/Component/Render/Text.hpp"
 #include "app/Component/Render/Texture.hpp"
 #include "app/Component/Render/ZIndex.hpp"
 #include "game/Component/UIElement.hpp"
@@ -54,8 +55,7 @@ static void RegisterComponent(sol::environment& env /*, sol::stack_table& ent */
 {
     auto refl = mirrow::srefl::reflect<T>();
     SDL_Log("Registry::RegisterComponent: %s", refl.name().data());
-
-    sol::usertype<T> type = env.new_usertype<T>(refl.name(),
+    sol::usertype<T> type = env.new_usertype<T>(refl.name().data() + std::string("Comp"),
         "remove", LuaRemove<T>,
         "erase", LuaErase<T>,
         "get", LuaGet<T>,
@@ -92,7 +92,7 @@ static decltype(auto) LuaEntityValid(sol::stack_table entity, sol::this_state lu
 
 void Registry::RegisterEnv(sol::environment& env)
 {
-    RegisterComponents<game::comp::UIElement, app::comp::Texture, game::comp::Transform, app::comp::ZIndex, mathfu::vec2>(env);
+    RegisterComponents<game::comp::UIElement, app::comp::Texture, game::comp::Transform, app::comp::ZIndex, app::comp::Text>(env);
 
     env["Entity"] = []() {
         return app::ScriptManager::GetLuaState().create_table_with(

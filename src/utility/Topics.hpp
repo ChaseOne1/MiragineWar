@@ -64,7 +64,7 @@ public:
         }
     }
 
-    std::size_t GetSubscriberCount(Topic topic) const noexcept
+    std::size_t GetSubscriberCount(const Topic& topic) const noexcept
     {
         if (auto iter = m_Topics.find(topic); iter != m_Topics.end()) return iter->second.size();
         else return 0u;

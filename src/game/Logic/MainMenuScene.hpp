@@ -1,19 +1,14 @@
 #pragma once
+#include "app/ScriptContext.hpp"
 #include "utility/Singleton.hpp"
 
 namespace game::logic {
-class MainMenuScene : public utility::Singleton<MainMenuScene>
+class MainMenuScene final : public utility::Singleton<MainMenuScene>, app::ScriptContext
 {
     friend class utility::Singleton<MainMenuScene>;
 
 private:
-    sol::environment m_LuaEnv;
-    sol::load_result m_LuaScript;
-
-private:
     MainMenuScene();
-    ~MainMenuScene() = default;
-
-    void OnScriptFileChanged();
+    ~MainMenuScene() override = default;
 };
 }

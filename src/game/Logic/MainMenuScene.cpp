@@ -1,50 +1,26 @@
 #include "MainMenuScene.hpp"
+
+#include "app/EventBus.hpp"
+#include "app/Layout.hpp"
+#include "app/Resources.hpp"
 #include "game/System/Scene.hpp"
 #include "app/ScriptManager.hpp"
+#include "utility/Registry.hpp"
+#include "app/ScriptLib.hpp"
 
 using namespace game::logic;
 
-static constexpr std::string_view gs_ScriptFileName("main_menu_scene.lua");
+static constexpr std::string_view gs_ScriptFileName("MainMenuScene.lua");
 
 MainMenuScene::MainMenuScene()
-    : m_LuaEnv(app::ScriptManager::GetLuaState(), sol::create, app::ScriptManager::GetLuaState().globals())
+    : ScriptContext(gs_ScriptFileName)
 {
-    sol::load_result script { app::ScriptManager::GetLuaState().load_file(app::ScriptManager::GetScriptFilePathString(gs_ScriptFileName)) };
-    if (!script.valid()) {
-        SDL_Log("load %s failed, status: %d", gs_ScriptFileName.data(), m_LuaScript.status());
-        throw std::runtime_error { "failed to load the file" };
-    }
+    utility::Registry::GetInstance().RegisterToEnv(m_LuaEnv);
+    app::Resources::GetInstance().RegisterToEnv(m_LuaEnv);
+    app::EventBus::GetInstance().RegisterToEnv(m_LuaEnv);
+    app::Layout::GetInstance().RegisterToEnv(m_LuaEnv);
+    app::ScriptLib::GetInstance().RegisterToEnv(m_LuaEnv);
 
-    sol::protected_function script_func = script.get<sol::protected_function>();
-    sol::set_environment(m_LuaEnv, script_func);
-    sol::protected_function_result result = script_func();
-    if (!result.valid()) {
-        SDL_Log("do file %s failed, status: %d", gs_ScriptFileName.data(), result.status());
-        throw std::runtime_error { "failed to script the file" };
-    }
-    app::ScriptManager::Subscribe(app::ScriptManager::GetScriptFilePath(gs_ScriptFileName), [this]() { this->OnScriptFileChanged(); });
-
-    m_LuaEnv[app::ScriptManager::SCM_Initialize]();
+    m_LuaEnv[app::ScriptManager::SLM_Initialize]();
     game::sys::Scene::GetInstance();
-}
-
-void MainMenuScene::OnScriptFileChanged()
-{
-    sol::load_result script = app::ScriptManager::GetLuaState().load_file(app::ScriptManager::GetScriptFilePathString(gs_ScriptFileName));
-    if (!script.valid()) {
-        SDL_Log("reload %s failed, status: %d", gs_ScriptFileName.data(), script.status());
-        return;
-    }
-
-    m_LuaEnv[app::ScriptManager::SCM_PreReload]();
-
-    sol::protected_function script_func = script.get<sol::protected_function>();
-    sol::set_environment(m_LuaEnv, script_func);
-    sol::protected_function_result result = script();
-    if (!result.valid()) {
-        SDL_Log("do file %s failed when reload, status: %d", gs_ScriptFileName.data(), result.status());
-        throw std::runtime_error { "failed to script the file when reload" };
-    }
-
-    m_LuaEnv[app::ScriptManager::SCM_PostReload]();
 }
