@@ -19,9 +19,6 @@ ScriptManager::ScriptManager()
     // inject global functions
     m_LuaState.script_file(GetScriptFilePathString(gsc_ScriptEngineFileName));
 
-    // inject the common module
-    // utility::Registry::GetInstance()::k;
-
     // TODO: disable this function if release mode
     app::sys::Timer::AddTimer(std::chrono::milliseconds(1000u), [] { return ScriptManager::GetInstance().DetectChanges(); });
 }

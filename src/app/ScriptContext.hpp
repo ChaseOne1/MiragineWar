@@ -1,7 +1,5 @@
 #pragma once
 
-#include "sol/environment.hpp"
-
 namespace app {
 class ScriptContext
 {

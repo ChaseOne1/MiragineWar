@@ -25,5 +25,6 @@
 #include <mathfu/glsl_mappings.h>
 #include <mathfu/constants.h>
 #include <sol/sol.hpp>
+#include <mirrow/srefl/reflect.hpp>
 
 #include "utility/Singleton.hpp"

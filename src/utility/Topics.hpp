@@ -33,6 +33,8 @@ public:
             const std::size_t dis2 = std::distance(iter, subscribers->second.begin());
             if (dis1 == dis2) ++iter;
         }
+
+        if(subscribers->second.empty()) m_Topics.erase(subscribers);
     }
 
     SubscriberID GetNextSubscriberID() const noexcept { return m_CurrentID + 1; }

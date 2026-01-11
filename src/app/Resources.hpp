@@ -21,14 +21,14 @@ private:
     utility::LRUContainer<GUID_t, Pak, GUIDHash> m_Paks { PAK_CACHE_NUM };
 
 private:
-    Resources() = default;
+    Resources();
     ~Resources() = default;
 
     // TODO: map file instade of stream
     template <typename T>
     static std::shared_ptr<T> LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data);
 
-    void RegisterEnv(sol::environment& env);
+    void RegisterEnv(sol::environment&);
 
 public:
     template <typename T>

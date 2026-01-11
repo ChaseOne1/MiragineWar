@@ -2,7 +2,7 @@
 #include "app/ScriptModule.hpp"
 
 namespace app {
-class Settings final : public utility::Singleton<Settings>, public app::ScriptModule<Settings>
+class Settings final : public utility::Singleton<Settings>
 {
     friend class Singleton<Settings>;
     friend class ScriptModule<Settings>;
@@ -17,8 +17,6 @@ private:
     Settings();
 
     ~Settings() = default;
-
-    void RegisterEnv(sol::environment& env);
 
 public:
 

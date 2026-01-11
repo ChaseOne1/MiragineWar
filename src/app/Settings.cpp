@@ -9,8 +9,3 @@ Settings::Settings()
 {
     // NOTE: DO NOT do any action except return a value in these file
 }
-
-void Settings::RegisterEnv(sol::environment& env)
-{
-    env.set("Settings", m_settings, "Language", m_language);
-}

@@ -1,4 +1,3 @@
-#include "game/System/MouseInteractive.hpp"
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL_main.h>
 
@@ -6,7 +5,6 @@
 #include "app/Layout.hpp"
 #include "app/Resources.hpp"
 #include "app/TextEngine.hpp"
-#include "app/FPS.hpp"
 
 #include "app/System/Input.hpp"
 #include "app/System/RenderCallback.hpp"
@@ -18,12 +16,12 @@
 #include "app/ScriptManager.hpp"
 #include "game/Game.hpp"
 #include "game/Camera.hpp"
-#include "game/World.hpp"
 
 #include "game/System/Move.hpp"
 #include "game/System/Logic.hpp"
 #include "game/System/Visible.hpp"
 #include "game/System/GarbageCollection.hpp"
+#include "game/System/MouseInteractive.hpp"
 
 SDL_AppResult SDL_AppInit(void**, int, char**)
 {
@@ -31,25 +29,22 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
     if (!SDL_Init(SDL_INIT_VIDEO) || !TTF_Init())
         return SDL_APP_FAILURE;
 
-    app::ScriptManager::GetInstance();
     app::Window::GetInstance();
     app::Renderer::GetInstance();
     app::TextEngine::GetInstance();
-    app::Layout::GetInstance();
+    app::ScriptManager::GetInstance();
+    utility::Registry::GetInstance(); // Registry begin
+    app::Layout::GetInstance(); // EventBus begin
     app::sys::Input::GetInstance();
     app::sys::Timer::GetInstance();
     app::sys::Network::GetInstance();
 
-    utility::Registry::GetInstance(); // Construct registry
     app::sys::Render::GetInstance();
 
     game::sys::MouseInteractive::GetInstance();
     game::sys::Visible::GetInstance();
-    game::World::GetInstance();
     game::Game::GetInstance();
     game::Camera::GetInstance();
-
-    app::FPS::GetInstance();
 
     return SDL_APP_CONTINUE;
 }
@@ -60,8 +55,11 @@ SDL_AppResult SDL_AppIterate(void*)
     app::sys::Timer::GetInstance().Tick();
     app::sys::Network::GetInstance().Tick();
 
+    uint8_t tick_count = 0u;
+    constexpr uint8_t max_tick_count = 6u;
     while (app::sys::Time::GetInstance().FixedTick()) {
         // Fixed Update
+        // if(tick_count > max_tick_count) continue; else ++tick_count;
         game::sys::Move::GetInstance().Tick();
         // game::sys::Collide::GetInstance().Tick();
         // game::sys::Trigger::GetInstance().Tick();
@@ -105,7 +103,8 @@ void SDL_AppQuit(void*, SDL_AppResult result)
     utility::Registry::GetInstance().GetRegistry().clear();
     app::Resources::GetInstance().CleanUp();
 
-    TTF_Quit();
+    // fine, you win
+    // TTF_Quit();
 
     // SDL_Quit(); not required in the case of callback main
 }

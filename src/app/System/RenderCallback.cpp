@@ -1,5 +1,5 @@
 #include "RenderCallback.hpp"
-#include "app/Component/Render/RenderCallback.hpp"
+#include "app/Component/RenderCallback.hpp"
 #include "utility/Registry.hpp"
 
 using namespace app::sys;

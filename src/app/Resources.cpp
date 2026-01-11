@@ -1,17 +1,42 @@
 #include "Resources.hpp"
 #include "Renderer.hpp"
-#include "app/Component/Render/Texture.hpp"
+#include "app/Component/Texture.hpp"
+#include "app/Layout.hpp"
 #include "app/resources/AnimSeqFrames.hpp"
 #include "app/resources/Mox.hpp"
+#include "app/resources/AllInOneIndex.hpp"
 
 using namespace app;
 
+Resources::Resources()
+{
+    // EventBus::Subscribe(SDL_EVENT_WINDOW_RESIZED, [this](const SDL_Event*) {
+    //     const float font_size = Settings::GetSettings()["Text"]["default_font_size"].get<float>() * app::Layout::GetScale().y;
+    //     const Index* idx = m_Indexes.Get(app::idx::TEXT_STYLE_IDX);
+    //     if (!idx) return;
+    //     for (const auto& pi : *idx) {
+    //         if(pi.second.m_eType != ResourceType::TTF) continue;
+    //         if (std::shared_ptr<void>* res = m_Resources.View(pi.first); res) TTF_SetFontSize((TTF_Font*)res->get(), font_size);
+    //         else continue;
+    //     }
+    // });
+}
+
 void Resources::RegisterEnv(sol::environment& env)
 {
-    env.new_usertype<Resources>("Resources", sol::no_constructor,
-        "texture", [](GUID_t res, GUID_t idx) { return Resources::GetInstance().Require<SDL_Texture>(res, idx); },
-        "font", [](GUID_t res, std::string idx) { return std::static_pointer_cast<void>(Resources::GetInstance().Require<TTF_Font>(res, static_cast<uint64_t>(std::stoull(idx)))); }
-        );
+    auto type = env.new_usertype<Resources>("Resources", sol::no_constructor);
+    type["texture"] = [](std::string_view res, std::string_view idx) {
+        return Resources::GetInstance().Require<SDL_Texture>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10));
+    };
+    type["font"] = [](std::string_view res, std::string_view idx) {
+        return std::static_pointer_cast<void>(Resources::GetInstance().Require<TTF_Font>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10)));
+    };
+    type["asf"] = [](std::string_view res, std::string_view idx) {
+        return Resources::GetInstance().Require<AnimSeqFrames>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10));
+    };
+    type["mox"] = [](std::string_view res, std::string_view idx) {
+        return Resources::GetInstance().Require<Mox>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10));
+    };
 }
 
 template <>
@@ -69,10 +94,10 @@ std::shared_ptr<AnimSeqFrames> Resources::LoadFromMem(const ResDesc& desc, std::
 template <>
 std::shared_ptr<TTF_Font> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data)
 {
-    SDL_Log("res: %lld", desc.m_Guid);
-    // the stream must remain open, and the data must be valid before the font is closed
-    SDL_IOStream* stream = SDL_IOFromConstMem(data.get(), desc.m_nSize);
-    return std::shared_ptr<TTF_Font>(TTF_OpenFontIO(stream, true, Settings::GetSettings()["Text"]["font_size"]), [datas = std::move(data)](TTF_Font* font) { TTF_CloseFont(font); });
+    // NOTE: the stream must remain open, and the data must be valid before the font is closed,
+    // setting closeio to true allows SDL_TTF to manage streams automatically
+    SDL_IOStream* stream = SDL_IOFromConstMem(data.release(), desc.m_nSize);
+    return std::shared_ptr<TTF_Font>(TTF_OpenFontIO(stream, true, Settings::GetSettings()["Text"]["default_font_size"]), [](TTF_Font* font) { TTF_CloseFont(font); });
 }
 
 template <>

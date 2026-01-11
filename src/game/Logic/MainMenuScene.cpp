@@ -1,8 +1,9 @@
 #include "MainMenuScene.hpp"
-
 #include "app/EventBus.hpp"
 #include "app/Layout.hpp"
 #include "app/Resources.hpp"
+#include "app/System/Time.hpp"
+#include "app/System/Timer.hpp"
 #include "game/System/Scene.hpp"
 #include "app/ScriptManager.hpp"
 #include "utility/Registry.hpp"
@@ -20,6 +21,8 @@ MainMenuScene::MainMenuScene()
     app::EventBus::GetInstance().RegisterToEnv(m_LuaEnv);
     app::Layout::GetInstance().RegisterToEnv(m_LuaEnv);
     app::ScriptLib::GetInstance().RegisterToEnv(m_LuaEnv);
+    app::sys::Time::GetInstance().RegisterToEnv(m_LuaEnv);
+    app::sys::Timer::GetInstance().RegisterToEnv(m_LuaEnv);
 
     m_LuaEnv[app::ScriptManager::SLM_Initialize]();
     game::sys::Scene::GetInstance();

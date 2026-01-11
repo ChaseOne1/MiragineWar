@@ -2,8 +2,8 @@
 #include "app/Resources.hpp"
 #include "app/resources/AllInOneRes.hpp"
 #include "app/resources/AllInOneIndex.hpp"
-#include "app/Component/Render/Texture.hpp"
-#include "app/Component/Render/ZIndex.hpp"
+#include "app/Component/Texture.hpp"
+#include "app/Component/ZIndex.hpp"
 #include "game/Component/Transform.hpp"
 #include "utility/Registry.hpp"
 

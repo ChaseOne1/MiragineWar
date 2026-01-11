@@ -29,6 +29,13 @@ void Timer::Tick()
     }
 }
 
+void Timer::RegisterEnv(sol::environment& env)
+{
+    auto type = env.new_usertype<Timer>("Timer", sol::no_constructor);
+    type["AddTimer"] = [this](lua_Integer ms, sol::function f, bool callNow) { this->AddTimer(std::chrono::milliseconds(ms), f, callNow); };
+    type["DelTimer"] = [this](TimerId id) { this->DelTimer(id); };
+}
+
 void Timer::DelTimer(TimerId timerId)
 {
     if (auto iter = GetInstance().m_TimerMap.find(timerId); iter != GetInstance().m_TimerMap.end()) {

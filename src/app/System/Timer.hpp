@@ -2,7 +2,7 @@
 #include "app/System/Time.hpp"
 
 namespace app::sys {
-class Timer : public utility::Singleton<Timer>
+class Timer : public utility::Singleton<Timer>, public app::ScriptModule<Timer>
 {
 public:
     using TimerId = std::uint32_t;
@@ -10,6 +10,7 @@ public:
 
 private:
     friend class utility::Singleton<Timer>;
+    friend class app::ScriptModule<Timer>;
 
     struct TimerInfo
     {
@@ -44,6 +45,8 @@ private:
 private:
     Timer() = default;
     ~Timer() = default;
+
+    void RegisterEnv(sol::environment&);
 
 public:
     void Tick();

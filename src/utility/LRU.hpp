@@ -49,6 +49,15 @@ public:
         return &m_Elements.front().second;
     }
 
+    V* View(const K& key) noexcept
+    {
+        auto iter = m_Cache.find(key);
+        if (iter == m_Cache.end())
+            return nullptr;
+
+        return &iter->second->second;
+    }
+
     void Release(const K& key)
     {
         auto e = m_Cache.find(key);
@@ -63,5 +72,10 @@ public:
     {
         m_Elements.clear();
     }
+
+    decltype(auto) begin() const noexcept { return m_Elements.begin(); }
+    decltype(auto) end() const noexcept { return m_Elements.end(); }
+    decltype(auto) cbegin() const noexcept { return m_Elements.cbegin(); }
+    decltype(auto) cend() const noexcept { return m_Elements.cend(); }
 };
 }

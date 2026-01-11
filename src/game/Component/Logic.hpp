@@ -1,7 +1,8 @@
 #pragma once
+#include "app/ScriptComponent.hpp"
 
 namespace game::comp {
-struct Logic
+struct Logic : app::ScriptComponent<Logic>
 {
 public:
     std::function<void()> m_fnEnter {}, m_fnTick {}, m_fnExit {};
@@ -27,3 +28,14 @@ public:
     }
 };
 }
+
+#include "mirrow/srefl/srefl_begin.hpp"
+// clang-format off
+srefl_class(game::comp::Logic,
+    ctors(
+        ctor(std::function<void()>),
+        ctor(std::function<void()>, std::function<void()>, std::function<void()>)
+    )
+)
+// clang-format on
+#include "mirrow/srefl/srefl_end.hpp"

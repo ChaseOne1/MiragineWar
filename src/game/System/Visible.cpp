@@ -3,8 +3,8 @@
 #include "game/Component/Visible.hpp"
 #include "game/Component/Transform.hpp"
 #include "game/Component/UIElement.hpp"
-#include "app/Component/Render/Texture.hpp"
-#include "app/Component/Render/Text.hpp"
+#include "app/Component/Texture.hpp"
+#include "app/Component/Text.hpp"
 
 using namespace game::sys;
 using namespace entt;

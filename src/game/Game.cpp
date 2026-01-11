@@ -19,7 +19,8 @@ Game::Game()
 void Game::LogicInit()
 {
     game::logic::MainMenuScene::GetInstance();
-    game::sys::NetGame::GetInstance();
+
+    // game::sys::NetGame::GetInstance();
 }
 
 // void LogicInit()
