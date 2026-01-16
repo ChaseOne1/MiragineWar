@@ -1,11 +1,9 @@
 #pragma once
-#include "app/ScriptModule.hpp"
 
 namespace app::sys {
-class Time : public utility::Singleton<Time>, public app::ScriptModule<Time>
+class Time : public utility::Singleton<Time>
 {
     friend class utility::Singleton<Time>;
-    friend class ScriptModule;
 
 public:
     using Clock_t = std::chrono::steady_clock;
@@ -24,10 +22,10 @@ private:
 
     float m_fTimeScale = 1.f;
 
-    void RegisterEnv(sol::environment& env);
-
 public:
     void Tick();
+
+    static void RegisterToLua();
 
     static bool FixedTick() noexcept;
 

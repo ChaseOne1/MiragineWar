@@ -7,7 +7,7 @@ class Render : public utility::Singleton<Render>
 
 private:
     Render();
-    ~Render() = default;
+    ~Render();
 
 public:
     void Tick();

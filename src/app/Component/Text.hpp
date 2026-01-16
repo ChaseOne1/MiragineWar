@@ -13,8 +13,8 @@ struct Text : app::ScriptComponent<Text>
 
 public:
     Text(std::string_view text, const std::shared_ptr<TTF_Font>& font, float font_size = 0.f)
-        : m_LogicalFont(TTF_CopyFont(font.get()), [](TTF_Font* font) { TTF_CloseFont(font); })
-        , m_RenderedFont(TTF_CopyFont(font.get()), [](TTF_Font* font) { TTF_CloseFont(font); })
+        : m_LogicalFont(TTF_CopyFont(font.get()), [](void*) { })
+        , m_RenderedFont(TTF_CopyFont(font.get()), [](void*) { })
         , m_Text(nullptr, nullptr)
     {
         if (font_size) TTF_SetFontSize(m_LogicalFont.get(), font_size);
@@ -24,8 +24,8 @@ public:
     }
 
     Text(std::string_view text, const std::shared_ptr<void>& font, sol::variadic_args font_size)
-        : m_LogicalFont(TTF_CopyFont((TTF_Font*)font.get()), [](TTF_Font* font) { TTF_CloseFont(font); })
-        , m_RenderedFont(TTF_CopyFont((TTF_Font*)font.get()), [](TTF_Font* font) { TTF_CloseFont(font); })
+        : m_LogicalFont(TTF_CopyFont((TTF_Font*)font.get()), [](void*) { })
+        , m_RenderedFont(TTF_CopyFont((TTF_Font*)font.get()), [](void*) { })
         , m_Text(nullptr, nullptr)
     {
         if (auto sz = font_size.get<sol::optional<float>>(); sz.value_or(0.f)) TTF_SetFontSize(m_LogicalFont.get(), sz.value());

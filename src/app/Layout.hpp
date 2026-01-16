@@ -1,12 +1,12 @@
 #pragma once
 #include "EventBus.hpp"
 #include "Renderer.hpp"
+#include "app/ScriptManager.hpp"
 
 namespace app {
-class Layout : public utility::Singleton<Layout>, public app::ScriptModule<Layout>
+class Layout : public utility::Singleton<Layout>
 {
     friend class utility::Singleton<Layout>;
-    friend class app::ScriptModule<Layout>;
 
 public:
     using Anchor = std::string_view;
@@ -35,6 +35,10 @@ private:
     {
         UpdateAnchors(nullptr);
         EventBus::GetInstance().Subscribe(SDL_EVENT_WINDOW_RESIZED, std::bind(&Layout::UpdateAnchors, this, std::placeholders::_1));
+
+        auto type = app::ScriptManager::GetLuaState().new_usertype<Layout>("Layout", sol::no_constructor);
+        type["transform"] = LuaTransform;
+        type["scale"] = sol::var(&m_fScale);
     }
 
     ~Layout() = default;
@@ -63,12 +67,6 @@ private:
         m_fScale = { w / (float)mc_nDefaultWindowSize.x, h / (float)mc_nDefaultWindowSize.y };
     }
 
-    void RegisterEnv(sol::environment& env)
-    {
-        auto type = env.new_usertype<Layout>("Layout", sol::no_constructor);
-        type["transform"] = LuaTransform;
-        type["scale"] = sol::var(&GetInstance().m_fScale);
-    }
 
 public:
     static const SDL_FPoint& GetScale() noexcept

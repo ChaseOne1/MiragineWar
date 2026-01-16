@@ -1,12 +1,10 @@
 #pragma once
 #include "utility/Topics.hpp"
-#include "app/ScriptModule.hpp"
 
 namespace app {
-class EventBus : public utility::Singleton<EventBus>, public app::ScriptModule<EventBus>
+class EventBus : public utility::Singleton<EventBus>
 {
     friend class utility::Singleton<EventBus>;
-    friend class app::ScriptModule<EventBus>;
     using Topic = decltype(SDL_Event::type);
 
 private:
@@ -14,13 +12,14 @@ private:
     utility::Topics<Topic, std::function<void(const SDL_Event*)>> m_Topics;
 
 private:
-    EventBus() = default;
+    EventBus();
     ~EventBus() = default;
 
-    void RegisterEnv(sol::environment&);
 
 public:
     void Tick(SDL_Event* event);
+
+    static void RegisterToEnv();
 
     template <typename F>
     static auto Subscribe(Topic topic, F&& callback)

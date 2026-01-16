@@ -3,7 +3,6 @@
 #include "app/Component/TextureRotation.hpp"
 #include "app/Component/ZIndex.hpp"
 #include "app/Layout.hpp"
-#include "app/Settings.hpp"
 #include "app/Component/Texture.hpp"
 #include "app/Component/Text.hpp"
 #include "app/Renderer.hpp"
@@ -43,6 +42,12 @@ Render::Render()
     // we need to sort them after someone is destroyed, but this callback is called before destroy
     reg.on_destroy<app::comp::ZIndex>().connect<SetSortFlag>();
     EventBus::Subscribe(SDL_EVENT_WINDOW_RESIZED, ResizeTextRenderedFont);
+}
+
+Render::~Render()
+{
+    registry& reg = utility::Registry::GetInstance().GetRegistry();
+    reg.on_destroy<app::comp::ZIndex>().disconnect<SetSortFlag>();
 }
 
 void Render::Tick()

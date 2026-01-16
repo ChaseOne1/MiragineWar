@@ -1,19 +1,12 @@
 #pragma once
-#include "ScriptModule.hpp"
 
 namespace app {
-class ScriptLib : public utility::Singleton<ScriptLib>, public app::ScriptModule<ScriptLib>
+class ScriptLib : public utility::Singleton<ScriptLib>
 {
     friend class Singleton;
-    friend class ScriptModule;
 
 private:
-    ScriptLib() = default;
+    ScriptLib();
     ~ScriptLib() = default;
-
-    void RegisterEnv(sol::environment&);
-
-public:
-
 };
 }

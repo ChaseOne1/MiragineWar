@@ -1,5 +1,6 @@
 #pragma once
 #include "utility/Topics.hpp"
+#include <iostream>
 
 namespace app {
 class ScriptManager : public utility::Singleton<ScriptManager>
@@ -40,10 +41,12 @@ private:
     ~ScriptManager() = default;
 
     bool DetectChanges();
-    sol::object LuaRequire(const std::string&, sol::environment&);
+
+    sol::object LuaRequire(std::string_view, sol::environment&);
 
 private:
     sol::state m_LuaState;
+    sol::function m_fnRequirer;
     utility::Topics<std::filesystem::path> m_FileChanged;
     std::unordered_map<std::filesystem::path, std::filesystem::file_time_type> m_FileLastWrite;
 };

@@ -1,12 +1,16 @@
 #include "EventBus.hpp"
+#include "app/ScriptManager.hpp"
 
 using namespace app;
 
-void EventBus::RegisterEnv(sol::environment& env)
+
+
+EventBus::EventBus()
 {
-    auto type = env.new_usertype<EventBus>("EventBus", sol::no_constructor);
-    type["Subscribe"] = &EventBus::Subscribe<sol::function>;
-    type["Unsubscribe"] = &EventBus::Unsubscribe;
+    auto type = app::ScriptManager::GetLuaState()
+                    .new_usertype<EventBus>("EventBus", sol::no_constructor);
+    type["Subscribe"] = EventBus::Subscribe<sol::function>;
+    type["Unsubscribe"] = EventBus::Unsubscribe;
 }
 
 void EventBus::Tick(SDL_Event* event)

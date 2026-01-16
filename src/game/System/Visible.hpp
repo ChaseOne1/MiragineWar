@@ -13,7 +13,7 @@ private:
 
 private:
     Visible();
-    ~Visible() = default;
+    ~Visible();
 
     void OnTransformConstruct(entt::registry&, entt::entity);
     void OnTransformUpdate(entt::registry&, entt::entity);

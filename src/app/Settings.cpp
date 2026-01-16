@@ -4,8 +4,8 @@
 using namespace app;
 
 Settings::Settings()
-    : m_settings(ScriptManager::GetLuaState().unsafe_script_file(ScriptManager::GetScriptFilePathString(msc_settings_file_name)))
-    , m_language(ScriptManager::GetLuaState().unsafe_script_file(ScriptManager::GetScriptFilePathString(msc_language_CHS_file_name)))
+    : m_settings(ScriptManager::GetLuaState().script(R"(return require("settings"))"))
+    , m_language(ScriptManager::GetLuaState().script(R"(return require("language_chs"))"))
 {
     // NOTE: DO NOT do any action except return a value in these file
 }

@@ -23,6 +23,12 @@ Visible::Visible()
     reg.on_destroy<game::comp::Transform>().connect<&Visible::OnTransformDestroy>(this);
 }
 
+Visible::~Visible()
+{
+    registry& reg = utility::Registry::GetInstance().GetRegistry();
+    reg.on_destroy<game::comp::Transform>().disconnect<&Visible::OnTransformDestroy>(this);
+}
+
 static bool CheckValid(const registry& reg, entity ent)
 {
     // NOTE: we only manage those that are not UI elements and can be seen (such as those with textures or text),

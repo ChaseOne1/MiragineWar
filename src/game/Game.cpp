@@ -3,7 +3,6 @@
 #include "app/ScriptManager.hpp"
 #include "game/Component/Logic.hpp"
 #include "game/Logic/MainMenuScene.hpp"
-#include "game/System/NetGame.hpp"
 
 using namespace game;
 using namespace entt;

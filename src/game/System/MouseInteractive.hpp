@@ -15,6 +15,7 @@ private:
 
 private:
     MouseInteractive();
+    ~MouseInteractive();
 
     void OnClick(const SDL_Event* event);
     void OnMotion(const SDL_Event* event);

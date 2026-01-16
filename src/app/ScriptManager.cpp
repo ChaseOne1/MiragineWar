@@ -1,9 +1,9 @@
 #include "ScriptManager.hpp"
+#include "app/ScriptLib.hpp"
 #include "app/System/Timer.hpp"
 
 using namespace app;
 
-static sol::function gs_fnRequirer;
 static constexpr std::string_view gsc_ScriptEngineFileName = "ScriptEngine.lua";
 
 ScriptManager::ScriptManager()
@@ -11,16 +11,16 @@ ScriptManager::ScriptManager()
     m_LuaState.open_libraries(sol::lib::base, sol::lib::package, sol::lib::math, sol::lib::string, sol::lib::table);
 
     // override require for hot-reloading
-    gs_fnRequirer = m_LuaState["require"];
+    m_fnRequirer = m_LuaState["require"];
     const std::string curr_path = m_LuaState["package"]["path"];
     m_LuaState["package"]["path"] = curr_path + ";" + SCRIPT_ROOT_PATH.string() + "?.lua";
     m_LuaState["require"] = [](const std::string_view name, sol::this_environment env) { return ScriptManager::GetInstance().LuaRequire(std::string(name), env); };
 
-    // inject global functions
+    // inject global module
     m_LuaState.script_file(GetScriptFilePathString(gsc_ScriptEngineFileName));
 
     // TODO: disable this function if release mode
-    app::sys::Timer::AddTimer(std::chrono::milliseconds(1000u), [] { return ScriptManager::GetInstance().DetectChanges(); });
+    app::sys::Timer::AddTimer(std::chrono::milliseconds(1000u), [] { return GetInstance().DetectChanges(); });
 }
 
 bool ScriptManager::DetectChanges()
@@ -39,7 +39,7 @@ bool ScriptManager::DetectChanges()
     return true;
 }
 
-sol::object ScriptManager::LuaRequire(const std::string& name, sol::environment& env)
+sol::object ScriptManager::LuaRequire(std::string_view name, sol::environment& env)
 {
     if (sol::object module = GetLuaState()["package"]["loaded"][name]; module.valid()) return module;
 
@@ -47,14 +47,16 @@ sol::object ScriptManager::LuaRequire(const std::string& name, sol::environment&
     std::replace_copy(name.cbegin(), name.cend(), path.begin(), '.', '/');
     path = SCRIPT_ROOT_PATH.string() + path + ".lua";
     if (!m_FileChanged.GetSubscriberCount(path)) {
-        Subscribe(path, [=] {
+        Subscribe(path, [name = std::string(name)] {
             // NOTE: if the module already has a reloading handler, it should do something like this.
             // update the cache in package loaded for downstream dependencies
-            static_cast<void>(GetLuaState()[SGM_ReloadModule].get<sol::function>()(name));
+            if (sol::function func = GetLuaState()[SGM_ReloadModule].get_or<sol::function>(sol::nil); func.valid())
+                func(name);
         });
     }
 
-    const sol::load_status status = static_cast<sol::load_status>(luaL_loadfilex(GetLuaState(), path.c_str(), sol::to_string(sol::load_mode::any).c_str()));
+    const sol::load_status status = static_cast<sol::load_status>(luaL_loadfilex(GetLuaState(), path.c_str(),
+        sol::to_string(sol::load_mode::any).c_str()));
     if (status == sol::load_status::ok) {
         static_cast<void>(env.push());
         lua_setupvalue(GetLuaState(), -2, 1);

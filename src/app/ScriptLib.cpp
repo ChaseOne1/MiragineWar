@@ -2,9 +2,12 @@
 #include "ScriptTypes.hpp"
 #include "app/Component/RenderCallback.hpp"
 #include "app/Component/Texture.hpp"
+#include "app/ScriptManager.hpp"
 #include "app/System/Time.hpp"
 #include "app/resources/AnimSeqFrames.hpp"
 #include "app/resources/Mox.hpp"
+
+using namespace app;
 
 static decltype(auto) GenerateAnimCallback(app::comp::Texture& tex, app::AnimSeqFrames::ANIM lua_anim, const std::shared_ptr<app::AnimSeqFrames>& asf)
 {
@@ -34,11 +37,11 @@ struct OverloadSet<Ctors<ArgsTuples...>, C>
 };
 
 template <typename T>
-static void RegisterType(sol::environment& env)
+static void RegisterType()
 {
     auto refl = mirrow::srefl::reflect<T>();
     SDL_Log("ScriptLib::RegisterType: %s", refl.name().data());
-    sol::usertype<T> type = env.new_usertype<T>(refl.name().data() + std::string("Type"));
+    sol::usertype<T> type = app::ScriptManager::GetLuaState().new_usertype<T>(refl.name().data() + std::string("Type"));
 
     refl.visit_fields([&type](auto&& field) { type[field.name()] = field.pointer(); });
 
@@ -54,12 +57,12 @@ static void RegisterType(sol::environment& env)
 }
 
 template <typename... Ts>
-static void RegisterTypes(sol::environment& env)
+static void RegisterTypes()
 {
-    (RegisterType<Ts>(env), ...);
+    (RegisterType<Ts>(), ...);
 }
 
-void app::ScriptLib::RegisterEnv(sol::environment& env)
+ScriptLib::ScriptLib()
 {
     // clang-format off
     RegisterTypes<
@@ -70,9 +73,9 @@ void app::ScriptLib::RegisterEnv(sol::environment& env)
         app::AnimSeqFrames::AnimInfo,
         app::Mox::Header,
         app::Mox
-    >(env);
+    >();
     // clang-format on
 
-    auto type = env.new_usertype<ScriptLib>("ScriptLib", sol::no_constructor);
+    auto type = app::ScriptManager::GetLuaState().new_usertype<ScriptLib>("ScriptLib", sol::no_constructor);
     type["GenerateAnimCallback"] = GenerateAnimCallback;
 }

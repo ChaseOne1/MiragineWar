@@ -2,7 +2,6 @@
 #include "app/resources/Index.hpp"
 #include "app/resources/Pak.hpp"
 #include "utility/LRU.hpp"
-#include "ScriptModule.hpp"
 
 #define RESOURCE_CACHE_NUM 100u
 #define INDEX_CACHE_NUM 10u
@@ -10,10 +9,9 @@
 
 namespace app {
 
-class Resources final : public utility::Singleton<Resources>, public app::ScriptModule<Resources>
+class Resources final : public utility::Singleton<Resources>
 {
     friend class utility::Singleton<Resources>;
-    friend class app::ScriptModule<Resources>;
 
 private:
     utility::LRUContainer<GUID_t, std::shared_ptr<void>, GUIDHash> m_Resources { RESOURCE_CACHE_NUM };
@@ -28,7 +26,6 @@ private:
     template <typename T>
     static std::shared_ptr<T> LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data);
 
-    void RegisterEnv(sol::environment&);
 
 public:
     template <typename T>

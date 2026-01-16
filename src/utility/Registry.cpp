@@ -15,9 +15,9 @@
 using namespace utility;
 
 template <typename... Comps>
-static void RegisterComponents(sol::environment& env)
+static void RegisterComponents()
 {
-    (Comps::RegisterToEnv(env), ...);
+    (Comps::RegisterToEnv(), ...);
 }
 
 static decltype(auto) LuaEntityDestroy(sol::stack_table entity)
@@ -30,7 +30,7 @@ static decltype(auto) LuaEntityValid(sol::stack_table entity)
     return utility::Registry::GetRegistry().valid(entity.raw_get<entt::entity>("id"));
 }
 
-void Registry::RegisterEnv(sol::environment& env)
+void Registry::RegisterToLua()
 {
     // clang-format off
     RegisterComponents<
@@ -46,10 +46,10 @@ void Registry::RegisterEnv(sol::environment& env)
         app::comp::TextureGrid,
         game::comp::UIClickable,
         game::comp::UIPointable
-    >(env);
+    >();
     // clang-format on
 
-    env["Entity"] = []() {
+    app::ScriptManager::GetLuaState()["Entity"] = []() {
         return app::ScriptManager::GetLuaState().create_table_with(
             "id", GetRegistry().create(),
             "destroy", LuaEntityDestroy,

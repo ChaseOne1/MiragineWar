@@ -16,18 +16,20 @@ private:
 
         if (!SDL_SetRenderVSync(m_pRenderer, SDL_RENDERER_VSYNC_ADAPTIVE))
             SDL_SetRenderVSync(m_pRenderer, 1);
-
-
-        if (Settings::GetSettings()["render"]["use_pixelart_scale"]
-            && !SDL_SetDefaultTextureScaleMode(m_pRenderer, SDL_SCALEMODE_PIXELART)) {
-            SDL_Log("Set texture scale mode failed");
-        }
     }
 
     ~Renderer() { SDL_DestroyRenderer(m_pRenderer); }
 
 public:
     static SDL_Renderer* GetSDLRenderer() noexcept { return GetInstance().m_pRenderer; }
+
+    static void SetDefaultTextureScaleMode()
+    {
+        if (Settings::GetSettings()["render"]["use_pixelart_scale"]
+            && !SDL_SetDefaultTextureScaleMode(GetInstance().m_pRenderer, SDL_SCALEMODE_PIXELART)) {
+            SDL_Log("Set texture scale mode failed");
+        }
+    }
 
     static mathfu::vec2i GetRenderSize() noexcept
     {

@@ -36,6 +36,13 @@ MouseInteractive::MouseInteractive()
     app::EventBus::GetInstance().Subscribe(SDL_EVENT_WINDOW_RESIZED, std::bind(&MouseInteractive::OnWindowResize, this, std::placeholders::_1));
 }
 
+MouseInteractive::~MouseInteractive()
+{
+    auto& reg = utility::Registry::GetInstance().GetRegistry();
+    reg.on_destroy<comp::UIClickable>().disconnect<&MouseInteractive::OnClickableDestroy>(this);
+    reg.on_destroy<comp::UIPointable>().disconnect<&MouseInteractive::OnPointableDestroy>(this);
+}
+
 void MouseInteractive::OnClick(const SDL_Event* event)
 {
     auto& reg = utility::Registry::GetInstance().GetRegistry();

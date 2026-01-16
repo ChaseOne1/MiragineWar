@@ -1,6 +1,14 @@
 #include "Timer.hpp"
+#include "app/ScriptManager.hpp"
 
 using namespace app::sys;
+
+void Timer::RegisterToLua()
+{
+    auto type = app::ScriptManager::GetLuaState().new_usertype<Timer>("Timer", sol::no_constructor);
+    type["AddTimer"] = [](lua_Integer ms, sol::function f, bool callNow) { AddTimer(std::chrono::milliseconds(ms), f, callNow); };
+    type["DelTimer"] = DelTimer;
+}
 
 void Timer::Tick()
 {
@@ -27,13 +35,6 @@ void Timer::Tick()
     for (auto timer : rescheduled) {
         m_TimerHeap.emplace(timer);
     }
-}
-
-void Timer::RegisterEnv(sol::environment& env)
-{
-    auto type = env.new_usertype<Timer>("Timer", sol::no_constructor);
-    type["AddTimer"] = [this](lua_Integer ms, sol::function f, bool callNow) { this->AddTimer(std::chrono::milliseconds(ms), f, callNow); };
-    type["DelTimer"] = [this](TimerId id) { this->DelTimer(id); };
 }
 
 void Timer::DelTimer(TimerId timerId)

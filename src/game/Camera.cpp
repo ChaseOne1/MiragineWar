@@ -20,7 +20,7 @@ Camera::Camera()
         auto& input = app::sys::Input::GetInstance();
         registry& reg = utility::Registry::GetInstance().GetRegistry();
         if (input.IsPressed(app::Key::CAM_MOVE_UP)) {
-            reg.patch<game::comp::Movement>(m_Camera, [](game::comp::Movement& movement) { movement.m_Velocity.y = -msc_Velocity.y; });
+            reg.patch<game::comp::Movement>(m_Camera, [](game::comp::Movement& movement) { movement.m_Velocity.y = -GetInstance().mc_Velocity.y; });
         } else {
             reg.patch<game::comp::Movement>(m_Camera, [](game::comp::Movement& movement) { movement.m_Velocity.y = 0.f; });
         }
@@ -30,7 +30,7 @@ Camera::Camera()
         auto& input = app::sys::Input::GetInstance();
         registry& reg = utility::Registry::GetInstance().GetRegistry();
         if (input.IsPressed(app::Key::CAM_MOVE_DOWN)) {
-            reg.patch<game::comp::Movement>(m_Camera, [](game::comp::Movement& movement) { movement.m_Velocity.y = msc_Velocity.y; });
+            reg.patch<game::comp::Movement>(m_Camera, [](game::comp::Movement& movement) { movement.m_Velocity.y = GetInstance().mc_Velocity.y; });
         } else {
             reg.patch<game::comp::Movement>(m_Camera, [](game::comp::Movement& movement) { movement.m_Velocity.y = 0.f; });
         }
@@ -40,7 +40,7 @@ Camera::Camera()
         auto& input = app::sys::Input::GetInstance();
         registry& reg = utility::Registry::GetInstance().GetRegistry();
         if (input.IsPressed(app::Key::CAM_MOVE_LEFT)) {
-            reg.patch<game::comp::Movement>(m_Camera, [](game::comp::Movement& movement) { movement.m_Velocity.x = -msc_Velocity.x; });
+            reg.patch<game::comp::Movement>(m_Camera, [](game::comp::Movement& movement) { movement.m_Velocity.x = -GetInstance().mc_Velocity.x; });
         } else {
             reg.patch<game::comp::Movement>(m_Camera, [](game::comp::Movement& movement) { movement.m_Velocity.x = 0.f; });
         }
@@ -50,7 +50,7 @@ Camera::Camera()
         auto& input = app::sys::Input::GetInstance();
         registry& reg = utility::Registry::GetInstance().GetRegistry();
         if (input.IsPressed(app::Key::CAM_MOVE_RIGHT)) {
-            reg.patch<game::comp::Movement>(m_Camera, [](game::comp::Movement& movement) { movement.m_Velocity.x = msc_Velocity.x; });
+            reg.patch<game::comp::Movement>(m_Camera, [](game::comp::Movement& movement) { movement.m_Velocity.x = GetInstance().mc_Velocity.x; });
         } else {
             reg.patch<game::comp::Movement>(m_Camera, [](game::comp::Movement& movement) { movement.m_Velocity.x = 0.f; });
         }

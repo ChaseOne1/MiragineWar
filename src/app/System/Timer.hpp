@@ -2,7 +2,7 @@
 #include "app/System/Time.hpp"
 
 namespace app::sys {
-class Timer : public utility::Singleton<Timer>, public app::ScriptModule<Timer>
+class Timer : public utility::Singleton<Timer>
 {
 public:
     using TimerId = std::uint32_t;
@@ -10,7 +10,6 @@ public:
 
 private:
     friend class utility::Singleton<Timer>;
-    friend class app::ScriptModule<Timer>;
 
     struct TimerInfo
     {
@@ -46,10 +45,11 @@ private:
     Timer() = default;
     ~Timer() = default;
 
-    void RegisterEnv(sol::environment&);
 
 public:
     void Tick();
+
+    static void RegisterToLua();
 
     template <typename F, typename = std::enable_if<std::is_invocable_r_v<bool, F>>>
     static TimerId AddTimer(std::chrono::milliseconds interval, F&& callable, bool callNow = false)

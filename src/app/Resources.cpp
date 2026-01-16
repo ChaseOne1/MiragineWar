@@ -1,30 +1,15 @@
 #include "Resources.hpp"
 #include "Renderer.hpp"
 #include "app/Component/Texture.hpp"
-#include "app/Layout.hpp"
+#include "app/ScriptManager.hpp"
 #include "app/resources/AnimSeqFrames.hpp"
 #include "app/resources/Mox.hpp"
-#include "app/resources/AllInOneIndex.hpp"
 
 using namespace app;
 
 Resources::Resources()
 {
-    // EventBus::Subscribe(SDL_EVENT_WINDOW_RESIZED, [this](const SDL_Event*) {
-    //     const float font_size = Settings::GetSettings()["Text"]["default_font_size"].get<float>() * app::Layout::GetScale().y;
-    //     const Index* idx = m_Indexes.Get(app::idx::TEXT_STYLE_IDX);
-    //     if (!idx) return;
-    //     for (const auto& pi : *idx) {
-    //         if(pi.second.m_eType != ResourceType::TTF) continue;
-    //         if (std::shared_ptr<void>* res = m_Resources.View(pi.first); res) TTF_SetFontSize((TTF_Font*)res->get(), font_size);
-    //         else continue;
-    //     }
-    // });
-}
-
-void Resources::RegisterEnv(sol::environment& env)
-{
-    auto type = env.new_usertype<Resources>("Resources", sol::no_constructor);
+    auto type = app::ScriptManager::GetLuaState().new_usertype<Resources>("Resources", sol::no_constructor);
     type["texture"] = [](std::string_view res, std::string_view idx) {
         return Resources::GetInstance().Require<SDL_Texture>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10));
     };
