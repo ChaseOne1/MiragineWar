@@ -29,7 +29,7 @@ public:
     static void ResizeWindow()
     {
         SDL_SetWindowSize(GetInstance().GetWindow(),
-            Settings::GetSettings()["app"]["window_width"], Settings::GetSettings()["app"]["window_height"]);
+            Settings::GetUser()["app"]["window_width"], Settings::GetUser()["app"]["window_height"]);
         SDL_SyncWindow(GetInstance().GetWindow());
     }
 };

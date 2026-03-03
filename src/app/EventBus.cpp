@@ -3,8 +3,6 @@
 
 using namespace app;
 
-
-
 EventBus::EventBus()
 {
     auto type = app::ScriptManager::GetLuaState()

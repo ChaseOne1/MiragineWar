@@ -10,16 +10,16 @@ using namespace app;
 Resources::Resources()
 {
     auto type = app::ScriptManager::GetLuaState().new_usertype<Resources>("Resources", sol::no_constructor);
-    type["texture"] = [](std::string_view res, std::string_view idx) {
+    type["texture"] = [](sol::string_view res, sol::string_view idx) {
         return Resources::GetInstance().Require<SDL_Texture>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10));
     };
-    type["font"] = [](std::string_view res, std::string_view idx) {
+    type["font"] = [](sol::string_view res, sol::string_view idx) {
         return std::static_pointer_cast<void>(Resources::GetInstance().Require<TTF_Font>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10)));
     };
-    type["asf"] = [](std::string_view res, std::string_view idx) {
+    type["asf"] = [](sol::string_view res, sol::string_view idx) {
         return Resources::GetInstance().Require<AnimSeqFrames>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10));
     };
-    type["mox"] = [](std::string_view res, std::string_view idx) {
+    type["mox"] = [](sol::string_view res, sol::string_view idx) {
         return Resources::GetInstance().Require<Mox>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10));
     };
 }
@@ -82,7 +82,7 @@ std::shared_ptr<TTF_Font> Resources::LoadFromMem(const ResDesc& desc, std::uniqu
     // NOTE: the stream must remain open, and the data must be valid before the font is closed,
     // setting closeio to true allows SDL_TTF to manage streams automatically
     SDL_IOStream* stream = SDL_IOFromConstMem(data.release(), desc.m_nSize);
-    return std::shared_ptr<TTF_Font>(TTF_OpenFontIO(stream, true, Settings::GetSettings()["Text"]["default_font_size"]), [](TTF_Font* font) { TTF_CloseFont(font); });
+    return std::shared_ptr<TTF_Font>(TTF_OpenFontIO(stream, true, Settings::GetSystem()["Text"]["default_font_size"]), [](TTF_Font* font) { TTF_CloseFont(font); });
 }
 
 template <>

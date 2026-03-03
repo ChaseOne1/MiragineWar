@@ -25,7 +25,7 @@ public:
 
     static void SetDefaultTextureScaleMode()
     {
-        if (Settings::GetSettings()["render"]["use_pixelart_scale"]
+        if (Settings::GetSystem()["render"]["use_pixelart_scale"]
             && !SDL_SetDefaultTextureScaleMode(GetInstance().m_pRenderer, SDL_SCALEMODE_PIXELART)) {
             SDL_Log("Set texture scale mode failed");
         }

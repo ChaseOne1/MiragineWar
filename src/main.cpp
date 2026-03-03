@@ -7,6 +7,7 @@
 #include "app/Layout.hpp"
 #include "app/Resources.hpp"
 #include "app/TextEngine.hpp"
+#include "app/ScriptLib.hpp"
 
 #include "app/System/Input.hpp"
 #include "app/System/RenderCallback.hpp"
@@ -14,14 +15,13 @@
 #include "app/System/Time.hpp"
 #include "app/System/Timer.hpp"
 #include "app/System/Network.hpp"
-//-------------------------------------------
+
 #include "game/Game.hpp"
 #include "game/Camera.hpp"
 
 #include "game/System/Move.hpp"
 #include "game/System/Logic.hpp"
 #include "game/System/Visible.hpp"
-#include "game/System/GarbageCollection.hpp"
 #include "game/System/MouseInteractive.hpp"
 
 SDL_AppResult SDL_AppInit(void**, int, char**)
@@ -47,11 +47,11 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
 
     // To avoid circular dependencies during construction,
     // we process them after construction is complete.
+    app::Window::ResizeWindow();
+    app::Renderer::SetDefaultTextureScaleMode();
     utility::Registry::RegisterToLua();
     app::sys::Time::RegisterToLua();
     app::sys::Timer::RegisterToLua();
-    app::Window::ResizeWindow();
-    app::Renderer::SetDefaultTextureScaleMode();
     
     app::Settings::GetInstance();
     app::Resources::GetInstance();
@@ -95,9 +95,7 @@ SDL_AppResult SDL_AppIterate(void*)
     SDL_RenderPresent(renderer);
     // Render End
 
-    app::EventBus::GetInstance().CleanUp();
     game::sys::Visible::GetInstance().CleanUp();
-    game::sys::GarbageCollection::GetInstance().Tick();
 
     return SDL_APP_CONTINUE;
 }

@@ -121,7 +121,7 @@ namespace encode {
         data.push_back(detail::type::NIL);
     }
 
-    inline void string(std::string& data, std::string_view sv)
+    inline void string(std::string& data, sol::string_view sv)
     {
         if (sv.size() < 32) {
             data.push_back(detail::type::FIXSTR | (sv.size() & 0xFF));
@@ -155,10 +155,10 @@ inline void pack(std::string& data, const sol::variadic_args& args)
             encode::nil(data);
             break;
         case sol::type::string:
-            encode::string(data, value.as<std::string_view>());
+            encode::string(data, value.as<sol::string_view>());
             break;
         default:
-            SDL_Log("utility::pack: cannot handle the type: %d", value.get_type());
+            SDL_Log("utility::pack: cannot handle the type: %d", (int)value.get_type());
             break;
         }
     }
@@ -307,7 +307,7 @@ namespace decode {
             return {};
         }
 
-        const std::string_view str { data.data(), len };
+        const sol::string_view str { data.data(), len };
         data.remove_prefix(len);
         return str;
     }
@@ -324,7 +324,7 @@ namespace decode {
             return sol::nil;
         }
 
-        const std::string_view str { data.data(), len };
+        const sol::string_view str { data.data(), len };
         data.remove_prefix(len);
         return sol::make_object(state, str);
     }
@@ -339,13 +339,13 @@ namespace decode {
         else if (type == detail::type::STR16) len = detail::read_bytes<uint16_t>(data);
         else if (type == detail::type::STR32) len = detail::read_bytes<uint32_t>(data);
         else {
-            SDL_Log("utility::decode::string: invalid string type");
+            SDL_Log("utility::decode::string: invalid string type: %d", type);
             return {};
         }
 
         if (data.size() < len) {
             SDL_Log("utility::decode::fix_string: string length exceeds buffer:"
-                    "expected length = %zu, buffer size = %zu",
+                    "expected length = %zu buffer size = %zu",
                 len, data.size());
             return {};
         }
@@ -365,7 +365,7 @@ namespace decode {
         else if (type == detail::type::STR16) len = detail::read_bytes<uint16_t>(data);
         else if (type == detail::type::STR32) len = detail::read_bytes<uint32_t>(data);
         else {
-            SDL_Log("utility::decode::string: invalid string type");
+            SDL_Log("utility::decode::string: invalid string type %d", type);
             return sol::nil;
         }
 
@@ -376,7 +376,7 @@ namespace decode {
             return sol::nil;
         }
 
-        const std::string_view str { data.data(), len };
+        const sol::string_view str { data.data(), len };
         data.remove_prefix(len);
         return sol::make_object(state, str);
     }

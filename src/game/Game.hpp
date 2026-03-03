@@ -1,8 +1,9 @@
 #pragma once
+#include "app/ScriptContext.hpp"
 #include "utility/Registry.hpp"
 
 namespace game {
-class Game : public utility::Singleton<Game>
+class Game : public utility::Singleton<Game>, public app::ScriptContext
 {
     friend class utility::Singleton<Game>;
 

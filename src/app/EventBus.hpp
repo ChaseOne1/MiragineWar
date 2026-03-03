@@ -31,7 +31,5 @@ public:
     {
         GetInstance().m_Topics.Unsubscribe(topic, id);
     }
-
-    static void CleanUp() { GetInstance().m_Topics.CleanUp(); }
 };
 }
