@@ -1,4 +1,5 @@
 #include "Move.hpp"
+#include "MWProtocol/MessageIdentifiers.hh"
 #include "game/Component/Movement.hpp"
 #include "game/Component/Transform.hpp"
 #include "app/System/Time.hpp"
@@ -9,6 +10,17 @@
 using namespace game::sys;
 using namespace entt;
 using namespace mathfu;
+using app::InboundPacket;
+
+Move::Move()
+{
+    app::sys::Network::Subscribe(proto::MessageID::ID_POSTION_SYNC,
+        [this](const app::InboundPacket& packet) { this->OnPositionSync(packet); });
+}
+
+void Move::OnPositionSync(const InboundPacket& packet)
+{
+}
 
 void Move::Tick()
 {

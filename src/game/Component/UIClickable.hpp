@@ -10,8 +10,8 @@ struct UIClickable : app::ScriptComponent<UIClickable>
     mathfu::vec4 m_Area;
 
     template <typename F>
-    UIClickable(F&& onClickInCallback, float cx, float cy, float hw, float hh)
-        : m_ClickInCallback(std::forward<F>(onClickInCallback))
+    UIClickable(F&& onClickOutCallback, float cx, float cy, float hw, float hh)
+        : m_ClickOutCallback(std::forward<F>(onClickOutCallback))
         , m_Area { cx, cy, hw, hh }
     { }
 

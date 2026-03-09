@@ -7,6 +7,7 @@
 #include "app/Layout.hpp"
 #include "app/Resources.hpp"
 #include "app/TextEngine.hpp"
+#include "app/ScriptLib.hpp"
 
 #include "app/System/Input.hpp"
 #include "app/System/RenderCallback.hpp"
@@ -14,14 +15,13 @@
 #include "app/System/Time.hpp"
 #include "app/System/Timer.hpp"
 #include "app/System/Network.hpp"
-//-------------------------------------------
+
 #include "game/Game.hpp"
 #include "game/Camera.hpp"
 
 #include "game/System/Move.hpp"
 #include "game/System/Logic.hpp"
 #include "game/System/Visible.hpp"
-#include "game/System/GarbageCollection.hpp"
 #include "game/System/MouseInteractive.hpp"
 
 SDL_AppResult SDL_AppInit(void**, int, char**)
@@ -31,12 +31,12 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
         return SDL_APP_FAILURE;
 
     app::TTF::GetInstance();
-    app::Window::GetInstance(); 
+    app::Window::GetInstance();
     app::Renderer::GetInstance();
     app::TextEngine::GetInstance();
 
     // In the destruction of some Lua objects involving the entt library,
-    // it is necessary to check whether their entities are valid; 
+    // it is necessary to check whether their entities are valid;
     // therefore, it is necessary to ensure that
     // the Registry is destroyed after the ScriptManager
     utility::Registry::GetInstance();
@@ -47,12 +47,12 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
 
     // To avoid circular dependencies during construction,
     // we process them after construction is complete.
+    app::Window::ResizeWindow();
+    app::Renderer::SetDefaultTextureScaleMode();
     utility::Registry::RegisterToLua();
     app::sys::Time::RegisterToLua();
     app::sys::Timer::RegisterToLua();
-    app::Window::ResizeWindow();
-    app::Renderer::SetDefaultTextureScaleMode();
-    
+
     app::Settings::GetInstance();
     app::Resources::GetInstance();
     app::EventBus::GetInstance();
@@ -95,9 +95,7 @@ SDL_AppResult SDL_AppIterate(void*)
     SDL_RenderPresent(renderer);
     // Render End
 
-    app::EventBus::GetInstance().CleanUp();
     game::sys::Visible::GetInstance().CleanUp();
-    game::sys::GarbageCollection::GetInstance().Tick();
 
     return SDL_APP_CONTINUE;
 }
@@ -109,7 +107,8 @@ SDL_AppResult SDL_AppEvent(void*, SDL_Event* event)
 
     app::EventBus::GetInstance().Tick(event);
 
-    return SDL_APP_CONTINUE; }
+    return SDL_APP_CONTINUE;
+}
 
 void SDL_AppQuit(void*, SDL_AppResult result)
 {

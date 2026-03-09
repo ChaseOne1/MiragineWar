@@ -1,24 +1,7 @@
 #include "Registry.hpp"
-#include "app/Component/TextureGrid.hpp"
 #include "app/ScriptManager.hpp"
-#include "app/Component/Text.hpp"
-#include "app/Component/Texture.hpp"
-#include "app/Component/ZIndex.hpp"
-#include "game/Component/Logic.hpp"
-#include "game/Component/Movement.hpp"
-#include "game/Component/UIClickable.hpp"
-#include "game/Component/UIElement.hpp"
-#include "app/Component/RenderCallback.hpp"
-#include "game/Component/Transform.hpp"
-#include "game/Component/UIPointable.hpp"
 
 using namespace utility;
-
-template <typename... Comps>
-static void RegisterComponents()
-{
-    (Comps::RegisterToEnv(), ...);
-}
 
 static decltype(auto) LuaEntityDestroy(sol::stack_table entity)
 {
@@ -32,22 +15,8 @@ static decltype(auto) LuaEntityValid(sol::stack_table entity)
 
 void Registry::RegisterToLua()
 {
-    // clang-format off
-    RegisterComponents<
-        game::comp::UIElement,
-        app::comp::Texture,
-        game::comp::Transform,
-        app::comp::ZIndex,
-        app::comp::Text,
-        app::comp::PreRender,
-        app::comp::PostRender,
-        game::comp::Movement,
-        game::comp::Logic,
-        app::comp::TextureGrid,
-        game::comp::UIClickable,
-        game::comp::UIPointable
-    >();
-    // clang-format on
+    RegisterAppComponents();
+    RegisterGameComponents();
 
     app::ScriptManager::GetLuaState()["Entity"] = []() {
         return app::ScriptManager::GetLuaState().create_table_with(

@@ -23,7 +23,7 @@ public:
             [](TTF_Text* text) { TTF_DestroyText(text); } };
     }
 
-    Text(std::string_view text, const std::shared_ptr<void>& font, sol::variadic_args font_size)
+    Text(sol::string_view text, const std::shared_ptr<void>& font, sol::variadic_args font_size)
         : m_LogicalFont(TTF_CopyFont((TTF_Font*)font.get()), [](void*) { })
         , m_RenderedFont(TTF_CopyFont((TTF_Font*)font.get()), [](void*) { })
         , m_Text(nullptr, nullptr)
@@ -90,7 +90,7 @@ public:
 // clang-format off
 srefl_class(app::comp::Text,
     ctors(
-        ctor(std::string_view, const std::shared_ptr<void>&, sol::variadic_args)
+        ctor(sol::string_view, const std::shared_ptr<void>&, sol::variadic_args)
     )
     fields(
         field(&app::comp::Text::m_Offset),

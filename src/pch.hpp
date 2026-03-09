@@ -17,8 +17,8 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
-#include <SDL3_ttf/SDL_ttf.h>
 #include <toml++/toml.hpp>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <entt/entt.hpp>
 #include <mathfu/vector.h>
 #include <mathfu/matrix.h>

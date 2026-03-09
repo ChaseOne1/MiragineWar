@@ -26,7 +26,7 @@ set(SDLTTF_PLUTOSVG OFF)
 add_subdirectory(3rdlibs/SDL3_ttf EXCLUDE_FROM_ALL)
 target_compile_options(harfbuzz PRIVATE -Wa,-mbig-obj) # for SDL_ttf's dependency on mingw
 
-add_subdirectory(3rdlibs/toml++ EXCLUDE_FROM_ALL)
+add_subdirectory(3rdlibs/toml++)
 
 add_subdirectory(3rdlibs/entt EXCLUDE_FROM_ALL)
 
@@ -65,4 +65,4 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.hpp)
 target_include_directories(${PROJECT_NAME} PRIVATE src ${LUA_ROOT}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${LUA_ROOT}/lib)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
-target_compile_options(${PROJECT_NAME} PRIVATE -g -Wa,-mbig-obj -fno-rtti -Og)
+target_compile_options(${PROJECT_NAME} PRIVATE -g1 -Wa,-mbig-obj -fno-rtti)

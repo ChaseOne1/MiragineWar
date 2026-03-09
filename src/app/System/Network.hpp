@@ -28,12 +28,6 @@ private:
     static void HandleLuaRpcCall(const InboundPacket&);
 
 public:
-    enum MessageID : uint8_t
-{
-    ID_RPC_CALL = ID_USER_PACKET_ENUM,
-};
-
-public:
     Network();
     ~Network();
 

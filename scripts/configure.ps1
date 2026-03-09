@@ -18,9 +18,6 @@ cd mathfu
 git submodule update --init --depth 1 dependencies/fplutil
 git submodule update --init --depth 1 dependencies/vectorial
 
-cd ../MiragineWarProtocol
-git submodule update --init --depth 1 3rdlibs/protobuf
-
 cd ../SDL3_image
 git submodule update --init --depth 1 external/libpng
 git submodule update --init --depth 1 external/jpeg
@@ -31,4 +28,4 @@ git submodule update --init --depth 1 external/freetype
 git submodule update --init --depth 1 external/harfbuzz
 
 cd ../../
-echo 'initialize done'
+echo 'initialize done!'

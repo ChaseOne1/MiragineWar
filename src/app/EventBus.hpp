@@ -19,8 +19,6 @@ private:
 public:
     void Tick(SDL_Event* event);
 
-    static void RegisterToEnv();
-
     template <typename F>
     static auto Subscribe(Topic topic, F&& callback)
     {
@@ -31,7 +29,5 @@ public:
     {
         GetInstance().m_Topics.Unsubscribe(topic, id);
     }
-
-    static void CleanUp() { GetInstance().m_Topics.CleanUp(); }
 };
 }
