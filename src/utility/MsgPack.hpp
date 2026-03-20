@@ -117,10 +117,10 @@ namespace encode {
 
     inline void floating(std::string& data, double value) noexcept
     {
-        if(value == static_cast<float>(value)){
+        if (value == static_cast<float>(value)) {
             data.push_back(detail::type::FLOAT);
             detail::write_bytes(data, static_cast<float>(value));
-        }else{
+        } else {
             data.push_back(detail::type::DOUBLE);
             detail::write_bytes(data, static_cast<double>(value));
         }
@@ -128,7 +128,7 @@ namespace encode {
 
     inline void boolean(std::string& data, bool value) noexcept
     {
-        if(value) data.push_back(detail::type::TTURE);
+        if (value) data.push_back(detail::type::TTURE);
         else data.push_back(detail::type::TFALSE);
     }
 
@@ -141,13 +141,13 @@ namespace encode {
     {
         if (sv.size() < 32) {
             data.push_back(detail::type::FIXSTR | (sv.size() & 0xFF));
-        }else if(sv.size() <= 0xFF){
+        } else if (sv.size() <= 0xFF) {
             data.push_back(detail::type::STR8);
             data.push_back(sv.size());
-        }else if(sv.size() <= 0xFFFF){
+        } else if (sv.size() <= 0xFFFF) {
             data.push_back(detail::type::STR16);
             detail::write_bytes(data, static_cast<std::uint16_t>(sv.size()));
-        }else{
+        } else {
             data.push_back(detail::type::STR32);
             detail::write_bytes(data, static_cast<std::uint32_t>(sv.size()));
         }
@@ -305,7 +305,7 @@ inline void pack(std::string& data, const sol::variadic_args& args)
 {
     data.reserve(args.size() * 8); // just an estimate
 
-    for(const auto& value : args) 
+    for (const auto& value : args)
         detail::encode_value(data, value);
 }
 
@@ -461,6 +461,30 @@ namespace decode {
         return sol::nil;
     }
 
+    inline std::string_view fixstring(std::string_view& data)
+    {
+        if (data.empty()) {
+            throw std::runtime_error("decode::string: empty buffer");
+        }
+
+        const std::uint8_t type = data[0];
+        data.remove_prefix(1);
+
+        const std::size_t len = type & 0x1F;
+
+        if (data.size() < len) {
+
+            SDL_Log("utility::decode::string: string length exceeds buffer:"
+                    "expected length = %zu, buffer size = %zu",
+                len, data.size());
+            return {};
+        }
+
+        const sol::string_view str { data.data(), len };
+        data.remove_prefix(len);
+        return str;
+    }
+
     inline std::string_view string(std::string_view& data)
     {
         if (data.empty()) {
@@ -471,22 +495,13 @@ namespace decode {
         data.remove_prefix(1);
 
         std::size_t len = 0;
-        switch(type){
-            case detail::type::FIXSTR:
-                len = type & 0x1F;
-                break;
-            case detail::type::STR8:
-                len = detail::read_bytes<uint8_t>(data);
-                break;
-            case detail::type::STR16:
-                len = detail::read_bytes<uint16_t>(data);
-                break;
-            case detail::type::STR32:
-                len = detail::read_bytes<uint32_t>(data);
-                break;
-            default:
-                SDL_Log("utility::decode::string: invalid string type: %d", type);
-                return {};
+        switch (type) {
+        case detail::type::STR8:  len = detail::read_bytes<uint8_t>(data); break;
+        case detail::type::STR16: len = detail::read_bytes<uint16_t>(data); break;
+        case detail::type::STR32: len = detail::read_bytes<uint32_t>(data); break;
+        default:
+            SDL_Log("utility::decode::string: invalid string type: %d", type);
+            return {};
         }
 
         if (data.size() < len) {
@@ -501,6 +516,30 @@ namespace decode {
         return str;
     }
 
+    inline sol::object fixstring(std::string_view& data, const sol::state& state)
+    {
+        if (data.empty()) {
+            throw std::runtime_error("decode::string: empty buffer");
+        }
+
+        const std::uint8_t type = data[0];
+        data.remove_prefix(1);
+
+        const std::size_t len = type & 0x1F;
+
+        if (data.size() < len) {
+
+            SDL_Log("utility::decode::string: string length exceeds buffer:"
+                    "expected length = %zu, buffer size = %zu",
+                len, data.size());
+            return sol::nil;
+        }
+
+        const sol::string_view str { data.data(), len };
+        data.remove_prefix(len);
+        return sol::make_object(state, str);
+    }
+
     inline sol::object string(std::string_view& data, const sol::state& state)
     {
         if (data.empty()) {
@@ -511,22 +550,13 @@ namespace decode {
         data.remove_prefix(1);
 
         std::size_t len = 0;
-        switch(type){
-            case detail::type::FIXSTR:
-                len = type & 0x1F;
-                break;
-            case detail::type::STR8:
-                len = detail::read_bytes<uint8_t>(data);
-                break;
-            case detail::type::STR16:
-                len = detail::read_bytes<uint16_t>(data);
-                break;
-            case detail::type::STR32:
-                len = detail::read_bytes<uint32_t>(data);
-                break;
-            default:
-                SDL_Log("utility::decode::string: invalid string type: %d", type);
-                return sol::nil;
+        switch (type) {
+        case detail::type::STR8:  len = detail::read_bytes<uint8_t>(data); break;
+        case detail::type::STR16: len = detail::read_bytes<uint16_t>(data); break;
+        case detail::type::STR32: len = detail::read_bytes<uint32_t>(data); break;
+        default:
+            SDL_Log("utility::decode::string: invalid string type: %d", type);
+            return sol::nil;
         }
 
         if (data.size() < len) {
@@ -569,13 +599,13 @@ namespace decode {
                 break;
             }
             sol::object key = detail::decode_value(data, state);
-            
+
             if (data.empty()) {
                 SDL_Log("decode::map: unexpected EOF (value %zu)", i);
                 break;
             }
             sol::object val = detail::decode_value(data, state);
-            
+
             tbl[key] = val;
         }
 
@@ -607,11 +637,11 @@ namespace decode {
         for (size_t i = 0; i < array_size; ++i) {
             if (data.empty()) {
                 SDL_Log("decode::array: unexpected EOF (element %zu)", i);
-                tbl[i+1] = sol::nil;
+                tbl[i + 1] = sol::nil;
                 continue;
             }
             sol::object elem = detail::decode_value(data, state);
-            tbl[i+1] = elem;
+            tbl[i + 1] = elem;
         }
 
         return tbl;
@@ -630,19 +660,24 @@ namespace detail
         const uint8_t type_byte = data[0];
 
         using detail::type;
-        if ((type_byte & 0xF0) == static_cast<uint8_t>(FIXARRAY)
-            || static_cast<detail::type>(type_byte) == ARRAY16
-            || static_cast<detail::type>(type_byte) == ARRAY32) {
+
+        if ((type_byte & 0x80) == 0 || (type_byte & 0xE0) == 0xE0) {
+            return decode::fix_integer(data, state);
+        }
+
+        if ((type_byte & 0xE0) == FIXSTR) {
+            return decode::fixstring(data, state);
+        } 
+
+        if ((type_byte & 0xF0) == FIXARRAY || type_byte == ARRAY16 || type_byte == ARRAY32) {
             return decode::array(data, state);
         }
 
-        if ((type_byte & 0xF0) == static_cast<uint8_t>(FIXMAP)
-            || static_cast<detail::type>(type_byte) == MAP16
-            || static_cast<detail::type>(type_byte) == MAP32) {
+        if ((type_byte & 0xF0) == FIXMAP || type_byte == MAP16 || type_byte == MAP32) {
             return decode::map(data, state);
         }
 
-        switch (static_cast<detail::type>(type_byte)) {
+        switch (type_byte) {
             case UINT8: case UINT16: case UINT32: case UINT64:
             case INT8:  case INT16:  case INT32:  case INT64:
             return decode::integer(data, state);
@@ -652,16 +687,12 @@ namespace detail
             return decode::boolean(data, state);
         case NIL:
             return decode::nil(data);
-        case FIXSTR: case STR8: case STR16: case STR32:
+        case STR8: case STR16: case STR32:
             return decode::string(data, state);
         default:
-            if ((type_byte & 0x80) == 0 || (type_byte & 0xE0) == 0xE0) {
-                return decode::fix_integer(data, state);
-            } else {
-                SDL_Log("decode_value: unknown type (%02X)", type_byte);
-                data.remove_prefix(1);
-                return sol::nil;
-            }
+            SDL_Log("decode_value: unknown type (%02X)", type_byte);
+            data.remove_prefix(1);
+            return sol::nil;
         }
     }
 }

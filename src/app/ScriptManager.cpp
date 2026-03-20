@@ -12,7 +12,7 @@ ScriptManager::ScriptManager()
     m_fnRequirer = m_LuaState["require"];
     const std::string curr_path = m_LuaState["package"]["path"];
     m_LuaState["package"]["path"] = curr_path + ";" + SCRIPT_ROOT_PATH.string() + "?.lua";
-    m_LuaState["require"] = [](const sol::string_view name, sol::this_environment env) { return ScriptManager::GetInstance().LuaRequire(std::string(name), env); };
+    m_LuaState["require"] = [](const sol::string_view name, sol::this_environment env) { return ScriptManager::GetInstance().LuaRequire(name, env); };
 
     // TODO: disable this function if release mode
     app::sys::Timer::AddTimer(std::chrono::milliseconds(1000u), [] { return GetInstance().DetectChanges(); });
