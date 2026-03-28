@@ -9,6 +9,7 @@ using namespace SLNet;
 
 Network::Network()
     : m_RakPeer(RakPeerInterface::GetInstance())
+    , m_LuaServices(app::ScriptManager::GetLuaState().script(R"(return require("service"))"))
 {
     SocketDescriptor client {};
     m_RakPeer->Startup(1u, &client, 1u);
@@ -25,8 +26,6 @@ Network::Network()
     auto type = app::ScriptManager::GetLuaState().new_usertype<Network>(
         "Network", sol::no_constructor);
     type["call"] = LuaRpcCall;
-
-    m_LuaServices = app::ScriptManager::GetLuaState().script(R"(return require("service"))");
 }
 
 Network::~Network()

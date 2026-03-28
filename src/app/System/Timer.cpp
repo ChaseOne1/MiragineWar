@@ -6,7 +6,8 @@ using namespace app::sys;
 void Timer::RegisterToLua()
 {
     auto type = app::ScriptManager::GetLuaState().new_usertype<Timer>("Timer", sol::no_constructor);
-    type["AddTimer"] = [](lua_Integer ms, sol::function f, bool callNow) { AddTimer(std::chrono::milliseconds(ms), f, callNow); };
+    type["AddTimer"] = [](lua_Integer ms, sol::function f, bool callNow)
+        -> lua_Integer { return AddTimer(std::chrono::milliseconds(ms), f, callNow); };
     type["DelTimer"] = DelTimer;
 }
 
@@ -20,12 +21,11 @@ void Timer::Tick()
             m_TimerHeap.pop();
             m_TimerMap.erase(timer->m_TimerId);
         } else if (timer->m_NextCallTime <= now) {
+            m_TimerHeap.pop();
             if (timer->m_Callable()) {
                 timer->m_NextCallTime += timer->m_Interval;
                 rescheduled.push_back(timer);
-                m_TimerHeap.pop();
             } else {
-                m_TimerHeap.pop();
                 // TODO: store the invalid timers and clean outside the loop
                 m_TimerMap.erase(timer->m_TimerId);
             }

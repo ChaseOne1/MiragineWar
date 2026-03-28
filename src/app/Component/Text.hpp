@@ -75,6 +75,11 @@ public:
         TTF_SetTextWrapWhitespaceVisible(m_Text.get(), visible);
     }
 
+    void SetText(sol::string_view text)
+    {
+        TTF_SetTextString(m_Text.get(), text.data(), text.length());
+    }
+
     Text(const Text& other) = delete;
 
     Text(Text&& other) = delete;
@@ -101,6 +106,7 @@ srefl_class(app::comp::Text,
         field(&app::comp::Text::GetLogicalTextSize),
         field(&app::comp::Text::GetRenderedTextSize),
         field(&app::comp::Text::SetTextColor),
+        field(&app::comp::Text::SetText),
         field(&app::comp::Text::SetTextWrapWhitespaceVisible)
     )
 )

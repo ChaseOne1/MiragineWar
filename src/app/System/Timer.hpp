@@ -55,7 +55,8 @@ public:
     static TimerId AddTimer(std::chrono::milliseconds interval, F&& callable, bool callNow = false)
     {
         auto& timer = GetInstance();
-        const auto [piter, succ] = timer.m_TimerMap.emplace(timer.m_NextTimerId, TimerInfo{ timer.m_NextTimerId, interval, std::forward<F>(callable)});
+        const auto [piter, succ] = timer.m_TimerMap.emplace(
+            timer.m_NextTimerId, TimerInfo { timer.m_NextTimerId, interval, std::forward<F>(callable) });
         if (!succ) return TimerIdNull;
 
         timer.m_TimerHeap.emplace(&piter->second);

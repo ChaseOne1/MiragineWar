@@ -15,14 +15,14 @@ Time::Time()
 void Time::RegisterToLua()
 {
     auto type = app::ScriptManager::GetLuaState().new_usertype<Time>("Time", sol::no_constructor);
-    type["GameStartTimeSec"] = []() -> lua_Integer { return std::chrono::duration_cast<std::chrono::seconds>(Time::GameStartTime().time_since_epoch()).count(); };
-    type["GameStartTimeMSec"] = []() -> lua_Integer { return std::chrono::duration_cast<std::chrono::milliseconds>(Time::GameStartTime().time_since_epoch()).count(); };
-    type["NowSec"] = []() -> lua_Integer { return std::chrono::duration_cast<std::chrono::seconds>(Time::Now().time_since_epoch()).count(); };
-    type["NowMSec"] = []() -> lua_Integer { return std::chrono::duration_cast<std::chrono::milliseconds>(Time::Now().time_since_epoch()).count(); };
-    type["RealNowSec"] = []() -> lua_Integer { return std::chrono::duration_cast<std::chrono::seconds>(Time::RealNow().time_since_epoch()).count(); };
-    type["RealNowMSec"] = []() -> lua_Integer { return std::chrono::duration_cast<std::chrono::milliseconds>(Time::RealNow().time_since_epoch()).count(); };
-    type["DeltaTimeMSec"] = []() -> lua_Integer { return Time::DeltaTime().count(); };
-    type["RealDeltaTimeMSec"] = []() -> lua_Integer { return Time::RealDeltaTime().count(); };
+    type["GameStartTimeSec"] = []() -> lua_Integer { return GameStartTimeSec(); };
+    type["GameStartTimeMSec"] = []() -> lua_Integer { return GameStartTimeMSec(); };
+    type["NowSec"] = []() -> lua_Integer { return NowSec(); };
+    type["NowMSec"] = []() -> lua_Integer { return NowMSec(); };
+    type["RealNowSec"] = []() -> lua_Integer { return RealNowSec(); };
+    type["RealNowMSec"] = []() -> lua_Integer { return RealNowMSec(); };
+    type["DeltaTimeMSec"] = []() -> lua_Integer { return DeltaTimeMSec(); };
+    type["RealDeltaTimeMSec"] = []() -> lua_Integer { return RealDeltaTimeMSec(); };
 }
 
 void Time::Tick()
