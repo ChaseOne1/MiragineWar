@@ -1,8 +1,12 @@
 #pragma once
 
 namespace game::comp {
-// NOTE: DO NOT emplace manually
 struct Visible
 { };
 }
 
+#include "mirrow/srefl/srefl_begin.hpp"
+// clang-format off
+srefl_class(game::comp::Visible)
+// clang-format on
+#include "mirrow/srefl/srefl_end.hpp"

@@ -1,5 +1,4 @@
 #pragma once
-#include "app/ScriptComponent.hpp"
 
 namespace app::comp {
 namespace detail {
@@ -8,16 +7,12 @@ namespace detail {
 
 struct PreRender
 {
-    REGISTER_TO_ENV(PreRender)
-
     using RenderCallback_t = detail::RenderCallback_t;
     RenderCallback_t m_fnPreRender;
 };
 
 struct PostRender 
 {
-    REGISTER_TO_ENV(PreRender)
-
     using RenderCallback_t = detail::RenderCallback_t;
     RenderCallback_t m_fnPostRender;
 };

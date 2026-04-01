@@ -11,6 +11,7 @@ git submodule update --init --depth 1 3rdlibs/SDL3_ttf
 git submodule update --init --depth 1 3rdlibs/SLikeNet
 git submodule update --init --depth 1 3rdlibs/sol2
 git submodule update --init --depth 1 3rdlibs/toml++
+git submodule update --init --depth 1 3rdlibs/spdlog
 
 cd 3rdlibs
 

@@ -1,5 +1,4 @@
 #pragma once
-#include "app/ScriptComponent.hpp"
 
 namespace app::comp {
 enum class ZIndexVal : uint16_t
@@ -11,7 +10,7 @@ enum class ZIndexVal : uint16_t
     ZINDEX_UIELEMENT = 1024u,
 };
 
-struct ZIndex : app::ScriptComponent<ZIndex>
+struct ZIndex
 {
     float m_Index;
 

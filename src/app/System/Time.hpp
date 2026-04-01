@@ -25,8 +25,6 @@ private:
 public:
     void Tick();
 
-    static void RegisterToLua();
-
     static bool FixedTick() noexcept;
 
     static std::chrono::time_point<std::chrono::steady_clock> GameStartTime() { return GetInstance().mc_GameStartTime; }

@@ -6,7 +6,6 @@
 #include "app/Layout.hpp"
 #include "app/Resources.hpp"
 #include "app/TextEngine.hpp"
-#include "app/ScriptLib.hpp"
 
 #include "app/System/Input.hpp"
 #include "app/System/RenderCallback.hpp"
@@ -34,23 +33,16 @@ SDL_AppResult SDL_AppInit(void**, int, char**)
     app::Renderer::GetInstance();
     app::TextEngine::GetInstance();
 
-    // In the destruction of some Lua objects involving the entt library,
-    // it is necessary to check whether their entities are valid;
-    // therefore, it is necessary to ensure that
-    // the Registry is destroyed after the ScriptManager
+    utility::ScriptManager::GetInstance();
     utility::Registry::GetInstance();
     app::sys::Time::GetInstance();
     app::sys::Timer::GetInstance();
-    app::ScriptManager::GetInstance();
-    app::ScriptLib::GetInstance();
 
-    // To avoid circular dependencies during construction,
+    // to avoid circular dependencies during construction,
     // we process them after construction is complete.
+    utility::ScriptManager::SetupFileChangeDetection();
     app::Window::ResizeWindow();
     app::Renderer::SetDefaultTextureScaleMode();
-    utility::Registry::RegisterToLua();
-    app::sys::Time::RegisterToLua();
-    app::sys::Timer::RegisterToLua();
 
     app::Settings::GetInstance();
     app::Resources::GetInstance();

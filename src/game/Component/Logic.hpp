@@ -1,8 +1,7 @@
 #pragma once
-#include "app/ScriptComponent.hpp"
 
 namespace game::comp {
-struct Logic : app::ScriptComponent<Logic>
+struct Logic
 {
 public:
     std::function<void()> m_fnEnter {}, m_fnTick {}, m_fnExit {};
@@ -21,6 +20,11 @@ public:
     explicit Logic(T&& fnTick)
         : m_fnTick(std::forward<T>(fnTick))
     { }
+
+    Logic(const Logic&) = default;
+    Logic(Logic&&) = default;
+    Logic& operator=(const Logic&) = default;
+    Logic& operator=(Logic&&) = default;
 
     ~Logic()
     {

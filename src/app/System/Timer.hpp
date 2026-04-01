@@ -42,7 +42,7 @@ private:
     std::unordered_map<TimerId, TimerInfo> m_TimerMap;
 
 private:
-    Timer() = default;
+    Timer();
     ~Timer() = default;
 
 

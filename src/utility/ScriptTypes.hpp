@@ -1,7 +1,6 @@
 #pragma once
 
 #include "mirrow/srefl/srefl_begin.hpp"
-// clang-format off
 
 srefl_class(mathfu::vec2,
     ctors(
@@ -35,5 +34,4 @@ srefl_class(SDL_FRect,
     )
 )
 
-// clang-format on
 #include "mirrow/srefl/srefl_end.hpp"

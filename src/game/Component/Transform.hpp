@@ -1,8 +1,7 @@
 #pragma once
-#include "app/ScriptComponent.hpp"
 
 namespace game::comp {
-struct Transform : app::ScriptComponent<Transform>
+struct Transform
 {
     mathfu::vec2 m_Position { mathfu::kZeros2f };
     mathfu::vec2 m_HalfSize { mathfu::kZeros2f };

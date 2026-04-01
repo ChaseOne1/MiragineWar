@@ -1,8 +1,7 @@
 #pragma once
-#include "app/ScriptComponent.hpp"
 
 namespace game::comp {
-struct Movement : app::ScriptComponent<Movement>
+struct Movement
 {
     mathfu::vec2 m_Velocity { mathfu::kZeros2f };
     mathfu::vec2 m_Acceleration { mathfu::kZeros2f };

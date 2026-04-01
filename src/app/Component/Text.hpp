@@ -2,14 +2,13 @@
 #include "SDL3_ttf/SDL_ttf.h"
 #include "app/Layout.hpp"
 #include "app/TextEngine.hpp"
-#include "app/ScriptComponent.hpp"
 
 namespace app::comp {
-struct Text : app::ScriptComponent<Text>
+struct Text
 {
     std::shared_ptr<TTF_Font> m_LogicalFont, m_RenderedFont;
     std::unique_ptr<TTF_Text, void (*)(TTF_Text*)> m_Text;
-    SDL_FPoint m_Offset {}; // scaled, used for alignment
+    SDL_FPoint m_Offset {};
 
 public:
     Text(std::string_view text, const std::shared_ptr<TTF_Font>& font, float font_size = 0.f)

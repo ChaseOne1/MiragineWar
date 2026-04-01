@@ -1,8 +1,7 @@
 #pragma once
-#include "app/ScriptComponent.hpp"
 
 namespace game::comp {
-struct UIClickable : app::ScriptComponent<UIClickable>
+struct UIClickable
 {
     using Callback_t = std::function<void()>;
     Callback_t m_ClickInCallback {}, m_ClickOutCallback {};

@@ -1,5 +1,5 @@
 #include "Time.hpp"
-#include "app/ScriptManager.hpp"
+#include "utility/ScriptManager.hpp"
 
 using namespace app::sys;
 using namespace std::chrono;
@@ -10,19 +10,18 @@ Time::Time()
     : mc_GameStartTime(Clock_t::now())
     , m_DeltaTime()
     , m_RealDeltaTime()
-{ }
-
-void Time::RegisterToLua()
 {
-    auto type = app::ScriptManager::GetLuaState().new_usertype<Time>("Time", sol::no_constructor);
-    type["GameStartTimeSec"] = []() -> lua_Integer { return GameStartTimeSec(); };
-    type["GameStartTimeMSec"] = []() -> lua_Integer { return GameStartTimeMSec(); };
-    type["NowSec"] = []() -> lua_Integer { return NowSec(); };
-    type["NowMSec"] = []() -> lua_Integer { return NowMSec(); };
-    type["RealNowSec"] = []() -> lua_Integer { return RealNowSec(); };
-    type["RealNowMSec"] = []() -> lua_Integer { return RealNowMSec(); };
-    type["DeltaTimeMSec"] = []() -> lua_Integer { return DeltaTimeMSec(); };
-    type["RealDeltaTimeMSec"] = []() -> lua_Integer { return RealDeltaTimeMSec(); };
+    sol::state_view state = utility::ScriptManager::GetLuaState();
+    sol::table prototype = state.script(R"(return require("builtin.time"))");
+
+    prototype["game_start_time_sec"] = []() -> lua_Integer { return GameStartTimeSec(); };
+    prototype["game_start_time_msec"] = []() -> lua_Integer { return GameStartTimeMSec(); };
+    prototype["now_sec"] = []() -> lua_Integer { return NowSec(); };
+    prototype["now_msec"] = []() -> lua_Integer { return NowMSec(); };
+    prototype["real_now_sec"] = []() -> lua_Integer { return RealNowSec(); };
+    prototype["real_now_msec"] = []() -> lua_Integer { return RealNowMSec(); };
+    prototype["delta_time_msec"] = []() -> lua_Integer { return DeltaTimeMSec(); };
+    prototype["real_delta_time_msec"] = []() -> lua_Integer { return RealDeltaTimeMSec(); };
 }
 
 void Time::Tick()

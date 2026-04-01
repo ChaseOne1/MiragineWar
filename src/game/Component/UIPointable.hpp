@@ -1,8 +1,7 @@
 #pragma once
-#include "app/ScriptComponent.hpp"
 
 namespace game::comp {
-struct UIPointable : app::ScriptComponent<UIPointable>
+struct UIPointable
 {
     using Callback_t = std::function<void()>;
     Callback_t m_PointInCallback {}, m_PointOutCallback {};

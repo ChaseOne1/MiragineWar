@@ -1,9 +1,8 @@
 #pragma once
 #include "app/Layout.hpp"
-#include "app/ScriptComponent.hpp"
 
 namespace game::comp {
-struct UIElement : app::ScriptComponent<UIElement>
+struct UIElement
 {
     app::Layout::Anchor m_Anchor;
 

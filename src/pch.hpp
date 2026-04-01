@@ -18,6 +18,9 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <toml++/toml.hpp>
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/fmt.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <entt/entt.hpp>
 #include <mathfu/vector.h>
@@ -28,3 +31,4 @@
 #include <mirrow/srefl/reflect.hpp>
 
 #include "utility/Singleton.hpp"
+#include "utility/Logger.hpp"

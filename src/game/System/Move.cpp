@@ -20,6 +20,7 @@ Move::Move()
 
 void Move::OnPositionSync(const InboundPacket& packet)
 {
+
 }
 
 void Move::Tick()
@@ -40,6 +41,7 @@ void Move::Tick()
         reg.patch<game::comp::Transform>(entity, [&](game::comp::Transform& transform) {
             const vec2 last_posn = transform.m_Position;
 
+            // TODO: update z_index
             transform.m_Position.x += movement.m_Velocity.x * time.m_FixedDeltaTime.count() / 1000.f + 0.5f * movement.m_Acceleration.x * time_square;
             transform.m_Position.y += movement.m_Velocity.y * time.m_FixedDeltaTime.count() / 1000.f + 0.5f * movement.m_Acceleration.x * time_square;
             transform.m_Position.x = std::clamp(transform.m_Position.x, 0.f, World::msc_fWidth);

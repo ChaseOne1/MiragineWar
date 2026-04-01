@@ -1,7 +1,7 @@
 #pragma once
 #include "EventBus.hpp"
 #include "Renderer.hpp"
-#include "app/ScriptManager.hpp"
+#include "utility/ScriptManager.hpp"
 
 namespace app {
 class Layout : public utility::Singleton<Layout>
@@ -28,7 +28,6 @@ private:
 
     std::unordered_map<Anchor, SDL_FPoint> m_Anchors;
     SDL_FPoint m_fScale {};
-    // TODO: a scale factory
 
 private:
     Layout()
@@ -36,7 +35,7 @@ private:
         UpdateAnchors(nullptr);
         EventBus::GetInstance().Subscribe(SDL_EVENT_WINDOW_RESIZED, std::bind(&Layout::UpdateAnchors, this, std::placeholders::_1));
 
-        auto type = app::ScriptManager::GetLuaState().new_usertype<Layout>("Layout", sol::no_constructor);
+        auto type = utility::ScriptManager::GetLuaState().new_usertype<Layout>("Layout", sol::no_constructor);
         type["transform"] = LuaTransform;
         type["scale"] = sol::var(&m_fScale);
     }
@@ -81,7 +80,7 @@ public:
             return { anchor_pos.x + offset.x * m_fScale.x - size.x * m_fScale.x / 2.f, anchor_pos.y + offset.y * m_fScale.y - size.y * m_fScale.y / 2.f,
                 size.x * m_fScale.x, size.y * m_fScale.y };
         } catch (std::out_of_range e) {
-            SDL_Log("%s\n", e.what());
+            LOGE("{}", e.what());
             return {};
         }
     }

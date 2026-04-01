@@ -46,6 +46,8 @@ add_subdirectory(3rdlibs/sol2 EXCLUDE_FROM_ALL)
 
 add_subdirectory(3rdlibs/mirrow EXCLUDE_FROM_ALL)
 
+add_subdirectory(3rdlibs/spdlog EXCLUDE_FROM_ALL)
+
 add_subdirectory(3rdlibs/MiragineWarProtocol EXCLUDE_FROM_ALL)
 
 #------------------------------------------------------------------
@@ -59,7 +61,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3
                                               MWProtocol::MWProtocol
                                               sol2::sol2
                                               lua
-                                              Mirrow::Srefl)
+                                              Mirrow::Srefl
+                                              spdlog::spdlog)
 #target_link_options(${PROJECT_NAME} PRIVATE -mwindows) #disable console window
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.hpp)
 target_include_directories(${PROJECT_NAME} PRIVATE src ${LUA_ROOT}/include)

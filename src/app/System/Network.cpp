@@ -1,5 +1,5 @@
 #include "Network.hpp"
-#include "app/ScriptManager.hpp"
+#include "utility/ScriptManager.hpp"
 #include "app/Settings.hpp"
 #include "utility/MsgPack.hpp"
 #include "MWProtocol/MessageIdentifiers.hh"
@@ -9,7 +9,7 @@ using namespace SLNet;
 
 Network::Network()
     : m_RakPeer(RakPeerInterface::GetInstance())
-    , m_LuaServices(app::ScriptManager::GetLuaState().script(R"(return require("service"))"))
+    , m_LuaServices(utility::ScriptManager::GetLuaState().script(R"(return require("service"))"))
 {
     SocketDescriptor client {};
     m_RakPeer->Startup(1u, &client, 1u);
@@ -23,9 +23,8 @@ Network::Network()
     m_MessageHandler.Subscribe(proto::MessageID::ID_RPC_CALL,
         [](const InboundPacket& packet) { GetInstance().HandleLuaRpcCall(packet); });
 
-    auto type = app::ScriptManager::GetLuaState().new_usertype<Network>(
-        "Network", sol::no_constructor);
-    type["call"] = LuaRpcCall;
+    sol::table network = utility::ScriptManager::GetLuaState().script(R"(return require("builtin.network"))");
+    network["call"] = LuaRpcCall;
 }
 
 Network::~Network()
@@ -64,29 +63,23 @@ void Network::HandleLuaRpcCall(const InboundPacket& packet)
     const sol::table service_mapping = GetInstance().m_LuaServices["mapping"].get<sol::table>();
     const sol::optional<sol::table> service = service_mapping.get<sol::optional<sol::table>>(service_id);
     if (!service) {
-        SDL_Log("app::sys::Network::HandleLuaRpcCall:"
-                "The service of RPC(%lld:%lld) has not been setup",
-            service_id, interface_id);
+        LOGE("The service of RPC({}:{}) has not been setup", service_id, interface_id);
         return;
     }
 
     const sol::optional<sol::string_view> interface_name
         = service->traverse_get<sol::optional<sol::string_view>>("mapping", interface_id);
     if (!interface_name) {
-        SDL_Log("app::sys::Network::HandleLuaRpcCall:"
-                "No such interface name matches of RPC(%lld:%lld)",
-            service_id, interface_id);
+        LOGE("No such interface name matches of RPC({}:{})", service_id, interface_id);
         return;
     }
 
     // fuck mircosoft, the "interface" has already been aliased in windows.h
     const sol::optional<sol::function> interfc = service->traverse_get<sol::optional<sol::function>>("client", *interface_name);
     if (!interfc) {
-        SDL_Log("app::sys::Network::HandleLuaRpcCall:"
-                "No such interface matches the RPC(%lld:%lld)",
-            service_id, interface_id);
+        LOGE("No such interface matches the RPC({}:{})", service_id, interface_id);
         return;
     }
 
-    (*interfc)(sol::as_args(utility::mp::unpack(payload, ScriptManager::GetLuaState())));
+    (*interfc)(sol::as_args(utility::mp::unpack(payload, utility::ScriptManager::GetLuaState())));
 }

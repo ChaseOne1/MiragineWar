@@ -1,7 +1,7 @@
 #include "Resources.hpp"
 #include "Renderer.hpp"
 #include "app/Component/Texture.hpp"
-#include "app/ScriptManager.hpp"
+#include "utility/ScriptManager.hpp"
 #include "app/resources/AnimSeqFrames.hpp"
 #include "app/resources/Mox.hpp"
 
@@ -9,17 +9,18 @@ using namespace app;
 
 Resources::Resources()
 {
-    auto type = app::ScriptManager::GetLuaState().new_usertype<Resources>("Resources", sol::no_constructor);
-    type["texture"] = [](sol::string_view res, sol::string_view idx) {
+    sol::table resources = utility::ScriptManager::GetLuaState().script(R"(return require("builtin.resources"))");
+
+    resources["texture"] = [](sol::string_view res, sol::string_view idx) {
         return Resources::GetInstance().Require<SDL_Texture>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10));
     };
-    type["font"] = [](sol::string_view res, sol::string_view idx) {
+    resources["font"] = [](sol::string_view res, sol::string_view idx) {
         return std::static_pointer_cast<void>(Resources::GetInstance().Require<TTF_Font>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10)));
     };
-    type["asf"] = [](sol::string_view res, sol::string_view idx) {
+    resources["asf"] = [](sol::string_view res, sol::string_view idx) {
         return Resources::GetInstance().Require<AnimSeqFrames>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10));
     };
-    type["mox"] = [](sol::string_view res, sol::string_view idx) {
+    resources["mox"] = [](sol::string_view res, sol::string_view idx) {
         return Resources::GetInstance().Require<Mox>(std::strtoull(res.data(), nullptr, 10), std::strtoull(idx.data(), nullptr, 10));
     };
 }
@@ -82,9 +83,9 @@ template <>
 std::shared_ptr<Mox> Resources::LoadFromMem(const ResDesc& desc, std::unique_ptr<std::byte[]> data)
 {
     std::shared_ptr<Mox> mox = std::make_shared<Mox>();
-    std::memcpy((void*)mox.get(), data.get(), sizeof(Mox::Header));
+    std::memcpy((void*)mox.get(), data.get(), sizeof(MoxHeader));
 
-    SDL_IOStream* stream = SDL_IOFromConstMem(data.get() + sizeof(Mox::Header), desc.m_nSize - sizeof(Mox::Header));
+    SDL_IOStream* stream = SDL_IOFromConstMem(data.get() + sizeof(MoxHeader), desc.m_nSize - sizeof(MoxHeader));
     mox->m_Texture.reset(IMG_LoadTexture_IO(app::Renderer::GetInstance().GetSDLRenderer(), stream, true), [](SDL_Texture* texture) { SDL_DestroyTexture(texture); });
 
     return mox;

@@ -1,14 +1,16 @@
 #include "Timer.hpp"
-#include "app/ScriptManager.hpp"
+#include "utility/ScriptManager.hpp"
 
 using namespace app::sys;
 
-void Timer::RegisterToLua()
+Timer::Timer()
 {
-    auto type = app::ScriptManager::GetLuaState().new_usertype<Timer>("Timer", sol::no_constructor);
-    type["AddTimer"] = [](lua_Integer ms, sol::function f, bool callNow)
-        -> lua_Integer { return AddTimer(std::chrono::milliseconds(ms), f, callNow); };
-    type["DelTimer"] = DelTimer;
+    sol::state_view state = utility::ScriptManager::GetLuaState();
+    sol::table timer = state.script(R"(return require("builtin.timer"))");
+
+    timer["add_timer"] = [](lua_Integer ms, sol::function f, bool callNow)
+        -> lua_Integer { return GetInstance().AddTimer(std::chrono::milliseconds(ms), f, callNow); };
+    timer["del_timer"] = DelTimer;
 }
 
 void Timer::Tick()

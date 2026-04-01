@@ -174,7 +174,7 @@ namespace encode {
             data.push_back(static_cast<uint8_t>(detail::type::MAP32));
             detail::write_bytes(data, static_cast<uint32_t>(map_size));
         } else {
-            SDL_Log("encode::kvcontainer: map too large (exceeds 2^32-1)");
+            LOGE("map too large (exceeds 2^32-1)");
             return;
         }
 
@@ -211,7 +211,7 @@ namespace encode {
             data.push_back(static_cast<uint8_t>(detail::type::MAP32));
             detail::write_bytes(data, static_cast<uint32_t>(map_size));
         } else {
-            SDL_Log("encode::map: map too large (exceeds 2^32-1)");
+            LOGE("map too large (exceeds 2^32-1)");
             return;
         }
 
@@ -234,14 +234,14 @@ namespace encode {
             data.push_back(static_cast<uint8_t>(detail::type::ARRAY32));
             detail::write_bytes(data, static_cast<uint32_t>(array_size));
         } else {
-            SDL_Log("encode::array: array too large (exceeds 2^32-1)");
+            LOGE("array too large (exceeds 2^32-1)");
             return;
         }
 
         for (size_t i = 1; i <= array_size; ++i) {
             sol::object elem = tbl[i];
             if (!elem.valid()) {
-                SDL_Log("encode::array: missing element at index %zu", i);
+                LOGW("missing element at index {}", i);
                 detail::encode_value(data, sol::nil);
                 continue;
             }
@@ -295,7 +295,7 @@ namespace detail {
             break;
         }
         default:
-            SDL_Log("encode_value: unsupported type (%d)", static_cast<int>(value.get_type()));
+            LOGW("unsupported type ({})", static_cast<int>(value.get_type()));
             break;
         }
     }
@@ -358,7 +358,7 @@ namespace decode {
         case detail::INT32:     return detail::read_bytes<int32_t>(data);
         case detail::INT64:     return detail::read_bytes<int64_t>(data);
         default:
-            SDL_Log("utility::decode::integer: invalid integer type: %d", type);
+            LOGW("invalid integer type: {}", type);
             return 0;
         }
     }
@@ -382,7 +382,7 @@ namespace decode {
         case detail::INT32:     return sol::make_object(state, detail::read_bytes<int32_t>(data));
         case detail::INT64:     return sol::make_object(state, detail::read_bytes<int64_t>(data));
         default:
-            SDL_Log("utility::decode::integer: invalid integer type: %d", type);
+            LOGW("invalid integer type: {}", type);
             return sol::nil;
         }
     }
@@ -399,7 +399,7 @@ namespace decode {
         if (type == detail::type::FLOAT) return detail::read_bytes<float>(data);
         if (type == detail::type::DOUBLE) return detail::read_bytes<double>(data);
 
-        SDL_Log("utility::decode::floating: invalid floating type: %d", type);
+        LOGW("invalid floating type: {}", type);
         return 0.0;
     }
 
@@ -415,7 +415,7 @@ namespace decode {
         if (type == detail::type::FLOAT) return sol::make_object(state, detail::read_bytes<float>(data));
         if (type == detail::type::DOUBLE) return sol::make_object(state, detail::read_bytes<double>(data));
 
-        SDL_Log("utility::decode::floating: invalid floating type: %d", type);
+        LOGW("invalid floating type: {}", type);
         return sol::nil;
     }
 
@@ -431,7 +431,7 @@ namespace decode {
         if (type == detail::type::TTURE) return true;
         if (type == detail::type::TFALSE) return false;
 
-        SDL_Log("utility::decode::boolean: invalid boolean type: %d", type);
+        LOGW("invalid boolean type: {}", type);
         return false;
     }
 
@@ -447,7 +447,7 @@ namespace decode {
         if (type == detail::type::TTURE) return sol::make_object(state, true);
         if (type == detail::type::TFALSE) return sol::make_object(state, false);
 
-        SDL_Log("utility::decode::boolean: invalid boolean type: %d", type);
+        LOGW("invalid boolean type: {}", type);
         return sol::nil;
     }
 
@@ -474,8 +474,7 @@ namespace decode {
 
         if (data.size() < len) {
 
-            SDL_Log("utility::decode::string: string length exceeds buffer:"
-                    "expected length = %zu, buffer size = %zu",
+            LOGW("string length exceeds buffer: expected length = {}, buffer size = {}",
                 len, data.size());
             return {};
         }
@@ -500,13 +499,13 @@ namespace decode {
         case detail::type::STR16: len = detail::read_bytes<uint16_t>(data); break;
         case detail::type::STR32: len = detail::read_bytes<uint32_t>(data); break;
         default:
-            SDL_Log("utility::decode::string: invalid string type: %d", type);
+            LOGW("invalid string type: {}", type);
             return {};
         }
 
         if (data.size() < len) {
-            SDL_Log("utility::decode::string: string length exceeds buffer:"
-                    "expected length = %zu buffer size = %zu",
+            LOGW("string length exceeds buffer:"
+                    "expected length = {} buffer size = {}",
                 len, data.size());
             return {};
         }
@@ -529,8 +528,7 @@ namespace decode {
 
         if (data.size() < len) {
 
-            SDL_Log("utility::decode::string: string length exceeds buffer:"
-                    "expected length = %zu, buffer size = %zu",
+            LOGW("string length exceeds buffer: expected length = {}, buffer size = {}",
                 len, data.size());
             return sol::nil;
         }
@@ -555,13 +553,13 @@ namespace decode {
         case detail::type::STR16: len = detail::read_bytes<uint16_t>(data); break;
         case detail::type::STR32: len = detail::read_bytes<uint32_t>(data); break;
         default:
-            SDL_Log("utility::decode::string: invalid string type: %d", type);
+            LOGW("invalid string type: {}", type);
             return sol::nil;
         }
 
         if (data.size() < len) {
-            SDL_Log("utility::decode::string: string length exceeds buffer:"
-                    "expected length = %zu, buffer size = %zu",
+            LOGW("string length exceeds buffer:"
+                    "expected length = {}, buffer size = {}",
                 len, data.size());
             return sol::nil;
         }
@@ -588,20 +586,20 @@ namespace decode {
         } else if (static_cast<detail::type>(header) == detail::type::MAP32) {
             map_size = detail::read_bytes<uint32_t>(data);
         } else {
-            SDL_Log("decode::map: invalid header (%02X)", header);
+            LOGW("invalid header ({:02X})", header);
             return sol::nil;
         }
 
         sol::table tbl = state.create_table(state);
         for (size_t i = 0; i < map_size; ++i) {
             if (data.empty()) {
-                SDL_Log("decode::map: unexpected EOF (key %zu)", i);
+                LOGW("unexpected EOF (key {})", i);
                 break;
             }
             sol::object key = detail::decode_value(data, state);
 
             if (data.empty()) {
-                SDL_Log("decode::map: unexpected EOF (value %zu)", i);
+                LOGW("unexpected EOF (value {})", i);
                 break;
             }
             sol::object val = detail::decode_value(data, state);
@@ -629,14 +627,14 @@ namespace decode {
         } else if (static_cast<detail::type>(header) == detail::type::ARRAY32) {
             array_size = detail::read_bytes<uint32_t>(data);
         } else {
-            SDL_Log("decode::array: invalid header (%02X)", header);
+            LOGW("invalid header ({:02X})", header);
             return sol::nil;
         }
 
         sol::table tbl = state.create_table(state);
         for (size_t i = 0; i < array_size; ++i) {
             if (data.empty()) {
-                SDL_Log("decode::array: unexpected EOF (element %zu)", i);
+                LOGW("unexpected EOF (element {})", i);
                 tbl[i + 1] = sol::nil;
                 continue;
             }
@@ -653,7 +651,7 @@ namespace detail
     inline sol::object decode_value(std::string_view& data, const sol::state& state)
     {
         if (data.empty()) {
-            SDL_Log("decode_value: empty buffer");
+            LOGW("empty buffer");
             return sol::nil;
         }
 
@@ -690,7 +688,7 @@ namespace detail
         case STR8: case STR16: case STR32:
             return decode::string(data, state);
         default:
-            SDL_Log("decode_value: unknown type (%02X)", type_byte);
+            LOGW("unknown type ({:02X})", type_byte);
             data.remove_prefix(1);
             return sol::nil;
         }

@@ -48,7 +48,7 @@ public:
             // WARNING: we dont know if a image is surface or texture anymore
             m_Resources.Put(resource, LoadFromMem<T>(desc, pak->Load(desc)));
         } catch (std::exception e) {
-            SDL_Log("%s\n", e.what());
+            LOGE("{}", e.what());
         }
 
         // give them what they want, maybe someting unexpected :D

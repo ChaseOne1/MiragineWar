@@ -1,8 +1,7 @@
 #pragma once
-#include "app/ScriptComponent.hpp"
 
 namespace app::comp {
-struct Texture : app::ScriptComponent<Texture>
+struct Texture
 {
     std::shared_ptr<SDL_Texture> m_pTexture {};
     std::optional<SDL_FRect> m_SrcFRect;

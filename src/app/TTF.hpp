@@ -12,7 +12,7 @@ private:
     TTF()
     {
         if (!TTF_Init()) {
-            SDL_Log("app::TTF::TTF: Failed to initialize SDL_TTF");
+            LOGC("failed to initialize SDL_TTF");
             std::terminate();
         } else {
             m_Success = true;

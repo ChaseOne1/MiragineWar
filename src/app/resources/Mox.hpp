@@ -3,14 +3,15 @@
 struct SDL_Texture;
 
 namespace app {
+struct MoxHeader {
+    uint16_t width = 0.f, height = 0.f;
+    float left_width = 0.f, right_width = 0.f;
+    float top_height = 0.f, bottom_height = 0.f;
+};
+
 struct Mox
 {
-    struct Header
-    {
-        uint16_t width = 0.f, height = 0.f;
-        float left_width = 0.f, right_width = 0.f;
-        float top_height = 0.f, bottom_height = 0.f;
-    } m_Header;
+    MoxHeader m_Header;
 
     std::shared_ptr<SDL_Texture> m_Texture;
 };
@@ -19,14 +20,14 @@ struct Mox
 #include "mirrow/srefl/srefl_begin.hpp"
 // clang-format off
 
-srefl_class(app::Mox::Header,
+srefl_class(app::MoxHeader,
     fields(
-        field(&app::Mox::Header::width),
-        field(&app::Mox::Header::height),
-        field(&app::Mox::Header::left_width),
-        field(&app::Mox::Header::right_width),
-        field(&app::Mox::Header::top_height),
-        field(&app::Mox::Header::bottom_height)
+        field(&app::MoxHeader::width),
+        field(&app::MoxHeader::height),
+        field(&app::MoxHeader::left_width),
+        field(&app::MoxHeader::right_width),
+        field(&app::MoxHeader::top_height),
+        field(&app::MoxHeader::bottom_height)
     )
 )
 
