@@ -14,13 +14,6 @@ using app::InboundPacket;
 
 Move::Move()
 {
-    app::sys::Network::Subscribe(proto::MessageID::ID_POSTION_SYNC,
-        [this](const app::InboundPacket& packet) { this->OnPositionSync(packet); });
-}
-
-void Move::OnPositionSync(const InboundPacket& packet)
-{
-
 }
 
 void Move::Tick()

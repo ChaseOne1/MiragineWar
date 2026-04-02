@@ -13,7 +13,7 @@
 #include "game/Component/Movement.hpp"
 #include "game/Component/Logic.hpp"
 #include "game/Component/Visible.hpp"
-#include "game/Component/Soldier.hpp"
+#include "game/Component/SoldierTag.hpp"
 #include "game/Component/UIElement.hpp"
 #include "game/Component/UIPointable.hpp"
 #include "game/Component/UIClickable.hpp"
@@ -176,7 +176,7 @@ void ScriptContext::RegisterComponents()
     RegisterComponent<Movement>();
     RegisterComponent<Logic>();
     RegisterComponent<Visible>();
-    RegisterComponent<Soldier>();
+    RegisterComponent<SoldierTag>();
     RegisterComponent<UIElement>();
     RegisterComponent<UIPointable>();
     RegisterComponent<UIClickable>();
