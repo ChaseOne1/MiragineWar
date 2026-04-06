@@ -25,6 +25,8 @@ Network::Network()
 
     sol::table network = utility::ScriptManager::GetLuaState().script(R"(return require("builtin.network"))");
     network["call"] = LuaRpcCall;
+    network["get_average_ping"] = []() { Network::GetInstance().m_RakPeer->GetAveragePing(UNASSIGNED_SYSTEM_ADDRESS); };
+    network["get_last_ping"] = []() { Network::GetInstance().m_RakPeer->GetLastPing(UNASSIGNED_SYSTEM_ADDRESS); };
 }
 
 Network::~Network()
@@ -38,7 +40,16 @@ void Network::Tick()
     Packet* packet = nullptr;
     for (packet = m_RakPeer->Receive(); packet; packet = m_RakPeer->Receive()) {
         const InboundPacket ipacket(packet);
-        m_MessageHandler.Publish(ipacket.GetOpcode(), ipacket);
+        SLNet::MessageID opcode = ipacket.GetOpcode();
+        switch (opcode) {
+        case ID_TIMESTAMP:
+            if (ipacket.GetPayload().length() <= sizeof(SLNet::Time)) break;
+            opcode = ipacket.GetPayload().substr(sizeof(SLNet::Time), sizeof(SLNet::MessageID))[0];
+            break;
+        default:
+            break;
+        }
+        m_MessageHandler.Publish(opcode, ipacket);
     }
 }
 

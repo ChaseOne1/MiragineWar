@@ -42,8 +42,8 @@ void Time::Tick()
 
 bool Time::FixedTick() noexcept
 {
-    if (gs_FixedTimeAccumulator < m_FixedDeltaTime) return false;
+    if (gs_FixedTimeAccumulator < msc_FixedDeltaTime) return false;
 
-    gs_FixedTimeAccumulator -= m_FixedDeltaTime;
+    gs_FixedTimeAccumulator -= msc_FixedDeltaTime;
     return true;
 }

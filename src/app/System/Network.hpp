@@ -1,7 +1,4 @@
 #pragma once
-#include "slikenet/peerinterface.h"
-#include "slikenet/MessageIdentifiers.h"
-#include "slikenet/types.h"
 #include "utility/Topics.hpp"
 
 namespace app {
@@ -80,10 +77,6 @@ public:
         return std::string_view { reinterpret_cast<const char*>(m_Packet->data + 1),
             m_Packet->length - 1 };
     }
-};
-
-class OutboundPacket
-{
 };
 
 }

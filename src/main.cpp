@@ -20,6 +20,7 @@
 #include "game/System/Move.hpp"
 #include "game/System/Logic.hpp"
 #include "game/System/Visible.hpp"
+#include "game/System/Synchronize.hpp"
 #include "game/System/MouseInteractive.hpp"
 
 SDL_AppResult SDL_AppInit(void**, int, char**)
@@ -67,6 +68,7 @@ SDL_AppResult SDL_AppIterate(void*)
     app::sys::Network::GetInstance().Tick();
 
     while (app::sys::Time::GetInstance().FixedTick()) {
+        game::sys::Synchronize::GetInstance().Tick();
         game::sys::Move::GetInstance().Tick();
     }
 

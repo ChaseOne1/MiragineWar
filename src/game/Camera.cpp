@@ -13,7 +13,7 @@ Camera::Camera()
     registry& reg = utility::Registry::GetInstance().GetRegistry();
 
     //the half size is used to half fov
-    reg.emplace<game::comp::Transform>(m_Camera, vec2 { World::msc_fWidth / 2.f, World::msc_fHeight / 2.f }, vec2 { 188.f, 128.f });
+    reg.emplace<game::comp::Transform>(m_Camera, vec2 { World::msc_fWidth / 2.f, World::msc_fHeight / 2.f }, vec2 { 192.f, 128.f });
     reg.emplace<game::comp::Movement>(m_Camera, vec2 { 0.f, 0.f }, vec2 { 0.f, 0.f });
 
     app::sys::Input::GetInstance().Subsrcibe(app::Key::CAM_MOVE_UP, [this](const SDL_Event* event) {

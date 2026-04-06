@@ -6,7 +6,10 @@ Index::Index(GUID_t index)
     : m_IndexFile(AppMetaData::msc_szAssetsPath / ms_IndexDescs[std::to_string(index)].value_or<std::string>(""),
           std::ios::in | std::ios::binary)
 {
-    if (!m_IndexFile) throw std::invalid_argument("Invalid index: " + std::to_string(index));
+    if (!m_IndexFile) {
+        LOGE("invalid index {}", index);
+        throw std::invalid_argument("Invalid index: " + std::to_string(index));
+    }
 
     ResDesc desc {};
     do {
@@ -16,5 +19,9 @@ Index::Index(GUID_t index)
 
 const ResourceDescription& Index::GetResourceDescription(GUID_t resource) const
 {
-    return m_ResDescs.at(resource);
+    if (auto iter = m_ResDescs.find(resource); iter == m_ResDescs.end()) {
+        throw std::invalid_argument("Invalid resource: " + std::to_string(resource));
+    } else {
+        return iter->second;
+    }
 }

@@ -9,6 +9,7 @@
 #include "app/Component/RenderCallback.hpp"
 
 #include "app/resources/AnimSeqFrames.hpp"
+#include "game/Component/Synchronize.hpp"
 #include "game/Component/Transform.hpp"
 #include "game/Component/Movement.hpp"
 #include "game/Component/Logic.hpp"
@@ -180,6 +181,8 @@ void ScriptContext::RegisterComponents()
     RegisterComponent<UIElement>();
     RegisterComponent<UIPointable>();
     RegisterComponent<UIClickable>();
+    RegisterComponent<SoldierTag>();
+    RegisterComponent<Synchronize>();
 }
 
 static decltype(auto) GenerateAnimCallback(app::comp::Texture& tex, app::AnimSeqFrames::ANIM lua_anim, const std::shared_ptr<app::AnimSeqFrames>& asf)

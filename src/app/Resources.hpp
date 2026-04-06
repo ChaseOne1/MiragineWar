@@ -36,7 +36,7 @@ public:
 
         // if not, load from the pak
         try {
-            // but firstly, find out which pak we need;;
+            // but firstly, find out which pak we need;
             auto idx = m_Indexes.Get(index);
             if (!idx) idx = m_Indexes.Put(index, Index(index));
             const ResDesc& desc = idx->GetResourceDescription(resource);

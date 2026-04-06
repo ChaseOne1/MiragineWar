@@ -29,6 +29,11 @@
 #include <mathfu/constants.h>
 #include <sol/sol.hpp>
 #include <mirrow/srefl/reflect.hpp>
+#include <slikenet/peerinterface.h>
+#include <slikenet/MessageIdentifiers.h>
+#include <slikenet/types.h>
+#include <slikenet/GetTime.h>
+#include <slikenet/BitStream.h>
 
 #include "utility/Singleton.hpp"
 #include "utility/Logger.hpp"

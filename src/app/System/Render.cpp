@@ -10,6 +10,7 @@
 #include "game/Component/UIElement.hpp"
 #include "game/Component/Visible.hpp"
 #include "game/Camera.hpp"
+#include "game/World.hpp"
 
 using namespace app;
 using namespace app::sys;
@@ -33,6 +34,20 @@ static void ResizeTextRenderedFont(const SDL_Event*)
     }
 }
 
+static void RecalculateZindex(registry& reg, entity ent)
+{
+    using namespace app::comp;
+    using namespace game::comp;
+
+    ZIndex* zindex = reg.try_get<ZIndex>(ent);
+    if(!zindex || reg.all_of<UIElement>(ent)) return;
+
+    Transform& tsfm = reg.get<Transform>(ent);
+    zindex->m_Index = static_cast<float>(ZIndexVal::ZINDEX_SOLDIER);
+    zindex->m_Index += tsfm.m_Position.y / World::msc_fHeight
+        * Settings::GetSystem().traverse_get<float>("Soldier", "zprecision");
+}
+
 Render::Render()
 {
     // to avoid sorting before each rendering
@@ -41,6 +56,7 @@ Render::Render()
     reg.on_update<app::comp::ZIndex>().connect<SetSortFlag>();
     // we need to sort them after someone is destroyed, but this callback is called before destroy
     reg.on_destroy<app::comp::ZIndex>().connect<SetSortFlag>();
+    reg.on_update<game::comp::Transform>().connect<RecalculateZindex>();
     EventBus::Subscribe(SDL_EVENT_WINDOW_RESIZED, ResizeTextRenderedFont);
 }
 

@@ -1,20 +1,13 @@
 #include "Move.hpp"
-#include "MWProtocol/MessageIdentifiers.hh"
 #include "game/Component/Movement.hpp"
 #include "game/Component/Transform.hpp"
 #include "app/System/Time.hpp"
-#include "game/World.hpp"
 #include "game/System/Visible.hpp"
 #include "utility/Registry.hpp"
 
 using namespace game::sys;
 using namespace entt;
 using namespace mathfu;
-using app::InboundPacket;
-
-Move::Move()
-{
-}
 
 void Move::Tick()
 {
@@ -27,26 +20,22 @@ void Move::Tick()
         vec2& position = view.get<game::comp::Transform>(entity).m_Position;
 
         const auto& time = app::sys::Time::GetInstance();
-        const float time_square = time.m_FixedDeltaTime.count() / 1000.f * time.m_FixedDeltaTime.count() / 1000.f;
+        const float time_square = time.FixedDeltaTimeSec() * time.FixedDeltaTimeSec();
 
         // update position
-        // in order to notify the collision system but not introduce a new way
         reg.patch<game::comp::Transform>(entity, [&](game::comp::Transform& transform) {
             const vec2 last_posn = transform.m_Position;
 
-            // TODO: update z_index
-            transform.m_Position.x += movement.m_Velocity.x * time.m_FixedDeltaTime.count() / 1000.f + 0.5f * movement.m_Acceleration.x * time_square;
-            transform.m_Position.y += movement.m_Velocity.y * time.m_FixedDeltaTime.count() / 1000.f + 0.5f * movement.m_Acceleration.x * time_square;
-            transform.m_Position.x = std::clamp(transform.m_Position.x, 0.f, World::msc_fWidth);
-            transform.m_Position.y = std::clamp(transform.m_Position.y, 0.f, World::msc_fHeight);
+            transform.m_Position.x += movement.m_Velocity.x * time.FixedDeltaTimeSec() + 0.5f * movement.m_Acceleration.x * time_square;
+            transform.m_Position.y += movement.m_Velocity.y * time.FixedDeltaTimeSec() + 0.5f * movement.m_Acceleration.x * time_square;
 
             Visible::GetInstance().OnPositionUpdate(entity, last_posn);
         });
 
         // update velocity
         reg.patch<game::comp::Movement>(entity, [&](game::comp::Movement& movement) {
-            movement.m_Velocity.x += movement.m_Acceleration.x * time.m_FixedDeltaTime.count() / 1000.f;
-            movement.m_Velocity.y += movement.m_Acceleration.y * time.m_FixedDeltaTime.count() / 1000.f;
+            movement.m_Velocity.x += movement.m_Acceleration.x * time.FixedDeltaTimeSec();
+            movement.m_Velocity.y += movement.m_Acceleration.y * time.FixedDeltaTimeSec();
         });
     }
 }

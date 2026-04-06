@@ -6,6 +6,8 @@ struct Movement
     mathfu::vec2 m_Velocity { mathfu::kZeros2f };
     mathfu::vec2 m_Acceleration { mathfu::kZeros2f };
 
+    Movement() = default;
+
     explicit Movement(mathfu::vec2 velocity)
         : m_Velocity(velocity)
     { }
@@ -30,6 +32,7 @@ struct Movement
 // clang-format off
 srefl_class(game::comp::Movement,
     ctors(
+        ctor(),
         ctor(sol::stack_table),
         ctor(sol::stack_table, sol::stack_table)
     )

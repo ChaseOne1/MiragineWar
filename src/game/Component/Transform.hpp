@@ -52,6 +52,7 @@ public:
 // clang-format off
 srefl_class(game::comp::Transform,
     ctors(
+        ctor(),
         ctor(float, float, float, float),
         ctor(sol::stack_table)
     )
